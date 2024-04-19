@@ -1,11 +1,7 @@
 <!-- @extends('layouts.user_type.guest') -->
 
 @section('content')
-@if(session('message'))
-    <div class="alert alert-danger">
-        {{ session('message') }}
-    </div>
-@endif
+
 
   <main class="main-content  mt-0">
     <section>
@@ -24,6 +20,26 @@
                   <p class="mb-0">Password <b>secret</b></p> -->
                 </div>
                 <div class="card-body">
+                @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+                <script>
+                    setTimeout(function(){
+                        document.getElementById('errorAlert').style.display = 'none';
+                    }, 5000); // Hide error message after 5 seconds (5000 milliseconds)
+                </script>
+                @endif
+                @if(session('error'))
+                    <div id="errorAlert" class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                    <script>
+                        setTimeout(function(){
+                            document.getElementById('errorAlert').style.display = 'none';
+                        }, 5000); // Hide error message after 5 seconds (5000 milliseconds)
+                    </script>
+                @endif
                   <form role="form" method="POST" action="{{route('login.user')}}">
                     @csrf
                     <label>Email</label>
@@ -49,7 +65,7 @@
                     </div>
                   </form>
                 </div>
-                <div class="card-footer text-center pt-0 px-lg-2 px-1">
+                <!-- <div class="card-footer text-center pt-0 px-lg-2 px-1"> -->
                 <!-- <small class="text-muted">Forgot you password? Reset you password
                   <a href="/login/forgot-password" class="text-info text-gradient font-weight-bold">here</a>
                 </small> -->
@@ -57,7 +73,7 @@
                     Don't have an account?
                     <a href="register" class="text-info text-gradient font-weight-bold">Sign up</a>
                   </p> -->
-                </div>
+                <!-- </div> -->
               </div>
             </div>
             <!-- <div class="col-md-6">

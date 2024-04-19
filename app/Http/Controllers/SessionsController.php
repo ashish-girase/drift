@@ -24,6 +24,7 @@ class SessionsController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
+        // dd($request);
         $email = strtolower($request->email);
         $password = $request->password;
         $collection=\App\Models\User::raw();
@@ -40,27 +41,46 @@ class SessionsController extends Controller
             ],
         ]);
 
-        if ($user) {
-            foreach ($user as $u) {
-                $userModel = new User();
-                $userModel->_id = $u->_id;
-                $userModel->userEmail = $u->userEmail;
-                $userModel->userPass = $u->userPass;
-                $userModel->userFirstName = $u->userFirstName;
-                $userModel->userLastName = $u->userLastName;
-                $userModel->userAddress = $u->userAddress;
+        $userFound = false;
 
-                Auth::login($userModel);
-            }
+        foreach ($user as $u) {
+            $userFound = true;
+            $userModel = new User();
+            $userModel->_id = $u->_id;
+            $userModel->userEmail = $u->userEmail;
+            $userModel->userPass = $u->userPass;
+            $userModel->userFirstName = $u->userFirstName;
+            $userModel->userLastName = $u->userLastName;
+            $userModel->userAddress = $u->userAddress;
 
-            return redirect('/')->withSuccess('You have Successfully loggedin');
+            Auth::login($userModel);
         }
-        else
-        {
 
-            return redirect('/login')->with(['success'=>'You have Not loggedin.']);
-
+        if ($userFound) {
+            return redirect('/')->withSuccess('You have Successfully logged in');
+        } else {
+            // dd($userFound);
+            return redirect('/login')->with('error', 'Invalid credentials');
         }
+
+        // if ($user->count() > 0) { // Check if any documents are returned
+        //     foreach ($user as $u) {
+        //         $userModel = new User();
+        //         $userModel->_id = $u->_id;
+        //         $userModel->userEmail = $u->userEmail;
+        //         $userModel->userPass = $u->userPass;
+        //         $userModel->userFirstName = $u->userFirstName;
+        //         $userModel->userLastName = $u->userLastName;
+        //         $userModel->userAddress = $u->userAddress;
+
+        //         Auth::login($userModel);
+        //     }
+
+        //     return redirect('/')->withSuccess('You have Successfully logged in');
+        // } else {
+        //     return redirect('/login')->with('error', 'Invalid credentials');
+        // }
+
 
     }
 

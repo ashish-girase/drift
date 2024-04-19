@@ -25,14 +25,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  @if (env('IS_DEMO'))
-      <x-demo-metas></x-demo-metas>
-  @endif
+  <!-- @if (env('IS_DEMO'))
+
+  @endif -->
 
   <link rel="apple-touch-icon" sizes="76x76" href="../public/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../public/img/favicon.png">
   <title>
-    Soft UI Dashboard by Creative Tim
+    Drift
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
@@ -44,6 +44,13 @@
   <link href="../public/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
   <link id="pagestyle" href="../public/assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <input type="hidden" value="{{url('/')}}" id="url" name="url">
 </head>
 
 <body class="g-sidenav-show  bg-gray-100 {{ (\Request::is('rtl') ? 'rtl' : (Request::is('virtual-reality') ? 'virtual-reality' : '')) }} ">
@@ -69,8 +76,9 @@
   <script src="../public/assets/js/plugins/smooth-scrollbar.min.js"></script>
   <script src="../public/assets/js/plugins/fullcalendar.min.js"></script>
   <script src="../public/assets/js/plugins/chartjs.min.js"></script>
-  <script src="../public/assets/js/js/user.js"></script>
-<!-- <script src="{{URL::to('/')}}/assets/js/js/user.js"></script> -->
+  <!-- <script src="../public/assets/js/js/user.js"></script> -->
+<script src="{{URL::to('/')}}/assets/js/js/user.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/company.js"></script>
   @stack('rtl')
   @stack('dashboard')
   <script>

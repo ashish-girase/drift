@@ -6,6 +6,8 @@ use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -29,37 +31,16 @@ Route::group(['middleware' => 'auth'], function () {
 		return view('dashboard');
 	})->name('dashboard');
 
-	// Route::get('billing', function () {
-	// 	return view('billing');
-	// })->name('billing');
+    //user Module
+    Route::POST('/admin/add_user', [UserController::class, 'add_user']);
+    Route::POST('/admin/edit_user', [UserController::class, 'edit_user']);
+    Route::POST('/admin/update_user', [UserController::class, 'update_user']);
+    Route::get('/user', [UserController::class, 'view_user']);
+    Route::post('/delete_user', [UserController::class, 'delete_user'])->name('delete_user');
 
-	// Route::get('profile', function () {
-	// 	return view('profile');
-	// })->name('profile');
-
-	// Route::get('rtl', function () {
-	// 	return view('rtl');
-	// })->name('rtl');
-
-	Route::get('user', function () {
-		return view('User/view_user');
-	})->name('user-management');
-
-	// Route::get('tables', function () {
-	// 	return view('tables');
-	// })->name('tables');
-
-    // Route::get('virtual-reality', function () {
-	// 	return view('virtual-reality');
-	// })->name('virtual-reality');
-
-    // Route::get('static-sign-in', function () {
-	// 	return view('static-sign-in');
-	// })->name('sign-in');
-
-    // Route::get('static-sign-up', function () {
-	// 	return view('static-sign-up');
-	// })->name('sign-up');
+    //Company master module
+    Route::get('/company', [CompanyController::class, 'view_company']);
+    Route::POST('/admin/add_company', [CompanyController::class, 'add_company']);
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);
