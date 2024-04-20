@@ -87,6 +87,14 @@
             <span class="nav-link-text ms-1">Company</span>
         </a>
       </li>
+      <li class="nav-item pb-2">
+        <a class="nav-link {{ (Request::is('customer') ? 'active' : '') }}" href="{{ url('customer') }}">
+            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('customer') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
+            </div>
+            <span class="nav-link-text ms-1">Customer</span>
+        </a>
+      </li>
 
 
       <!-- <li class="nav-item mt-2">

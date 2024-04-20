@@ -36,6 +36,7 @@
                                     </thead>
                                     <tbody>
                                         @if($companyData)
+
                                         @foreach($companyData as $key => $comData_val)
                                         <tr>
                                             <td class="ps-4">
@@ -44,11 +45,13 @@
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->companyName }}</p>
                                             </td>
+
                                             <td class="text-center">
-                                                <a href="#" class="mx-3 edit-user" data-user-id="{{ $comData_val->company->_id }}" data-bs-toggle="tooltip">
+                                                <a href="#" class="mx-3 edit-company"  data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
-                                                <a href="#" class="mx-3 delete-user" data-user-id="{{ $comData_val->company->_id }}" data-bs-toggle="tooltip">
+                                                <a href="#" class="mx-3 delete-company" data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                <!-- <a href="#" class="mx-3 delete-company" data-user-id="{{ $comData_val->company->_id }}" data-bs-toggle="tooltip"> -->
                                                     <span>
                                                         <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                                     </span>
@@ -64,6 +67,7 @@
                                     </tbody>
 
                                 </table>
+
                             </div>
                         </div>
                     </div>
@@ -109,7 +113,7 @@
 
 
                         <!-- Edit user -->
-                        <div class="modal fade" id="edit_userModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="edit_companyModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">
@@ -121,73 +125,22 @@
                                 <div class="modal-body">
                                         <form method="post">
                                                 @csrf
-                                                <input type="hidden" name="_token" id="_tokeupdatenuser" value="{{Session::token()}}">
-                                                <input type="hidden" name="user_id"  id="user_editid">
+                                                <input type="hidden" name="_token" id="_tokeupdatencompany" value="{{Session::token()}}">
+                                                <input type="hidden" name="company_id"  id="company_editid">
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
-                                                        <label for="user_firstname">First Name<span
+                                                        <label for="company_name">Company Name<span
                                                                 class="required"></span></label>
-                                                        <input type="text" class="form-control" name="user_firstname"
-                                                            id="user_editfirstname" placeholder="First Name">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_lastname">Last Name<span
-                                                                class="required"></span></label>
-                                                        <input type="email" class="form-control" name="user_lastname"
-                                                            id="user_editlastname" placeholder="Last Name">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_email">Email<span
-                                                                class="required"></span></label>
-                                                        <input type="email" class="form-control email"
-                                                            name="user_email" id="user_editemail" placeholder="Email">
+                                                        <input type="text" class="form-control" name="company_editname"
+                                                            id="company_editname" placeholder="Comapny Name">
                                                     </div>
 
-                                                    <div class="form-group col-md-12">
-                                                        <label for="inputAddress">Type Of Work<span   class="required"></span></label>
-                                                        <!-- <input type="text" class="form-control" name="inputAddress" id="inputAddress" placeholder="Enter Address"> -->
-                                                        <select class="form-control" id="user_edittype" class="user_type">
-                                                            <option name="on_site">On site </option>
-                                                            <option name="remote">Remote </option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_address">Address<span   class="required"></span></label>
-                                                        <input type="text" class="form-control" name="user_address" id="user_editaddress" placeholder="Enter Address">
-
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="inputLocation">User Code</label>
-                                                        <input type="text" class="form-control" name="user_code" id="user_editcode" placeholder="Enter User Code">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label>Date Of Birth</label>
-                                                        <input type="date" class="form-control" name="user_dob" id="user_editdob" >
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="inputZip">Phone Number</label>
-                                                        <input type="text" class="form-control" name="user_phoneno"   placeholder="Enter Phone Number" id="user_editphoneno">
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="inputAddress">Department<span   class="required"></span></label>
-                                                        <!-- <input type="text" class="form-control" name="inputAddress" id="inputAddress" placeholder="Enter Address"> -->
-                                                        <select class="form-control" name="user_department" id="user_editdepartment">
-                                                            <option value="sales">Sales</option>
-                                                            <option value="production">Production </option>
-                                                            <option value="account">Account </option>
-                                                            <option value="qc">QC </option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="form-group col-md-12">
-                                                        <label for="inputZip">Note</label>
-                                                        <textarea class="form-control" name="user_note" id="user_editnote"></textarea>
-                                                    </div>
                                                 </div>
                                                 </form>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn bg-gradient-primary " id="updateuser">Update changes</button>
+                                        <button type="button" class="btn bg-gradient-primary " id="updatecompany">Update changes</button>
                                     </div>
                                     </div>
                                 </div>

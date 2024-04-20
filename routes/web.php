@@ -8,6 +8,7 @@ use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -39,8 +40,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/delete_user', [UserController::class, 'delete_user'])->name('delete_user');
 
     //Company master module
-    Route::get('/company', [CompanyController::class, 'view_company']);
+    Route::get('/company', [CompanyController::class, 'view_company'])->name('company');
     Route::POST('/admin/add_company', [CompanyController::class, 'add_company']);
+    Route::POST('/admin/edit_company', [CompanyController::class, 'edit_company']);
+    Route::POST('/admin/update_company', [CompanyController::class, 'update_company']);
+    Route::post('/admin/delete_company', [CompanyController::class, 'delete_company'])->name('delete_company');
+
+    //Customer master module
+    Route::get('/customer', [CustomerController::class, 'view_customer'])->name('customer');
+    Route::POST('/admin/add_customer', [CustomerController::class, 'add_customer']);
+    Route::POST('/admin/edit_customer', [CustomerController::class, 'edit_customer']);
+    Route::post('admin/get_companylist', [CustomerController::class, 'get_companylist']);
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);

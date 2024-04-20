@@ -5,54 +5,42 @@ $(document).ready(function() {
 $(".createCompanyModalStore").click(function(){
         $('#addCompanyModal').modal("show");
     });
-    $('.edit-user').click(function(e) {
-        var userId = $(this).data('user-id');
+    $('.edit-company').click(function(e) {
+        var userId = $(this).data('user-ids');
+        var master_id = $(this).data('user-master_id');
         $.ajax({
             type:'POST',
-            url:base_path+"/admin/edit_user",
-            data:{id:userId},
+            url:base_path+"/admin/edit_company",
+            data: {
+                id: userId,
+                master_id: master_id
+            },
             success:function(response){
-                var res = JSON.parse(response);
-                console.log("_id",res._id)
-                $('#user_editid').val(res._id);
-                $('#user_editemail').val(res.userEmail);
+                console.log("_id", response);
+                // var res = JSON.parse(response);
+                var companyData = response.success[0].company[0];
+                // console.log("_id", response.success[0]); // Logging _id for debugging
+                $('#company_editid').val(companyData._id); // Setting _id value
+                $('#company_editname').val(companyData.companyName);
             }
         });
-        $('#edit_userModel').modal("show");
+        $('#edit_companyModel').modal("show");
     });
 
     //Update User
-    $(document).on("click", '#updateuser', function(event) {
+    $(document).on("click", '#updatecompany', function(event) {
         console.log("Edit User")
-        var user_id= $('#user_editid').val();
+        var c_id= $('#company_editid').val();
         // var companySubID= $('#up_comSubId').val();
-        var user_firstname= $('#user_editfirstname').val();
-        var user_lastname= $('#user_editlastname').val();
-        var user_email= $('#user_editemail').val();
-        var user_type= $('#user_edittype').val();
-        var user_address= $('#user_editaddress').val();
-        var user_code= $('#user_editcode').val();
-        var user_dob= $('#user_editdob').val();
-        var user_phoneno=$('#user_editphoneno').val();
-        var user_department=$('#user_editdepartment').val();
-        var user_note=$('#user_editnote').val();
+        var company_editname= $('#company_editname').val();
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
-        formData.append('_token', $("#_tokeupdatenuser").val());
-        formData.append('user_id', user_id);
-        formData.append('user_firstname', user_firstname);
-        formData.append('user_lastname', user_lastname);
-        formData.append('user_email', user_email);
-        formData.append('user_type', user_type);
-        formData.append('user_address', user_address);
-        formData.append('user_code', user_code);
-        formData.append('user_dob', user_dob);
-        formData.append('user_phoneno', user_phoneno);
-        formData.append('user_department', user_department);
-        formData.append('user_note', user_note);
+        formData.append('_token', $("#_tokeupdatencompany").val());
+        formData.append('_id', c_id);
+        formData.append('company_name', company_editname);
         formData.append('deleteStatus', "NO");
         $.ajax({
-            url: base_path + "/admin/update_user",
+            url: base_path + "/admin/update_company",
             type: 'post',
             datatype: "JSON",
             contentType: false,
@@ -60,9 +48,9 @@ $(".createCompanyModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
-                $('#edit_userModel').modal("hide");
+                $('#edit_companyModel').modal("hide");
 
-                window.location.href = base_path+"/user";
+                window.location.href = base_path+"/company";
 
             },
             error: function (data) {
@@ -74,22 +62,27 @@ $(".createCompanyModalStore").click(function(){
     });
 
     //delete user
-    $('.delete-user').click(function(e) {
+    $('.delete-company').click(function(e) {
         e.preventDefault();
-        var userId = $(this).data('user-id');
+        // var userId = $(this).data('user-ids').split(',');
+        var userId = $(this).data('user-ids');
+        var master_id = $(this).data('user-master_id');
+
+        // var userId = $(this).data('user-id');
         var confirmDelete = confirm("Are you sure you want to delete this user?");
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
-        url: base_path+"/delete_user",
+        url: base_path+"/admin/delete_company",
         type: "POST",
         dataType: "json",
         data: {
             id: userId,
+            master_id: master_id,
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/user";
+            window.location.href = base_path+"/company";
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -100,7 +93,7 @@ $(".createCompanyModalStore").click(function(){
 
 });
 
-$("#savecompany").click(function(){
+$("#savecustomer").click(function(){
 
     var company_name=$('#company_name').val();
     if(company_name=='')
