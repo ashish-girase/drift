@@ -112,84 +112,63 @@ class CompanyController extends Controller
             return view('Company.view_company',compact('companyData'));
         }
 
-        public function edit_user(Request $request)
+        // public function edit_user(Request $request)
+        // {
+        //     $id = intval($request->id);
+        //     $UserData = Company::where('_id', $id)->where('delete_status', 'NO')->first();
+        //     echo json_encode($UserData);
+        // }
+        public function edit_company(Request $request)
         {
-            $id = intval($request->id);
-            $UserData = Company::where('_id', $id)->where('delete_status', 'NO')->first();
-            echo json_encode($UserData);
+            // dd($request);
+            $companyID=1;
+            $parent=$request->master_id;
+            $id=$request->id;
+            $collection=\App\Models\Company::raw();
+            $show1 = $collection->aggregate([
+            ['$match' => ['_id' => (int)$parent, 'companyID' => 1]],
+            ['$unwind' => ['path' => '$company']],
+            ['$match' => ['company._id' => (int)$id]]
+            ]);
+            foreach ($show1 as $row) {
+            $activeCust= array();
+            $k = 0;
+            $activeCust[$k] = $row['company'];
+            $k++;
+
+            }
+
+            $companyData[]=array("company" => $activeCust);
+            // dd($companyData);
+            if ($companyData) {
+            // dd($companyData);
+            return response()->json(['success' => $companyData]);
+            }
         }
-        public function update_user(Request $request)
+
+        public function update_company(Request $request)
         {
-        // dd($request);
-            $reqid = intval($request->user_id);
-            // dd($request->input('user_firstname'));
-            $UserArrayUp =Company::where('_id', $reqid)->first();
-            if (!$UserArrayUp) {
-            return response()->json(['status' => false, 'message' => 'No records found'], 200);
-            }
-            //$password = hash('sha1',$request->userPass);
-            $data = [
+        //dd($request);
+            $id=(int)$request->_id;
+            $companyID=1;
 
-            'userEmail' => $request->input('user_email'),
-            'user_type' => $request->input('user_type'),
-            'userFirstName' => $request->input('user_firstname'),
-            'userLastName' => $request->input('user_lastname'),
-            'userAddress' => $request->input('user_address'),
-            'userCode' => $request->input('user_code'),
-            'userDob' => $request->input('user_dob'),
-            'userNote' => $request->input('userNote'),
-            'userTelephone' => $request->input('user_phoneno'),
-            'department' => $request->input('user_department'),
-            'userNote' => $request->input('user_note'),
-            // 'aa'=>$request->insertUser,
+            $data=Company::raw()->updateOne(['companyID' => $companyID,'company._id' => $id],
 
-            'privilege' => (object)array(
+            ['$set' => [
 
-            'insertUser' => $request->insertUser,
-            'updateUser' => $request->updateUser,
-            'deleteUser' => $request->deleteUser,
-            ),
-            'dashboard' => (object)array(
-
-            ),
-            'product' => (object)array(
-            // 'addProduct' => (int)$request->input('addProduct'),
-            ),
-            'order' => (object)array(
-            ),
-            'admin' => (object)array(
-
-            ),
-            'QC' => (object)array(
-
-            ),
-            'insertedTime' => time(),
-            'delete_status' => "NO",
-            'deleteUser' => "",
-            'deleteTime' => "",
-            ];
-            // dd($UserArrayUp);
-            $result = $UserArrayUp->update($data);
-            if ($result) {
-            // dd($result);
-            return response()->json(['status' => true,'message' => 'User updated successfully'], 200);
-            } else {
-            return response()->json(['status' => false,'message' => 'Failed to update User'], 200);
-            }
-            }
-        public function delete_user(Request $request)
-        {
-            $id = intval($request->id);
-            // dd($id);
-            $userData = Company::raw()->updateOne(
-            ['_id' => $id],
-            ['$set' => ['delete_status' => 'YES', 'deleteUser' => intval($id), 'deleteTime' => time()]]
+            'company.$.companyName' => $request->company_name,
+            'company.$.insertedTime' => time(),
+            'company.$.delete_status' => "NO",
+            'company.$.deleteCompany' => "",
+            'company.$.deleteTime' => "",]]
             );
-            if ($userData == true) {
-            // dd($userData);
-            $arr = array('status' => 'success', 'message' => 'User deleted successfully.', 'statusCode' => 200);
-            return json_encode($arr);
-        }
-        }
 
+            if ($data==true) {
+            //dd($data);
+            return response()->json(['status' => true,'message' => 'Company updated successfully'], 200);
+            } else {
+            return response()->json(['status' => false,'message' => 'Failed to update Company'], 200);
+            }
+
+        }
 }
