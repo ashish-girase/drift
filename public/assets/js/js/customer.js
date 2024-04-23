@@ -181,15 +181,14 @@ function doSearch_sett(dom, funname, val) {
       }
       timeout = setTimeout(function () {
         if (func == 'companylistcust') {
-            companylistcust(dom, 'companylistcust');
+            companylistcust(dom, 'companylistcust1');
           }
         }, 600);
   }
 
   function companylistcust(value, id) {
-    // console.log("value",value)
+    // console.log("value",id)
     if (!value.includes(")")) {
-        console.log("value",value)
         var formData = new FormData();
         formData.append('_token', $(".laravel_csrf_tokn").val());
         formData.append('value', value);
@@ -204,18 +203,18 @@ function doSearch_sett(dom, funname, val) {
             data: formData,
             cache: false,
             success: function (response) {
-                
-              var result = JSON.parse(response);
-              if (result.length == 0) {
-                document.getElementById(id).innerHTML = "<option value='No results Found ...'></option>";
-              } else {
-                var options = "";
-                for (var i = 0; i < result.length; i++) {
-                  options += `<option data-value = "${result[i].id}" data-parent = "${result[i].parent}" value="${result[i].value}"></option>`;
+                var result = JSON.parse(response);
+                if (result.length == 0) {
+                  document.getElementById(id).innerHTML = "<option value='No results Found ...'></option>";
+                } else {
+                  var options = "";
+                  for (var i = 0; i < result.length; i++) {
+                    // console.log("result[i].parent",result[i].value)
+                    options += `<option data-value = "${result[i].id}" data-parent = "${result[i].parent}" value="${result[i].value}"></option>`;
+                  }
+                  document.getElementById(id).innerHTML = options;
                 }
-                document.getElementById(id).innerHTML = options;
               }
-            }
           });
         } else {
           Swal.fire('Please input alphanumeric characters only');

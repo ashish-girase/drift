@@ -214,29 +214,28 @@ class CustomerController extends Controller
         }
         public function get_companylist(Request $request)
         {
-    
-            $val = $request->value;
+            $val = $request->email;
             $para = '^' . $val;
             $datasearch = new Regex ($para, 'i');
+            // dd($datasearch);
             $companyID=1;
             $show = \App\Models\Company::raw()->aggregate([['$match' => ["companyID" => $companyID]],
                 ['$unwind' => '$company'],
-                ['$match' => ['company.companyName' => $datasearch,'company.deleteStatus' => "NO"]],
-                ['$project' => ['company._id' => 1,'_id' => 1, 'company.companyName' => 1,'company.deleteStatus'=>1,'companyID' => (int)$companyID]],
-                // ['$limit' => 100]
+                ['$match' => ['company.companyName' => $datasearch,'company.delete_status' => "NO"]],
+                ['$project' => ['company._id' => 1,'_id' => 1, 'company.companyName' => 1,'company.deleteStatus'=>1]],
             ]);
             $company = array();
             $companyList = array();
             foreach ($show as $s)
             {
-                dd($s);
+                // dd($s);
                 $k = 0;
                 $company[$k] = $s['company'];
                 $parent = $s['_id'];
                 $k++;
                 foreach ($company as $sr)
                 {
-                    $companyList[] = array("id" =>$sr['_id'], "value" => $sr['companyName'],"delstatus"=>$sr['deleteStatus'], "parent" => $parent);
+                    $companyList[] = array("id" =>$sr['_id'], "value" => $sr['companyName'],"parent" => $parent);
                 }
     
             }

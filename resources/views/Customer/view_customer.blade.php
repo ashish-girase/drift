@@ -121,10 +121,10 @@
                                                                 class="required"></span></label>
                                                         <!-- <input type="text" class="form-control" name="company_name"
                                                             id="company_name" placeholder="Company Name"> -->
-                                            <input list="driversett" placeholder="search here..." class="form-control" id="driver_sett"
-                                            name="drivername_sett" onkeyup="doSearch_sett(this.value,'companylistcust')"  autocomplete="off">
-                                            <datalist id="companylistcust">
-                                            </datalist>
+                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="driver_sett"
+                                                        name="companylistcust" onkeyup="doSearch_sett(this.value,'companylistcust')"  autocomplete="off">
+                                                        <datalist id="companylistcust1">
+                                                        </datalist>
                                                         </div>
                                                 </div>
                                                 <div class="form-row">
