@@ -2,15 +2,15 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-$(".createCompanyModalStore").click(function(){
-        $('#addCompanyModal').modal("show");
+$(".createColorModalStore").click(function(){
+        $('#addColorModal').modal("show");
     });
-    $('.edit-company').click(function(e) {
+    $('.edit-color').click(function(e) {
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
         $.ajax({
             type:'POST',
-            url:base_path+"/admin/edit_company",
+            url:base_path+"/admin/edit_color",
             data: {
                 id: userId,
                 master_id: master_id
@@ -18,29 +18,29 @@ $(".createCompanyModalStore").click(function(){
             success:function(response){
                 console.log("_id", response);
                 // var res = JSON.parse(response);
-                var companyData = response.success[0].company[0];
+                var colorData = response.success[0].color[0];
                 // console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#company_editid').val(companyData._id); // Setting _id value
-                $('#company_editname').val(companyData.companyName);
+                $('#color_editid').val(colorData._id); // Setting _id value
+                $('#color_editname').val(colorData.color_name);
             }
         });
-        $('#edit_companyModel').modal("show");
+        $('#edit_colorModel').modal("show");
     });
 
     //Update User
-    $(document).on("click", '#updatecompany', function(event) {
+    $(document).on("click", '#updatecolor', function(event) {
         console.log("Edit User")
-        var c_id= $('#company_editid').val();
+        var c_id= $('#color_editid').val();
         // var companySubID= $('#up_comSubId').val();
-        var company_editname= $('#company_editname').val();
+        var color_editname= $('#color_editname').val();
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
-        formData.append('_token', $("#_tokeupdatencompany").val());
+        formData.append('_token', $("#_tokeupdatencolor").val());
         formData.append('_id', c_id);
-        formData.append('company_name', company_editname);
+        formData.append('color_name', color_editname);
         formData.append('deleteStatus', "NO");
         $.ajax({
-            url: base_path + "/admin/update_company",
+            url: base_path + "/admin/update_color",
             type: 'post',
             datatype: "JSON",
             contentType: false,
@@ -48,9 +48,9 @@ $(".createCompanyModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
-                $('#edit_companyModel').modal("hide");
+                $('#edit_colorModel').modal("hide");
 
-                window.location.href = base_path+"/company";
+                window.location.href = base_path+"/color";
 
             },
             error: function (data) {
@@ -62,27 +62,27 @@ $(".createCompanyModalStore").click(function(){
     });
 
     //delete user
-    $('.delete-company').click(function(e) {
+    $('.delete-color').click(function(e) {
         e.preventDefault();
         // var userId = $(this).data('user-ids').split(',');
-        var compan_id = $(this).data('user-ids');
+        var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
-// console.log("master_id",compan_id)
-        // var compan_id = $(this).data('user-id');
+
+        // var userId = $(this).data('user-id');
         var confirmDelete = confirm("Are you sure you want to delete this user?");
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
-        url: base_path+"/admin/delete_company",
+        url: base_path+"/admin/delete_color",
         type: "POST",
         dataType: "json",
         data: {
-            id: compan_id,
+            id: userId,
             master_id: master_id,
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/company";
+            window.location.href = base_path+"/color";
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -93,37 +93,37 @@ $(".createCompanyModalStore").click(function(){
 
 });
 
-$("#savecustomer").click(function(){
+$("#savecolor").click(function(){
 
-    var company_name=$('#company_name').val();
-    if(company_name=='')
+    var color_name=$('#color_name').val();
+    if(color_name=='')
     {
     Swal.fire( "Enter Company Name");
-    $('#company_name').focus();
+    $('#color_name').focus();
     return false;
     }
-    var company_name=$('#company_name').val();
+    var color_name=$('#color_name').val();
     $.ajax({
-        url: base_path+"/admin/add_company",
+        url: base_path+"/admin/add_color",
         type: "POST",
         datatype:"JSON",
         data: {
-            _token: $("#_tokencompany").val(),
-            company_name: company_name,
+            _token: $("#_tokencolor").val(),
+            color_name: color_name,
         },
         cache: false,
         success: function(Result){
             console.log(Result);
-            $("#addCompanyModal").modal("hide");
+            $("#addColorModal").modal("hide");
             // Store the success message in session storage
-            sessionStorage.setItem('successMessage', 'Company added successfully');
-            window.location.href = base_path + "/company";
+            sessionStorage.setItem('successMessage_col', 'Color added successfully');
+            window.location.href = base_path + "/color";
         }
     });
 });
 
-const successMessage = sessionStorage.getItem('successMessage');
-if (successMessage) {
-    Swal.fire(successMessage);
-    sessionStorage.removeItem('successMessage');
+const successMessage_col = sessionStorage.getItem('successMessage_col');
+if (successMessage_col) {
+    Swal.fire(successMessage_col);
+    sessionStorage.removeItem('successMessage_col');
 }

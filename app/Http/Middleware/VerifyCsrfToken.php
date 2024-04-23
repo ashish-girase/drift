@@ -18,6 +18,11 @@ class VerifyCsrfToken extends Middleware
         '/admin/edit_company',
         '/admin/add_customer',
         '/admin/edit_customer',
-        '/admin/get_companylist'
+        '/admin/get_companylist',
+        '/admin/edit_color',
+        '/admin/delete_color',
+        '/admin/edit_product',
+        '/admin/delete_product',
+        '/admin/get_colorlist'
     ];
 }

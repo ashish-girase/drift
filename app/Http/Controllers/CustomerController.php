@@ -214,7 +214,7 @@ class CustomerController extends Controller
         }
         public function get_companylist(Request $request)
         {
-            $val = $request->email;
+            $val = $request->value;
             $para = '^' . $val;
             $datasearch = new Regex ($para, 'i');
             // dd($datasearch);

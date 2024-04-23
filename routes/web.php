@@ -9,6 +9,8 @@ use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ColorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -51,6 +53,21 @@ Route::group(['middleware' => 'auth'], function () {
     Route::POST('/admin/add_customer', [CustomerController::class, 'add_customer']);
     Route::POST('/admin/edit_customer', [CustomerController::class, 'edit_customer']);
     Route::post('admin/get_companylist', [CustomerController::class, 'get_companylist']);
+
+    //Color master module
+     Route::get('/color', [ColorController::class, 'view_color'])->name('color');
+     Route::POST('/admin/add_color', [ColorController::class, 'add_color']);
+     Route::POST('/admin/edit_color', [ColorController::class, 'edit_color']);
+     Route::POST('/admin/update_color', [ColorController::class, 'update_color']);
+     Route::post('/admin/delete_color', [ColorController::class, 'delete_color'])->name('delete_color');
+
+     //Product master module
+     Route::get('/product', [ProductController::class, 'view_product'])->name('product');
+     Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
+     Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
+     Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
+     Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
+     Route::post('admin/get_colorlist', [ProductController::class, 'get_colorlist']);
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);

@@ -122,7 +122,7 @@
                                                         <!-- <input type="text" class="form-control" name="company_name"
                                                             id="company_name" placeholder="Company Name"> -->
                                                         <input list="companylistcust" placeholder="search here..." class="form-control" id="driver_sett"
-                                                        name="companylistcust" onkeyup="doSearch_sett(this.value,'companylistcust')"  autocomplete="off">
+                                                        name="companylistcust" onkeyup="doSearch_customer(this.value,'companylistcust')"  autocomplete="off">
                                                         <datalist id="companylistcust1">
                                                         </datalist>
                                                         </div>
@@ -241,7 +241,7 @@
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit User</h5>
+                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit Customer</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
@@ -250,7 +250,7 @@
                                         <form method="post">
                                                 @csrf
                                                 <input type="hidden" name="_token" id="_tokeupdatencustomer" value="{{Session::token()}}">
-                                                <input type="text" name="customer_id"  id="edit_customer_id">
+                                                <input type="hidden" name="customer_id"  id="edit_customer_id">
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Customer Name<span

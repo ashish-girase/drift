@@ -171,7 +171,7 @@ if (successMessage_cus) {
     sessionStorage.removeItem('successMessage_cus');
 }
 
-function doSearch_sett(dom, funname, val) {
+function doSearch_customer(dom, funname, val) {
     var active_id = val;
     var func = funname;
     var dom = dom;
@@ -203,18 +203,25 @@ function doSearch_sett(dom, funname, val) {
             data: formData,
             cache: false,
             success: function (response) {
-                var result = JSON.parse(response);
-                if (result.length == 0) {
-                  document.getElementById(id).innerHTML = "<option value='No results Found ...'></option>";
+                var result = response; // Assuming response is already parsed as JSON
+                var dropdown = document.getElementById(id);
+                if (dropdown) {
+                    if (result.length == 0) {
+                        dropdown.innerHTML = "<option value='No results Found ...'></option>";
+                    } else {
+                        var options = "";
+                        for (var i = 0; i < result.length; i++) {
+                            options += `<option data-value="${result[i].id}" data-parent="${result[i].parent}" value="${result[i].value}">${result[i].value}</option>`; // Added closing tag for <option> and displayed value inside the option
+                        }
+                        dropdown.innerHTML = options;
+                    }
                 } else {
-                  var options = "";
-                  for (var i = 0; i < result.length; i++) {
-                    // console.log("result[i].parent",result[i].value)
-                    options += `<option data-value = "${result[i].id}" data-parent = "${result[i].parent}" value="${result[i].value}"></option>`;
-                  }
-                  document.getElementById(id).innerHTML = options;
+                    console.error("Dropdown element not found with id:", id);
                 }
-              }
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText); // Log error details for debugging
+            }
           });
         } else {
           Swal.fire('Please input alphanumeric characters only');
