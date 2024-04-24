@@ -20,9 +20,10 @@
 
                             </div>
                         </div>
+                        <hr/>
                         <div class="card-body px-0 pt-0 pb-2">
                             <div class="table-responsive p-0">
-                                <table class="table align-items-center mb-0">
+                                <table class="table align-items-center mb-0" id="customerTable">
                                     <thead>
                                         <tr>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
@@ -237,7 +238,7 @@
 
 
                         <!-- Edit user -->
-                        <div class="modal fade" id="edit_companyModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="edit_customerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">
@@ -368,7 +369,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn bg-gradient-primary " id="updatecompany">Update changes</button>
+                                        <button type="button" class="btn bg-gradient-primary " id="updatecustomer">Update changes</button>
                                     </div>
                                     </div>
                                 </div>

@@ -2,6 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
+    $('#customerTable').DataTable();
 $(".createCustomerModalStore").click(function(){
         $('#addCustomerModal').modal("show");
     });
@@ -39,23 +40,48 @@ $(".createCustomerModalStore").click(function(){
                 $('#edit_briefInformation').val(customerData.briefInformation);
             }
         });
-        $('#edit_companyModel').modal("show");
+        $('#edit_customerModel').modal("show");
     });
 
     //Update User
-    $(document).on("click", '#updatecompany', function(event) {
+    $(document).on("click", '#updatecustomer', function(event) {
         console.log("Edit User")
-        var c_id= $('#customer_editid').val();
-        // var companySubID= $('#up_comSubId').val();
-        var company_editname= $('#company_editname').val();
+        var c_id= $('#edit_customer_id').val();
+        var edit_custName= $('#edit_custName').val();
+        var edit_company_name= $('#edit_company_name').val();
+        var edit_factoryCode= $('#edit_factoryCode').val();
+        var edit_GstDetails= $('#edit_GstDetails').val();
+        var edit_custEmail= $('#edit_custEmail').val();
+        var edit_custAddress= $('#edit_custAddress').val();
+        var edit_cust_Billing_address= $('#edit_cust_Billing_address').val();
+        var edit_cust_Delivery_address= $('#edit_cust_Delivery_address').val();
+        var edit_custCity= $('#edit_custCity').val();
+        var edit_custState= $('#edit_custState').val();
+        var edit_custCountry= $('#edit_custCountry').val();
+        var edit_custZip= $('#edit_custZip').val();
+        var edit_custTelephone= $('#edit_custTelephone').val();
+        var edit_briefInformation= $('#edit_briefInformation').val();
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
         formData.append('_token', $("#_tokeupdatencustomer").val());
         formData.append('_id', c_id);
-        formData.append('company_name', company_editname);
+        formData.append('custName', edit_custName);
+        formData.append('company_name', edit_company_name);
+        formData.append('factoryCode', edit_factoryCode);
+        formData.append('GstDetails', edit_GstDetails);
+        formData.append('custEmail', edit_custEmail);
+        formData.append('custAddress', edit_custAddress);
+        formData.append('cust_Billing_address', edit_cust_Billing_address);
+        formData.append('cust_Delivery_address', edit_cust_Delivery_address);
+        formData.append('custCity', edit_custCity);
+        formData.append('custState', edit_custState);
+        formData.append('custCountry', edit_custCountry);
+        formData.append('custZip', edit_custZip);
+        formData.append('custTelephone', edit_custTelephone);
+        formData.append('briefInformation', edit_briefInformation);
         formData.append('deleteStatus', "NO");
         $.ajax({
-            url: base_path + "/admin/update_company",
+            url: base_path + "/admin/update_customer",
             type: 'post',
             datatype: "JSON",
             contentType: false,
@@ -63,9 +89,9 @@ $(".createCustomerModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
-                $('#edit_companyModel').modal("hide");
+                $('#edit_customerModel').modal("hide");
 
-                window.location.href = base_path+"/company";
+                window.location.href = base_path+"/customer";
 
             },
             error: function (data) {
@@ -77,7 +103,7 @@ $(".createCustomerModalStore").click(function(){
     });
 
     //delete user
-    $('.delete-company').click(function(e) {
+    $('.delete-customer').click(function(e) {
         e.preventDefault();
         // var userId = $(this).data('user-ids').split(',');
         var userId = $(this).data('user-ids');
@@ -88,7 +114,7 @@ $(".createCustomerModalStore").click(function(){
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
-        url: base_path+"/admin/delete_company",
+        url: base_path+"/admin/delete_customer",
         type: "POST",
         dataType: "json",
         data: {
@@ -97,7 +123,7 @@ $(".createCustomerModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/company";
+            window.location.href = base_path+"/customer";
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -203,7 +229,8 @@ function doSearch_customer(dom, funname, val) {
             data: formData,
             cache: false,
             success: function (response) {
-                var result = response; // Assuming response is already parsed as JSON
+                var result = response;
+               // Assuming response is already parsed as JSON
                 var dropdown = document.getElementById(id);
                 if (dropdown) {
                     if (result.length == 0) {

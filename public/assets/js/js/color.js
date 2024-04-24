@@ -2,6 +2,8 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
+    $('#colorTable').DataTable();
+    
 $(".createColorModalStore").click(function(){
         $('#addColorModal').modal("show");
     });

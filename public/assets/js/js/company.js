@@ -2,6 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
+    $('#companyTable').DataTable();
 $(".createCompanyModalStore").click(function(){
         $('#addCompanyModal').modal("show");
     });
@@ -93,7 +94,7 @@ $(".createCompanyModalStore").click(function(){
 
 });
 
-$("#savecustomer").click(function(){
+$("#savecompany").click(function(){
 
     var company_name=$('#company_name').val();
     if(company_name=='')

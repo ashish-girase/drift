@@ -45,6 +45,15 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+
+<!-- jQuery (necessary for DataTables) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
     <input type="hidden" value="{{url('/')}}" id="url" name="url">
 </head>
 
@@ -77,6 +86,7 @@
 <script src="{{URL::to('/')}}/assets/js/js/customer.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/color.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/product.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/order.js"></script>
   @stack('rtl')
   @stack('dashboard')
   <script>

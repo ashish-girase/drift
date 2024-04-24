@@ -187,31 +187,66 @@ class CustomerController extends Controller
             }
         }
 
-        public function update_company(Request $request)
+        public function update_customer(Request $request)
         {
-        //dd($request);
+        // dd($request);
             $id=(int)$request->_id;
             $companyID=1;
 
-            $data=Company::raw()->updateOne(['companyID' => $companyID,'company._id' => $id],
+            $data=Customer::raw()->updateOne(['companyID' => $companyID,'customer._id' => $id],
 
             ['$set' => [
 
-            'company.$.companyName' => $request->company_name,
-            'company.$.insertedTime' => time(),
-            'company.$.delete_status' => "NO",
-            'company.$.deleteCompany' => "",
-            'company.$.deleteTime' => "",]]
+            'customer.$.custName' => $request->custName,
+            'customer.$.companyName' => $request->company_name,
+            'customer.$.factoryCode' => $request->factoryCode,
+            'customer.$.GstDetails' => $request->GstDetails,
+            'customer.$.custEmail' => $request->custEmail,
+            'customer.$.custAddress' => $request->custAddress,
+            'customer.$.cust_Billing_address' => $request->cust_Billing_address,
+            'customer.$.cust_Delivery_address' => $request->cust_Delivery_address,
+            'customer.$.custCity' => $request->custCity,
+            'customer.$.custState' => $request->custState,
+            'customer.$.custCountry' => $request->custCountry,
+            'customer.$.custZip' => $request->custZip,
+            'customer.$.custTelephone' => $request->custTelephone,
+            'customer.$.briefInformation' => $request->briefInformation,
+            'customer.$.insertedTime' => time(),
+            'customer.$.delete_status' => "NO",
+            'customer.$.deletecustomer' => "",
+            'customer.$.deleteTime' => "",]]
+            
             );
 
             if ($data==true) {
             //dd($data);
-            return response()->json(['status' => true,'message' => 'Company updated successfully'], 200);
+            return response()->json(['status' => true,'message' => 'Record updated successfully'], 200);
             } else {
             return response()->json(['status' => false,'message' => 'Failed to update Company'], 200);
             }
 
         }
+        public function delete_customer(Request $request)
+        {
+            $id = intval($request->id);
+            $companyID=1;
+            $mainId=(int)$request->master_id;
+            // dd($request);
+            $prodData=Customer::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'customer._id' => (int)$id],
+            ['$set' => [
+                'customer.$.insertedTime' => time(),
+                'customer.$.delete_status' => "YES",
+                'customer.$.deletecustomer' => intval($id),
+                'customer.$.deleteTime0' => time(),
+            ]]);
+            if($prodData==true)
+            {
+                $arr = array('status' => 'success', 'message' => 'Record Deleted successfully.','statusCode' => 200);
+                return json_encode($arr);
+            }
+
+        }
+
         public function get_companylist(Request $request)
         {
             $val = $request->value;
