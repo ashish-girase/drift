@@ -15,35 +15,46 @@
 -->
 <!DOCTYPE html>
 
-@if (\Request::is('rtl'))
-  <html dir="rtl" lang="ar">
-@else
-  <html lang="en" >
-@endif
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  @if (env('IS_DEMO'))
-      <x-demo-metas></x-demo-metas>
-  @endif
+  <!-- @if (env('IS_DEMO'))
 
-  <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-  <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+  @endif -->
+
+  <link rel="apple-touch-icon" sizes="76x76" href="{{URL::to('/')}}/img/apple-icon.png">
+  <link rel="icon" type="image/png" href="{{URL::to('/')}}/img/favicon.png">
   <title>
-    Soft UI Dashboard by Creative Tim
+    Drift
   </title>
   <!--     Fonts and icons     -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
-  <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="{{URL::to('/')}}/assets/css/nucleo-icons.css" rel="stylesheet" />
+  <link href="{{URL::to('/')}}/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+  <link href="{{URL::to('/')}}/assets/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
-  <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+  <link id="pagestyle" href="{{URL::to('/')}}/assets/css/soft-ui-dashboard.css?v=1.0.3" rel="stylesheet" />
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+
+<!-- jQuery (necessary for DataTables) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+    <input type="hidden" value="{{url('/')}}" id="url" name="url">
 </head>
 
 <body class="g-sidenav-show  bg-gray-100 {{ (\Request::is('rtl') ? 'rtl' : (Request::is('virtual-reality') ? 'virtual-reality' : '')) }} ">
@@ -63,12 +74,19 @@
     </div>
   @endif
     <!--   Core JS Files   -->
-  <script src="../assets/js/core/popper.min.js"></script>
-  <script src="../assets/js/core/bootstrap.min.js"></script>
-  <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-  <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-  <script src="../assets/js/plugins/fullcalendar.min.js"></script>
-  <script src="../assets/js/plugins/chartjs.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/core/popper.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/core/bootstrap.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/plugins/perfect-scrollbar.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/plugins/smooth-scrollbar.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/plugins/fullcalendar.min.js"></script>
+  <script src="{{URL::to('/')}}/assets/js/plugins/chartjs.min.js"></script>
+  <!-- <script src="{{URL::to('/')}}/assets/js/js/user.js"></script> -->
+<script src="{{URL::to('/')}}/assets/js/js/user.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/company.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/customer.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/color.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/product.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/order.js"></script>
   @stack('rtl')
   @stack('dashboard')
   <script>
@@ -84,7 +102,7 @@
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
+  <script src="{{URL::to('/')}}/assets/js/soft-ui-dashboard.min.js?v=1.0.3"></script>
 </body>
 
 </html>
