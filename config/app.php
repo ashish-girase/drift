@@ -2,10 +2,6 @@
 
 return [
 
-    'scheduled' => env('SCHEDULED_TIME', 15),
-    'hour' => env('SCHEDULED_HOUR', ''),
-    'min' => env('SCHEDULED_MIN', ''),
-
     /*
     |--------------------------------------------------------------------------
     | Application Name
