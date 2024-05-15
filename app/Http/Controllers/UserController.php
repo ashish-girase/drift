@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Helpers\AppHelper;
 use MongoDB\BSON\Regex;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -61,8 +62,8 @@ class UserController extends Controller
             'deleteTime' => "",
             ];
             // dd($data);
-            $result = User::insertOne($data);
-           // $result = DB::collection('your_collection')->insertOne($data);
+           // $result = User::insertOne($data);
+            $result = DB::collection('your_collection')->insertOne($data);
 
             if ($result) {
             return response()->json([ 'status' => true,'message' => 'User added successfully'], 200);
