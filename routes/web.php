@@ -36,7 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 	})->name('dashboard');
 
     //user Module
-    Route::POST('/admin/add_user', [UserController::class, 'add_user'])->name('u');
+    Route::POST('/admin/add_user', [UserController::class, 'add_user']);
     Route::POST('/admin/edit_user', [UserController::class, 'edit_user']);
     Route::POST('/admin/update_user', [UserController::class, 'update_user']);
     Route::get('/user', [UserController::class, 'view_user']);

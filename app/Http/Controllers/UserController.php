@@ -29,7 +29,7 @@ class UserController extends Controller
 
             // Create data array
             $data = [
-            '_id' => $new_id,
+            
             'userEmail' => $request->input('user_email'),
             // 'userName' => $request->input('userName'),
             'userPass' => $password,
