@@ -28,9 +28,8 @@ class UserController extends Controller
             $password = hash('sha1',$request->user_password);
 
             // Create data array
-           
             $data = [
-            
+            '_id' => $new_id,
             'userEmail' => $request->input('user_email'),
             // 'userName' => $request->input('userName'),
             'userPass' => $password,
