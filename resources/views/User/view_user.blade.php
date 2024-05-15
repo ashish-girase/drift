@@ -104,7 +104,7 @@
                                 <div class="modal-body">
                                         <form method="post">
                                               
-                                                <input type="hidden" name="_token" id="_tokenuser" value="{{Session::token()}}">
+                                                <input type="hidden" name="_token" id="_tokenuser" value="{{route('userenter')}}">
                                                 @csrf
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
