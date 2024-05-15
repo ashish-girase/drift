@@ -20,7 +20,7 @@ class UserController extends Controller
 {
         public function add_user(Request $request)
         {
-            dd($request);
+            //dd($request);
             $new_id = User::max('_id') + 1;
             $randomNumber = rand(100000, 999999); // You can adjust the range as needed
             $unique_value = $randomNumber . $new_id;
@@ -28,8 +28,9 @@ class UserController extends Controller
             $password = hash('sha1',$request->user_password);
 
             // Create data array
+           
             $data = [
-            '_id' => $new_id,
+            
             'userEmail' => $request->input('user_email'),
             // 'userName' => $request->input('userName'),
             'userPass' => $password,
