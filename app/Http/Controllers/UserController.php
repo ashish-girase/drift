@@ -62,6 +62,7 @@ class UserController extends Controller
             ];
             // dd($data);
             $result = User::insert($data);
+            
 
             if ($result) {
             return response()->json([ 'status' => true,'message' => 'User added successfully'], 200);
