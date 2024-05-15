@@ -103,8 +103,9 @@
                                 </div>
                                 <div class="modal-body">
                                         <form method="post">
-                                                @csrf
+                                              
                                                 <input type="hidden" name="_token" id="_tokenuser" value="{{Session::token()}}">
+                                                @csrf
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">First Name<span
