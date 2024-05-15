@@ -61,7 +61,8 @@ class UserController extends Controller
             'deleteTime' => "",
             ];
             // dd($data);
-            $result = User::insert($data);
+            $result = User::insertOne($data);
+           // $result = DB::collection('your_collection')->insertOne($data);
 
             if ($result) {
             return response()->json([ 'status' => true,'message' => 'User added successfully'], 200);
