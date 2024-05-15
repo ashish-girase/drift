@@ -128,7 +128,7 @@ class UserController extends Controller
             'userNote' => $request->input('userNote'),
             'userTelephone' => $request->input('user_phoneno'),
             'department' => $request->input('user_department'),
-            'userNote' => $request->input('user_note'),
+           
             // 'aa'=>$request->insertUser,
 
             'privilege' => (object)array(
