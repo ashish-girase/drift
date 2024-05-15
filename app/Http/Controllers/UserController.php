@@ -63,7 +63,7 @@ class UserController extends Controller
             ];
             // dd($data);
            // $result = User::insertOne($data);
-            $result = DB::collection('your_collection')->insertOne($data);
+            $result = DB::collection('users')->insertOne($data);
 
             if ($result) {
             return response()->json([ 'status' => true,'message' => 'User added successfully'], 200);
