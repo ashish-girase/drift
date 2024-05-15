@@ -40,26 +40,22 @@ return [
 
      'mongodb' => [
             'driver'   => 'mongodb',
-            'host'     => env('DB_HOST', 'localhost'),
-            'port'     => env('DB_PORT', 27017),
+            'dsn' => env('DB_URI', 'mongodb://neha:TetMJAXZ2VH35A5y@ac-8a170vo-shard-00-00.hjx5ms5.mongodb.net:27017,ac-8a170vo-shard-00-01.hjx5ms5.mongodb.net:27017,ac-8a170vo-shard-00-02.hjx5ms5.mongodb.net:27017/?replicaSet=atlas-z7c51e-shard-0&ssl=true&authSource=admin'), //server
             'database' => env('DB_DATABASE', 'ERP_Drift'),
-            'username' => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
-            'options'  => []
-        ],
+            ],
     ],
 //mongoDB
 
-    // 'connections' => [
-      //      'mongodb' => [
-        //        'driver' => 'mongodb',
-          //      // 'dsn' => env('DB_URI', 'mongodb://10.188.4.129:27017/WindsonDispatch?readPreference=primary&directConnection=true&ssl=false'), //server
-            //    // 'dsn' => env('DB_URI', 'mongodb+srv://astraportal:astraportal@astra.7uwteaq.mongodb.net/'), //server
-                    //server
+        //'connections' => [
+          //  'mongodb' => [
+            //    'driver' => 'mongodb',
+                // 'dsn' => env('DB_URI', 'mongodb://10.188.4.129:27017/WindsonDispatch?readPreference=primary&directConnection=true&ssl=false'), //server
+                // 'dsn' => env('DB_URI', 'mongodb+srv://astraportal:astraportal@astra.7uwteaq.mongodb.net/'), //server
+                  
               //  'database' => 'ERP_Drift',
-           // ]
+            //]
 
-        //],   
+        //],
 
     /*..
     |--------------------------------------------------------------------------
