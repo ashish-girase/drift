@@ -170,15 +170,21 @@ class UserController extends Controller
         {
             $id = intval($request->id);
             // dd($id);
-            $userData = User::raw()->updateOne(
+            $userData = User::raw()->deleteOne(
             ['_id' => $id],
             ['$set' => ['delete_status' => 'YES', 'deleteUser' => intval($id), 'deleteTime' => time()]]
             );
-            if ($userData == true) {
+           // if ($userData == true) {
             // dd($userData);
-            $arr = array('status' => 'success', 'message' => 'User deleted successfully.', 'statusCode' => 200);
-            return json_encode($arr);
-        }
+           // $arr = array('status' => 'success', 'message' => 'User deleted successfully.', 'statusCode' => 200);
+           // return json_encode($arr);
+           
+        //}
+        if ($userData) {
+            return response()->json([ 'status' => 'YES','message' => 'User deleted successfully'], 200);
+            } else {
+            return response()->json(['status' => 'NO','message' => 'Failed to delt User'], 200); // 500 for internal server error
+            }
         }
 
 }

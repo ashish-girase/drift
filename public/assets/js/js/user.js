@@ -86,7 +86,7 @@ $(".createUserModalStore").click(function(){
         });
     });
 
-    //delete user
+   ////DELETE USER/////////
     $('.delete-user').click(function(e) {
         e.preventDefault();
         var userId = $(this).data('user-id');
@@ -96,12 +96,13 @@ $(".createUserModalStore").click(function(){
         // url: "{{ route('delete_user') }}",
         url: base_path+"/delete_user",
         type: "POST",
-        dataType: "json",
+        dataType: "JSON",
         data: {
             id: userId,
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
+            Swal.fire('USER DELETED SUCCESSFULLY')
             window.location.href = base_path+"/user";
         },
         error: function(xhr, status, error) {
@@ -113,6 +114,7 @@ $(".createUserModalStore").click(function(){
 
 });
 
+//////////////SAVE USER///////////////
 $("#saveuser").click(function(){
 
 var user_firstname=$('#user_firstname').val();
@@ -208,7 +210,7 @@ success: function(Result){
 
 
 
-$("#saveuser").click(function(){
+/*$("#saveuser").click(function(){
 
     var user_firstname=$('#user_firstname').val();
     if(user_firstname=='')
@@ -286,3 +288,4 @@ $("#saveuser").click(function(){
     });
     // loadfunct.remove();
     });
+*/
