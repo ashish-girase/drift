@@ -28,7 +28,7 @@
                                         <tr>
                                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                              Copmpany Name
+                                              Company Name
                                             </th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                                 Action

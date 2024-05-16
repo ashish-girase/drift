@@ -2,7 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-    $('#companyTable').DataTable();
+    // $('#companyTable').DataTable();
 $(".createCompanyModalStore").click(function(){
         $('#addCompanyModal').modal("show");
     });
@@ -83,6 +83,7 @@ $(".createCompanyModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
+            Swal.fire('COMPANY DELETED SUCCESSFULLY')
             window.location.href = base_path+"/company";
         },
         error: function(xhr, status, error) {
