@@ -30,6 +30,36 @@
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                                               Company Name
                                             </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Company Code
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Company Address
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              City
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Zip Code
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              State
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Country
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Tax No./Gst No.
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Phone No.
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Email
+                                            </th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                                              Website
+                                            </th>
                                             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                                 Action
                                             </th>
@@ -44,7 +74,37 @@
                                                 <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->companyName }}</p>
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->companyName }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->ccode }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->caddress }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->city }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->zipcode }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->state }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->country }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->taxgstno }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->phoneno }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->email }}--></p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->website }}--></p>
                                             </td>
 
                                             <td class="text-center">
@@ -98,8 +158,69 @@
                                                         <label for="user_firstname">Company Name<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="company_name"
-                                                            id="company_name" placeholder="Company Name">
+                                                            id="company_name" placeholder="Enter Company Name">
                                                     </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Company Code<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="ccode"
+                                                            id="company_name" placeholder="Enter Company code">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Company Address<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="caddress"
+                                                            id="company_name" placeholder="Enter Company address">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">City<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="city"
+                                                            id="company_name" placeholder="Enter City">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Zip Code<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="zipcode"
+                                                            id="company_name" placeholder="Enter Zip Code">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">State<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="state"
+                                                            id="company_name" placeholder="State">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Country<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="country"
+                                                            id="company_name" placeholder="country">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Tax/Gst Number<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="taxgstno"
+                                                            id="company_name" placeholder="Tax no./Gst no.">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Phone number<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="phoneno"
+                                                            id="company_name" placeholder="phone no.">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Email<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="email"
+                                                            id="company_name" placeholder="Enter Email">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="user_firstname">Website<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="website"
+                                                            id="company_name" placeholder="website">
+                                                    </div>
+                                                    
                                                 </div>
                                                 </form>
                                     </div>

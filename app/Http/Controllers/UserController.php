@@ -170,7 +170,7 @@ class UserController extends Controller
         {
             $id = intval($request->id);
             // dd($id);
-            $userData = User::raw()->deleteOne(
+            $userData = User::raw()->updateOne(
             ['_id' => $id],
             ['$set' => ['delete_status' => 'YES', 'deleteUser' => intval($id), 'deleteTime' => time()]]
             );

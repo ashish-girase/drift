@@ -154,7 +154,7 @@
 
                                                     </div>
                                                     <div class="form-group col-md-12">
-                                                        <label for="inputLocation">User Code</label>
+                                                        <label for="inputLocation">Zip Code</label>
                                                         <input type="text" class="form-control" name="user_code" id="user_code" placeholder="Enter User Code">
                                                     </div>
                                                     <div class="form-group col-md-12">

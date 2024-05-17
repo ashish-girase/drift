@@ -3,18 +3,18 @@
 @section('content')
 
 
-  <main class="main-content  mt-0">
+  <main class="main-content  mt-0"   style="background-image: url('{{ asset('assets/img/curved-images/white-curved.jpeg') }}');">
     <section>
       <div class="page-header min-vh-75">
         <div class="container">
-          <div class="row">
-            <div class="col-xl-4 col-lg-5 col-md-12 d-flex flex-column mx-auto">
+          <div class="row" >
+            <div class="col-xl-4 col-lg-5 col-md-12 d-flex flex-column mx-auto" style="">
               <div class="card card-plain mt-8">
                 <div class="card-header pb-0 text-left bg-transparent">
                      <!-- <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('..public/assets/img/curved-images/curved6.jpg')"></div> -->
-                    <img src="../public/assets/img/driftsurfacestudio.png" height="50%"  width="50%"/>
+                    <img src="{{ asset('assets/img/driftsurfacestudio.png') }}" height="100px" width="310px"alt="image"/>
                   <h3 class="font-weight-bolder text-info text-gradient">Welcome back</h3>
-                  <!-- <p class="mb-0">Create a new acount<br></p>
+                  <!-- <p class="mb-0">Create a new acount<br></p>driftsurefacestudio.png
                   <p class="mb-0">OR Sign in with these credentials:</p>
                   <p class="mb-0">Email <b>admin@softui.com</b></p>
                   <p class="mb-0">Password <b>secret</b></p> -->

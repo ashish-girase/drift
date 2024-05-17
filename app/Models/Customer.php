@@ -26,7 +26,17 @@ class Customer extends Model
         protected $fillable = [
 
         'custName',
-        'companyName',
+        'companylistcust',
+        'email',
+        'phoneno',
+        'address',
+        'city',
+        'zipcode',
+        'state',
+        'country',
+        'custref'
+
+       /*'companyName',
         'factoryCode',
         'GstDetails',
         'custAddress',
@@ -38,7 +48,7 @@ class Customer extends Model
         'custTelephone',
         'cust_Billing_address',
         'cust_Delivery_address',
-        'briefInformation',
+        'briefInformation',*/
         //'SalesRep',
 
 
