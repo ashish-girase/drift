@@ -66,59 +66,82 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if($companyData)
-
-                                        @foreach($companyData as $key => $comData_val)
+                                    @if($companyData)
+                                    @foreach($companyData as $key => $comData_val)
                                         <tr>
-                                            <td class="ps-4">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->companyName }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->ccode }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->caddress }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->city }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->zipcode }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->state }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->country }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->taxgstno }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->phoneno }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->email }}--></p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"><!--{{ $comData_val->company->website }}--></p>
-                                            </td>
-
-                                            <td class="text-center">
-                                                <a href="#" class="mx-3 edit-company"  data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
-                                                    <i class="fas fa-user-edit text-secondary"></i>
-                                                </a>
-                                                <a href="#" class="mx-3 delete-company" data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
-                                                <!-- <a href="#" class="mx-3 delete-company" data-user-id="{{ $comData_val->company->_id }}" data-bs-toggle="tooltip"> -->
-                                                    <span>
-                                                        <i class="cursor-pointer fas fa-trash text-secondary"></i>
-                                                    </span>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                                <td class="ps-4">
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
+                                                </td>
+                                                <td class="text-center">
+                                                    @if(!empty($comData_val->company->company_name))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->company_name}}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                     @if(!empty($comData_val->company->ccode))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->ccode }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->caddress))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->caddress }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->city))
+                                                    <p class="text-xs font-weight-bold mb-0">{{$comData_val->company->city }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->zipcode))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->zipcode }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->state))
+                                                    <p class="text-xs font-weight-bold mb-0">{{$comData_val->company->state }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->country))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->country }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->taxgstno))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->taxgstno }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->phoneno))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->phoneno }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->email))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->email}}</p>
+                                                @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->website))
+                                                    <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->website }}</p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
+                                                @if(!empty($comData_val->company->_id))
+                                                    <a href="#" class="mx-3 edit-company"  data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                        <i class="fas fa-user-edit text-secondary"></i>
+                                                        @endif
+                                                    </a>
+                                                    @if(!empty($comData_val->company->_id))
+                                                    <a href="#" class="mx-3 delete-company" data-user-ids="{{ $comData_val->company->_id}}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                        <span>
+                                                            <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                                                        </span>
+                                                        @endif
+                                                    </a>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                         @else
                                         <tr>
@@ -164,61 +187,61 @@
                                                         <label for="user_firstname">Company Code<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="ccode"
-                                                            id="company_name" placeholder="Enter Company code">
+                                                            id="ccode" placeholder="Enter Company code">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Company Address<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="caddress"
-                                                            id="company_name" placeholder="Enter Company address">
+                                                            id="caddress" placeholder="Enter Company address">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">City<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="city"
-                                                            id="company_name" placeholder="Enter City">
+                                                            id="city" placeholder="Enter City">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Zip Code<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="zipcode"
-                                                            id="company_name" placeholder="Enter Zip Code">
+                                                            id="zipcode" placeholder="Enter Zip Code">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">State<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="state"
-                                                            id="company_name" placeholder="State">
+                                                            id="state" placeholder="State">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Country<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="country"
-                                                            id="company_name" placeholder="country">
+                                                            id="country" placeholder="country">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Tax/Gst Number<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="taxgstno"
-                                                            id="company_name" placeholder="Tax no./Gst no.">
+                                                            id="taxgstno" placeholder="Tax no./Gst no.">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Phone number<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="phoneno"
-                                                            id="company_name" placeholder="phone no.">
+                                                            id="phoneno" placeholder="phone no.">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Email<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="email"
-                                                            id="company_name" placeholder="Enter Email">
+                                                            id="email" placeholder="Enter Email">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Website<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="website"
-                                                            id="company_name" placeholder="website">
+                                                            id="website" placeholder="website">
                                                     </div>
                                                     
                                                 </div>

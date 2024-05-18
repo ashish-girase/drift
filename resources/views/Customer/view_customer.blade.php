@@ -53,45 +53,24 @@
                                             <td class="ps-4">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
                                             </td>
-                                            <td class="text-center">
-                                           
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->custName }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                @if(empty($cusData_val->customer->companyName))
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->companyName }}</p>
-                                                @endif
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0"></p>
-                                            </td>
-                                         <!--   <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->custEmail }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->cust_Billing_address }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->cust_Delivery_address }}</p>
-                                            </td>
-                                        -->
+                                       
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->custName }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->companylistcust }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->companylistcust}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->email }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->phoneno }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->phoneno}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->address }}</p>
                                             </td>
                                             <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->city }}</p>
+                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->city}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->customer->zipcode }}</p>
@@ -107,7 +86,7 @@
                                             </td>
                                            
                                             <td class="text-center">
-                                                <a href="#" class="mx-3 edit-customer"  data-user-ids="{{ $cusData_val->customer->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                <a href="#" class="mx-3 edit-customer"  data-user-ids="{{ $cusData_val->customer->_id}}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
                                                 <a href="#" class="mx-3 delete-customer" data-user-ids="{{ $cusData_val->customer->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
@@ -161,14 +140,23 @@
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Company Name<span
+                                                        <label for="user_firstname">Company list<span
                                                                 class="required"></span></label>
+                                                        <input type="text" class="form-control" name="companylistcust"
+                                                            id="companylistcust" placeholder="Company Name">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-12">
+                                                       <!-- <label for="user_firstname">Company Name<span
+                                                                class="required"></span></label>-->
                                                         <!-- <input type="text" class="form-control" name="company_name"
                                                             id="company_name" placeholder="Company Name"> -->
-                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="driver_sett"
+                                                        <!--
+                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="companylistcust"
                                                         name="companylistcust" onkeyup="doSearch_customer(this.value,'companylistcust')"  autocomplete="off">
-                                                        <datalist id="companylistcust1">
-                                                        </datalist>
+                                                        <datalist id="companylistcust">
+                                                        </datalist>-->
                                                        <!-- <input type="dropdown" class="form-control" name="email"
                                                             id="factoryCode" placeholder="">
                                                                 <select>
@@ -184,56 +172,56 @@
                                                             <label for="user_firstname">Customer Email<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="email"
-                                                            id="factoryCode" placeholder="Enter Email">
+                                                            id="email" placeholder="Enter Email">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">Customer Phone Number<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="phoneno"
-                                                            id="factoryCode" placeholder="phone No">
+                                                            id="phoneno" placeholder="phone No">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">Customer Address<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="address"
-                                                            id="factoryCode" placeholder="Enter Address">
+                                                            id="address" placeholder="Enter Address">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">City<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="city"
-                                                            id="factoryCode" placeholder="City">
+                                                            id="city" placeholder="City">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">Zip Code<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="zipcode"
-                                                            id="factoryCode" placeholder="Enter ZipCode">
+                                                            id="zipcode" placeholder="Enter ZipCode">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">State<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="state"
-                                                            id="factoryCode" placeholder="State">
+                                                            id="state" placeholder="State">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">Country<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="country"
-                                                            id="factoryCode" placeholder="country">
+                                                            id="country" placeholder="country">
                                                     </div>
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
                                                             <label for="user_firstname">Customer Reference<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="custref"
-                                                            id="factoryCode" placeholder="Add Reference">
+                                                            id="custref" placeholder="Add Reference">
                                                     </div>
                                                    
                                                <!-- <div class="form-row">
@@ -372,72 +360,72 @@
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Company Name<span
                                                                 class="required"></span></label>
-                                                        <input type="text" class="form-control" name="company_name"
-                                                            id="edit_company_name" placeholder="Company Name">
+                                                        <input type="text" class="form-control" name="edit_companylistcust"
+                                                            id="edit_companylistcust" placeholder="Company Name">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Customer Email<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="email"
-                                                            id="factoryCode" placeholder="Enter Email">
+                                                            <input type="text" class="form-control" name="edit_email"
+                                                            id="edit_email" placeholder="Enter Email">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Customer Phone Number<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="phoneno"
-                                                            id="factoryCode" placeholder="phone No">
+                                                            <input type="text" class="form-control" name="edit_phoneno"
+                                                            id="edit_phoneno" placeholder="phone No">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Customer Address<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="address"
-                                                            id="factoryCode" placeholder="Enter Address">
+                                                            <input type="text" class="form-control" name="edit_address"
+                                                            id="edit_address" placeholder="Enter Address">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                         < <label for="user_firstname">City<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="city"
-                                                            id="factoryCode" placeholder="City">
+                                                            <input type="text" class="form-control" name="edit_city"
+                                                            id="edit_city" placeholder="City">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Zip Code<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="zipcode"
-                                                            id="factoryCode" placeholder="Enter ZipCode">
+                                                            <input type="text" class="form-control" name="edit_zipcode"
+                                                            id="edit_zipcode" placeholder="Enter ZipCode">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">State<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="state"
-                                                            id="factoryCode" placeholder="State">
+                                                            <input type="text" class="form-control" name="edit_state"
+                                                            id="edit_state" placeholder="State">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Country<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="country"
-                                                            id="factoryCode" placeholder="country">
+                                                            <input type="text" class="form-control" name="edit_country"
+                                                            id="edit_country" placeholder="country">
                                                     </div>
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
                                                     <label for="user_firstname">Customer Reference<span
                                                                 class="required"></span></label>
-                                                            <input type="text" class="form-control" name="custref"
-                                                            id="factoryCode" placeholder="Add Reference">
+                                                            <input type="text" class="form-control" name="edit_custref"
+                                                            id="edit_custref" placeholder="Add Reference">
                                                     </div>
                                                 </div>
                                                <!-- <div class="form-row">

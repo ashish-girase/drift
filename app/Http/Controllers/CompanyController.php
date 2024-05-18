@@ -29,7 +29,17 @@ class CompanyController extends Controller
         $cons = [
         '_id' => $new_id,
         'counter' => 1,
-        'companyName' => $request->input('company_name'),
+        'company_name' => $request->input('company_name'),
+         'ccode' => $request->input('ccode'),
+            'caddress' => $request->input('caddress'),
+            'city' => $request->input('city'),
+            'zipcode' => $request->input('zipcode'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
+            'taxgstno' => $request->input('taxgstno'),
+            'phoneno' => $request->input('phoneno'),
+            'email' => $request->input('email'),
+            'website' => $request->input('website'),
         'insertedTime' => time(),
         'delete_status' => "NO",
         'deleteCompany' => "",
@@ -52,10 +62,11 @@ class CompanyController extends Controller
             'caddress' => $request->input('caddress'),
             'city' => $request->input('city'),
             'zipcode' => $request->input('zipcode'),
-            'state' => $request->input('country'),
+            'state' => $request->input('state'),
             'country' => $request->input('country'),
             'taxgstno' => $request->input('taxgstno'),
-            'phoneno' => $request->input('email'),
+            'phoneno' => $request->input('phoneno'),
+            'email' => $request->input('email'),
             'website' => $request->input('website'),
             'insertedTime' => time(),
             'delete_status' => "NO",
@@ -105,20 +116,40 @@ class CompanyController extends Controller
 
 
     }
-        public function view_company(Request $request)
+        public function view_company()
         {
             $companyID=1;
-            $collection=\App\Models\Company::raw();
+            $collection=Company::raw();
             $companyCurr= $collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$company'],
-            ['$match' => ['company.delete_status' =>"NO"]]
+            ['$match' => ['company.delete_status' =>"NO"]],
+            ['$project' => [
+                'company._id' => 1,
+                'company.company_name' => 1,
+                'company.ccode' => 1,
+                'company.city' => 1,
+                'company.zipcode' => 1,
+                'company.state' => 1,
+                'company.country' => 1,
+                'company.taxgstno' => 1,
+                'company.phoneno' => 1,
+                'company.email' => 1,
+                'company.website' => 1,
+                //'customer.website' => 1,
+            ]],
             ]);
             // Check if company are found
 
-            $companyData = iterator_to_array($companyCurr);
-            // dd($companyData);
+          // $companyCurr = Company::all();
+             //dd($companyCurr);
+           // $companyData = iterator_to_array($companyCurr);
+          
+           $companyData= $companyCurr->toArray();
+            //dd($companyData);
+           
             return view('Company.view_company',compact('companyData'));
+            
         }
 
         // public function edit_user(Request $request)
@@ -174,6 +205,7 @@ class CompanyController extends Controller
             'company.$.country' => $request->country,
             'company.$.taxgstno' => $request->taxgstno,
             'company.$.phoneno' => $request->phoneno,
+            'company.$.email' => $request->email,
             'company.$.website' => $request->website,
             'company.$.insertedTime' => time(),
             'company.$.delete_status' => "NO",

@@ -96,7 +96,7 @@ class ColorController extends Controller
 
 
     }
-        public function view_color(Request $request)
+        public function view_color()
         {
             $companyID=1;
             $collection=\App\Models\Color::raw();

@@ -2,7 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-    $('#customerTable').DataTable();
+   // $('#customerTable').DataTable();
 $(".createCustomerModalStore").click(function(){
         $('#addCustomerModal').modal("show");
     });
@@ -24,20 +24,20 @@ $(".createCustomerModalStore").click(function(){
                 // console.log("_id", response.success[0]); // Logging _id for debugging
                 $('#edit_customer_id').val(customerData._id); // Setting _id value
                 $('#edit_custName').val(customerData.custName);
-                $('#edit_companyName').val(customerData.companyName);
-                $('#edit_factoryCode').val(customerData.factoryCode);
-                $('#edit_GstDetails').val(customerData.GstDetails);
-                $('#edit_custName').val(customerData.custName);
-                $('#edit_custEmail').val(customerData.custEmail);
-                $('#edit_custAddress').val(customerData.custAddress);
-                $('#edit_cust_Billing_address').val(customerData.cust_Billing_address);
-                $('#edit_cust_Delivery_address').val(customerData.cust_Delivery_address);
-                $('#edit_custCity').val(customerData.custCity);
-                $('#edit_custState').val(customerData.custState);
+                $('#edit_companylistcust').val(customerData.companylistcust);
+                $('#edit_email').val(customerData.email);
+                $('#edit_phoneno').val(customerData.phoneno);
+                $('#edit_address').val(customerData.address);
+                $('#edit_city').val(customerData.city);
+                $('#edit_zipcode').val(customerData.zipcode);
+                $('#edit_state').val(customerData.state);
+                $('#edit_country').val(customerData.country);
+                $('#edit_custref').val(customerData.custref);
+              /*  $('#edit_custState').val(customerData.custState);
                 $('#edit_custCountry').val(customerData.custCountry);
                 $('#edit_custZip').val(customerData.custZip);
                 $('#edit_custTelephone').val(customerData.custTelephone);
-                $('#edit_briefInformation').val(customerData.briefInformation);
+                $('#edit_briefInformation').val(customerData.briefInformation);*/
             }
         });
         $('#edit_customerModel').modal("show");
@@ -48,38 +48,38 @@ $(".createCustomerModalStore").click(function(){
         console.log("Edit User")
         var c_id= $('#edit_customer_id').val();
         var edit_custName= $('#edit_custName').val();
-        var edit_company_name= $('#edit_company_name').val();
-        var edit_factoryCode= $('#edit_factoryCode').val();
-        var edit_GstDetails= $('#edit_GstDetails').val();
-        var edit_custEmail= $('#edit_custEmail').val();
-        var edit_custAddress= $('#edit_custAddress').val();
-        var edit_cust_Billing_address= $('#edit_cust_Billing_address').val();
-        var edit_cust_Delivery_address= $('#edit_cust_Delivery_address').val();
-        var edit_custCity= $('#edit_custCity').val();
-        var edit_custState= $('#edit_custState').val();
-        var edit_custCountry= $('#edit_custCountry').val();
+        var edit_companylistcust= $('#edit_companylistcust').val();
+        var edit_email= $('#edit_email').val();
+        var edit_phoneno= $('#edit_phoneno').val();
+        var edit_address= $('#edit_address').val();
+        var edit_city= $('#edit_city').val();
+        var edit_zipcode= $('#edit_zipcode').val();
+        var edit_state= $('#edit_state').val();
+        var edit_country= $('#edit_country').val();
+        var edit_custref= $('#edit_custref').val();
+       /* var edit_custCountry= $('#edit_custCountry').val();
         var edit_custZip= $('#edit_custZip').val();
         var edit_custTelephone= $('#edit_custTelephone').val();
-        var edit_briefInformation= $('#edit_briefInformation').val();
+        var edit_briefInformation= $('#edit_briefInformation').val();*/
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
         formData.append('_token', $("#_tokeupdatencustomer").val());
         formData.append('_id', c_id);
         formData.append('custName', edit_custName);
-        formData.append('company_name', edit_company_name);
-        formData.append('factoryCode', edit_factoryCode);
-        formData.append('GstDetails', edit_GstDetails);
-        formData.append('custEmail', edit_custEmail);
-        formData.append('custAddress', edit_custAddress);
-        formData.append('cust_Billing_address', edit_cust_Billing_address);
-        formData.append('cust_Delivery_address', edit_cust_Delivery_address);
-        formData.append('custCity', edit_custCity);
-        formData.append('custState', edit_custState);
-        formData.append('custCountry', edit_custCountry);
+        formData.append('companylistcust', edit_companylistcust);
+        formData.append('email', edit_email);
+        formData.append('phoneno', edit_phoneno);
+        formData.append('address', edit_address);
+        formData.append('city', edit_city);
+        formData.append('zipcode', edit_zipcode);
+        formData.append('state', edit_state);
+        formData.append('country', edit_country);
+        formData.append('custref', edit_custref);
+       /* formData.append('custCountry', edit_custCountry);
         formData.append('custZip', edit_custZip);
         formData.append('custTelephone', edit_custTelephone);
         formData.append('briefInformation', edit_briefInformation);
-        formData.append('deleteStatus', "NO");
+        formData.append('deleteStatus', "NO");*/
         $.ajax({
             url: base_path + "/admin/update_customer",
             type: 'post',
@@ -144,20 +144,20 @@ $("#savecustomer").click(function(){
     return false;
     }
     var custName=$('#custName').val();
-    var company_name=$('#company_name').val();
-    var factoryCode=$('#factoryCode').val();
-    var GstDetails=$('#GstDetails').val();
-    var custEmail=$('#custEmail').val();
-    var custAddress=$('#custAddress').val();
-    var cust_Billing_address=$('#cust_Billing_address').val();
-    var cust_Delivery_address=$('#cust_Delivery_address').val();
-    var custCity=$('#custCity').val();
-    var custState=$('#custState').val();
-    var custCountry=$('#custCountry').val();
+    var companylistcust=$('#companylistcust').val();
+    var email=$('#email').val();
+    var phoneno=$('#phoneno').val();
+    var address=$('#address').val();
+    var city=$('#city').val();
+    var zipcode=$('#zipcode').val();
+    var state=$('#state').val();
+    var country=$('#country').val();
+    var custref=$('#custref').val();
+    /*var custCountry=$('#custCountry').val();
     var custZip=$('#custZip').val();
     var custTelephone=$('#custTelephone').val();
     var briefInformation=$('#briefInformation').val();
-    var SalesRep=$('#SalesRep').val();
+    var SalesRep=$('#SalesRep').val();*/
     $.ajax({
         url: base_path+"/admin/add_customer",
         type: "POST",
@@ -165,20 +165,20 @@ $("#savecustomer").click(function(){
         data: {
             _token: $("#_tokencustomer").val(),
             custName: custName,
-            company_name: company_name,
-            factoryCode: factoryCode,
-            GstDetails: GstDetails,
-            custEmail: custEmail,
-            custAddress: custAddress,
-            cust_Billing_address: cust_Billing_address,
-            cust_Delivery_address: cust_Delivery_address,
-            custCity: custCity,
-            custState: custState,
-            custCountry: custCountry,
+            companylistcust: companylistcust,
+            email: email,
+            phoneno: phoneno,
+            address: address,
+            city: city,
+            zipcode: zipcode,
+            state: state,
+            country: country,
+            custref: custref,
+           /* custCountry: custCountry,
             custZip: custZip,
             custTelephone: custTelephone,
             briefInformation: briefInformation,
-            SalesRep: SalesRep,
+            SalesRep: SalesRep,*/
         },
         cache: false,
         success: function(Result){
@@ -207,7 +207,7 @@ function doSearch_customer(dom, funname, val) {
       }
       timeout = setTimeout(function () {
         if (func == 'companylistcust') {
-            companylistcust(dom, 'companylistcust1');
+            companylistcust(dom, 'companylistcust');
           }
         }, 600);
   }

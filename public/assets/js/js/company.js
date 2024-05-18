@@ -2,7 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-    // $('#companyTable').DataTable();
+     $('#companyTable').DataTable();
 $(".createCompanyModalStore").click(function(){
         $('#addCompanyModal').modal("show");
     });
@@ -23,6 +23,16 @@ $(".createCompanyModalStore").click(function(){
                 // console.log("_id", response.success[0]); // Logging _id for debugging
                 $('#company_editid').val(companyData._id); // Setting _id value
                 $('#company_editname').val(companyData.companyName);
+                $('#company_editccode').val(companyData.ccode); 
+                $('#company_editcaddress').val(companyData.caddress);
+                $('#company_editcity').val(companyData.city); 
+                $('#company_editzipcode').val(companyData.zipcode);
+                $('#company_editstate').val(companyData.state); 
+                $('#company_editcountry').val(companyData.country);
+                $('#company_edittaxgstno').val(companyData.taxgstno); 
+                $('#company_editphoneno').val(companyData.phoneno); 
+                $('#company_editemail').val(companyData.email); 
+                $('#company_editwebsite').val(companyData.website);
             }
         });
         $('#edit_companyModel').modal("show");
@@ -34,11 +44,32 @@ $(".createCompanyModalStore").click(function(){
         var c_id= $('#company_editid').val();
         // var companySubID= $('#up_comSubId').val();
         var company_editname= $('#company_editname').val();
+        var company_editccode= $('#company_editccode').val();
+        var company_editcaddress= $('#company_editcaddress').val();
+        var company_editcity= $('#company_editcity').val();
+        var company_editzipcode= $('#company_editzipcode').val();
+        var company_editstate= $('#company_editstate').val();
+        var company_editcountry= $('#company_editcountry').val();
+        var company_edittaxgstno= $('#company_edittaxgstno').val();
+        var company_editphoneno= $('#company_editphoneno').val();
+        var company_editemail= $('#company_editemail').val();
+        var company_editwebsite= $('#company_editwebsite').val();
+      
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
         formData.append('_token', $("#_tokeupdatencompany").val());
         formData.append('_id', c_id);
         formData.append('company_name', company_editname);
+        formData.append('ccode', company_editccode);
+        formData.append('caddress', company_editcaddress);
+        formData.append('city', company_editcity);
+        formData.append('zipcode', company_editzipcode);
+        formData.append('state', company_editstate);
+        formData.append('country', company_editcountry);
+        formData.append('taxgstno', company_edittaxgstno);
+        formData.append('phoneno', company_editphoneno);
+        formData.append('email', company_editemail);
+        formData.append('website', company_editwebsite);
         formData.append('deleteStatus', "NO");
         $.ajax({
             url: base_path + "/admin/update_company",
@@ -98,6 +129,16 @@ $(".createCompanyModalStore").click(function(){
 $("#savecompany").click(function(){
 
     var company_name=$('#company_name').val();
+    var ccode=$('#ccode').val();
+    var caddress=$('#caddress').val();
+    var city=$('#city').val();
+    var zipcode=$('#zipcode').val();
+    var state=$('#state').val();
+    var country=$('#country').val();
+    var taxgstno=$('#taxgstno').val();
+    var phoneno=$('#phoneno').val();
+    var email=$('#email').val();
+    var website=$('#website').val();
     if(company_name=='')
     {
     Swal.fire( "Enter Company Name");
@@ -112,6 +153,18 @@ $("#savecompany").click(function(){
         data: {
             _token: $("#_tokencompany").val(),
             company_name: company_name,
+            ccode:ccode,
+            caddress:caddress,
+            city:city,
+            zipcode:zipcode,
+            state:state,
+            country:country,
+            taxgstno:taxgstno,
+            phoneno:phoneno,
+            email:email,
+            website:website,
+           
+
         },
         cache: false,
         success: function(Result){

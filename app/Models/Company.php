@@ -25,6 +25,7 @@ class Company extends Model
     */
     protected $fillable = [
 
+        
     'company_name',
     'ccode',
     'caddress',
@@ -38,6 +39,7 @@ class Company extends Model
     'website'
 
     ];
+   
 
     /**
     * The attributes that should be hidden for serialization.

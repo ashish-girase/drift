@@ -70,7 +70,7 @@ class UserController extends Controller
             return response()->json(['status' => false,'message' => 'Failed to Add User'], 200); // 500 for internal server error
             }
         }
-        public function view_user(Request $request)
+        public function view_user()
         {
             // try {
             // Perform aggregation query

@@ -126,7 +126,7 @@ class ProductController extends Controller
             }
         }
 
-        public function view_product(Request $request)
+        public function view_product()
         {
             $companyID=1;
             $collection=\App\Models\Product::raw();

@@ -20,33 +20,30 @@ use Illuminate\Database\Eloquent\Collection;
 class CustomerController extends Controller
 {
     public function add_customer(Request $request)
-    {
+{
+    $maxLength = 2000;
+    $new_id = Customer::max('_id') + 1;
+    $randomNumber = rand(100000, 999999);
+    $unique_value = $randomNumber . $new_id;
+    $companyId = 1;
+    $docAvailable = AppHelper::instance()->checkDoc(Customer::raw(), $companyId, $maxLength);
+    $company_id = (int)$request->input('company_id');
 
-        //dd($request);
-        $maxLength = 2000;
-        $new_id = Customer::max('_id') + 1;
-        $randomNumber = rand(100000, 999999); // You can adjust the range as needed
-        $unique_value = $randomNumber . $new_id;
-        $companyId =1;
-        $docAvailable = AppHelper::instance()->checkDoc(Customer::raw(),$companyId,$maxLength);
-        // dd($docAvailable);
-        $company_id = (int)$request->input('company_id');
-
-        // Fetching company name based on company_id
-        $company = Company::raw()->aggregate([
+    // Fetching company name based on company_id
+    $company = Company::raw()->aggregate([
         ['$match' => ['companyID' => $companyId]],
         ['$unwind' => '$company'],
         ['$match' => ['company._id' => $company_id]],
         ['$limit' => 1]
-        ])->toArray();
+    ])->toArray();
 
-        $company_name = $company ? $company[0]['company']['companyName'] : '';
-        $cons = [
+    $companylistcust = !empty($company) ? $company[0]['company']['companyName'] : '';
+
+    $cons = [
         '_id' => $new_id,
         'counter' => 1,
         'custName' => $request->input('custName'),
-        'company_id'=>$company_id,
-        'companyName' => $company_name,
+        'companylistcust' => $companylistcust,  // Assuming 'companylistcust' is equivalent to 'companyName'
         'email' => $request->input('email'),
         'phoneno' => $request->input('phoneno'),
         'address' => $request->input('address'),
@@ -55,102 +52,88 @@ class CustomerController extends Controller
         'state' => $request->input('state'),
         'country' => $request->input('country'),
         'custref' => $request->input('custref'),
-        //'custCountry' => $request->input('custCountry'),
-        //'custZip' => $request->input('custZip'),
-        //'custTelephone' => $request->input('custTelephone'),
-        //'briefInformation' => $request->input('briefInformation'),
-        // 'SalesRep' => $request->input('SalesRep'),
         'insertedTime' => time(),
         'delete_status' => "NO",
         'deleteCustomer' => "",
         'deleteTime' => "",
-        ];
-        //dd($cons);
-        if ($docAvailable != "No")
-        {
-            $info = (explode("^",$docAvailable));
-            $docId = $info[1];
-            // dd($docId);
-            $counter = $info[0];
-            $customerid = AppHelper::instance()->getAdminDocumentSequence(1, Customer::raw(),'customer',(int)$docId);
-            // dd($customerid);
-            $cons_data = array(
+    ];
+
+    if ($docAvailable != "No") {
+        $info = explode("^", $docAvailable);
+        $docId = (int)$info[1];
+        $counter = (int)$info[0];
+
+        $customerid = AppHelper::instance()->getAdminDocumentSequence(1, Customer::raw(), 'customer', $docId);
+
+        $cons_data = array_merge($cons, [
             '_id' => $customerid,
             'counter' => 0,
-            'custName' => $request->input('custName'),
-            'company_id'=>$company_id,
-            'companyName' => $company_name,
-            'email' => $request->input('email'),
-            'phoneno' => $request->input('phoneno'),
-            'address' => $request->input('address'),
-            'city' => $request->input('city'),
-            'zipcode' => $request->input('zipcode'),
-            'state' => $request->input('state'),
-            'country' => $request->input('country'),
-            'custref' => $request->input('custref'),
-         //   'custCountry' => $request->input('custCountry'),
-           /// 'custZip' => $request->input('custZip'),
-            //'custTelephone' => $request->input('custTelephone'),
-            //'briefInformation' => $request->input('briefInformation'),
-            // 'SalesRep' => $request->input('SalesRep'),
-            'insertedTime' => time(),
-            'delete_status' => "NO",
-            'deleteCustomer' => "",
-            'deleteTime' => "",
-            );
-            // dd($cons_data);
-            Customer::raw()->updateOne(['companyID' => $companyId,'_id' => (int)$docId], ['$push' => ['customer' => $cons_data]]);
-            //dd($cons_data);
-            echo json_encode($cons_data);
-        }
-        else
-        {
+        ]);
 
-            $count_data=Customer::all();;
-            $count=count($count_data);
-            $ids=array();
-            if($count !=0)
-            {
-            foreach($count_data as $row)
-            {
-            $ids[]=$row->_id;
+        Customer::raw()->updateOne(
+            ['companyID' => $companyId, '_id' => $docId],
+            ['$push' => ['customer' => $cons_data]]
+        );
+
+        echo json_encode($cons_data);
+    } else {
+        $count_data = Customer::all();
+        $count = count($count_data);
+        $ids = [];
+
+        if ($count != 0) {
+            foreach ($count_data as $row) {
+                $ids[] = $row->_id;
             }
-            $id=max($ids);
-            }
-            else
-            {
-            $id=0;
-            }
-            $data=array(
-            '_id'=>$id+1,
-            'counter'=>0,
-            "companyID"=>$companyId,
-            'customer'=>array($cons),
-            );
-            Customer::raw()->insertOne($data);
+            $id = max($ids);
+        } else {
+            $id = 0;
         }
+
+        $data = [
+            '_id' => $id + 1,
+            'counter' => 0,
+            "companyID" => $companyId,
+            'customer' => [$cons],
+        ];
+
+        Customer::raw()->insertOne($data);
+
         echo json_encode($data);
-
-        // dd($data);
-        // if (!empty($data)) {
-        //      return response()->json([ 'status' => true,'message' => 'Company added successfully'], 200);
-        // } else {
-        //     return response()->json(['status' => false,'message' => 'Failed to Add Company'], 200);
-        // }
-
-
     }
-        public function view_customer(Request $request)
+}
+
+        public function view_customer()
         {
+           // dd($request);
             $companyID=1;
-            $collection=\App\Models\Customer::raw();
+            $collection=Customer::raw();
             $customerCurr= $collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$customer'],
-            ['$match' => ['customer.delete_status' =>"NO"]]
+            ['$match' => ['customer.delete_status' =>"NO"]],
+            ['$project' => [
+                'customer._id' => 1,
+                'customer.custName' => 1,
+                'customer.companylistcust' => 1,
+                'customer.email' => 1,
+                'customer.phoneno' => 1,
+                'customer.address' => 1,
+                'customer.city' => 1,
+                'customer.zipcode' => 1,
+                'customer.state' => 1,
+                'customer.country' => 1,
+                'customer.custref' => 1,
+                //'customer.website' => 1,
+            ]],
              ]);
+             
             $customer_data = $customerCurr->toArray();
-
+            //dd( $customer_data);
+        //  $customerCurr = Customer::all();
+        
+            //$customer_data = iterator_to_array($customerCurr);
+           
             return view('Customer.view_customer',compact('customer_data'));
         }
 
@@ -198,7 +181,7 @@ class CustomerController extends Controller
             ['$set' => [
 
             'customer.$.custName' => $request->custName,
-            'customer.$.companyName' => $request->company_name,
+            'customer.$.companylistcust' => $request->companylistcust,
             'customer.$.email' => $request->email,
             'customer.$.phoneno' => $request->phoneno,
             'customer.$.address' => $request->address,
