@@ -1,7 +1,7 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
+  
 <div>
 
 
@@ -140,7 +140,7 @@
                                                 </div>
                                                 <div class="form-row">
                                                     <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Company list<span
+                                                        <label for="user_firstname">Company Name<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="companylistcust"
                                                             id="companylistcust" placeholder="Company Name">
@@ -352,7 +352,7 @@
                                                     <div class="form-group col-md-12">
                                                         <label for="user_firstname">Customer Name<span
                                                                 class="required"></span></label>
-                                                        <input type="text" class="form-control" name="custName"
+                                                        <input type="text" class="form-control" name="edit_custName"
                                                             id="edit_custName" placeholder="Customer Name">
                                                     </div>
                                                 </div>

@@ -128,6 +128,7 @@ class CompanyController extends Controller
                 'company._id' => 1,
                 'company.company_name' => 1,
                 'company.ccode' => 1,
+                'company.caddress'=>1,
                 'company.city' => 1,
                 'company.zipcode' => 1,
                 'company.state' => 1,

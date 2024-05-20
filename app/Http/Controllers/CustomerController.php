@@ -37,13 +37,13 @@ class CustomerController extends Controller
         ['$limit' => 1]
     ])->toArray();
 
-    $companylistcust = !empty($company) ? $company[0]['company']['companyName'] : '';
+    //$companylistcust = !empty($company) ? $company[0]['company']['companylistcust'] : '';
 
     $cons = [
         '_id' => $new_id,
         'counter' => 1,
         'custName' => $request->input('custName'),
-        'companylistcust' => $companylistcust,  // Assuming 'companylistcust' is equivalent to 'companyName'
+        'companylistcust' => $request->input('companylistcust'),  // Assuming 'companylistcust' is equivalent to 'companyName'
         'email' => $request->input('email'),
         'phoneno' => $request->input('phoneno'),
         'address' => $request->input('address'),
@@ -230,7 +230,7 @@ class CustomerController extends Controller
 
         }
 
-        public function get_companylist(Request $request)
+       /* public function get_companylist(Request $request)
         {
             $val = $request->value;
             $para = '^' . $val;
@@ -259,6 +259,6 @@ class CustomerController extends Controller
             }
             // dd($companyList);
             echo json_encode($companyList);
-        }
+        }*/
 
 }

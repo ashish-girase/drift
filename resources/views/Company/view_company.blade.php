@@ -73,9 +73,9 @@
                                                     <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
                                                 </td>
                                                 <td class="text-center">
-                                                    @if(!empty($comData_val->company->company_name))
+                                                   
                                                     <p class="text-xs font-weight-bold mb-0">{{ $comData_val->company->company_name}}</p>
-                                                    @endif
+                                                   
                                                 </td>
                                                 <td class="text-center">
                                                      @if(!empty($comData_val->company->ccode))
@@ -128,17 +128,17 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                @if(!empty($comData_val->company->_id))
+                                               
                                                     <a href="#" class="mx-3 edit-company"  data-user-ids="{{ $comData_val->company->_id }}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
                                                         <i class="fas fa-user-edit text-secondary"></i>
-                                                        @endif
+                                                    
                                                     </a>
-                                                    @if(!empty($comData_val->company->_id))
+                                                 
                                                     <a href="#" class="mx-3 delete-company" data-user-ids="{{ $comData_val->company->_id}}" data-user-master_id="{{ $comData_val['_id'] }}" data-bs-toggle="tooltip">
                                                         <span>
                                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                                         </span>
-                                                        @endif
+                                                      
                                                     </a>
                                                 </td>
                                             </tr>
@@ -262,7 +262,7 @@
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit User</h5>
+                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit company</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
@@ -277,7 +277,67 @@
                                                         <label for="company_name">Company Name<span
                                                                 class="required"></span></label>
                                                         <input type="text" class="form-control" name="company_editname"
-                                                            id="company_editname" placeholder="Comapny Name">
+                                                            id="company_editname" placeholder="Company Name">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Company Code<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editccode"
+                                                            id="company_editccode" placeholder="Company Code">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Company Address<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editcaddress"
+                                                            id="company_editcaddress" placeholder="Company Address">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">City<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editcity"
+                                                            id="company_editcity" placeholder="City">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">ZipCode<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editzipcode"
+                                                            id="company_editzipcode" placeholder="Enter ZipCode">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">State<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editstate"
+                                                            id="company_editstate" placeholder="State">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Country<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editcountry"
+                                                            id="company_editcountry" placeholder="Country">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Tax/Gst No<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_edittaxgstno"
+                                                            id="company_edittaxgstno" placeholder=" Enter Tax/Gst No.">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Phone Number<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editphoneno"
+                                                            id="company_editphoneno" placeholder="Phone number">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Email<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editemail"
+                                                            id="company_editemail" placeholder="Company Email">
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label for="company_name">Website<span
+                                                                class="required"></span></label>
+                                                        <input type="text" class="form-control" name="company_editwebsite"
+                                                            id="company_editwebsite" placeholder="Company website">
                                                     </div>
 
                                                 </div>

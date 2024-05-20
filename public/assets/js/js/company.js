@@ -22,7 +22,7 @@ $(".createCompanyModalStore").click(function(){
                 var companyData = response.success[0].company[0];
                 // console.log("_id", response.success[0]); // Logging _id for debugging
                 $('#company_editid').val(companyData._id); // Setting _id value
-                $('#company_editname').val(companyData.companyName);
+                $('#company_editname').val(companyData.company_name);
                 $('#company_editccode').val(companyData.ccode); 
                 $('#company_editcaddress').val(companyData.caddress);
                 $('#company_editcity').val(companyData.city); 

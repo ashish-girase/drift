@@ -2,7 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-   // $('#customerTable').DataTable();
+    $('#customerTable').DataTable();
 $(".createCustomerModalStore").click(function(){
         $('#addCustomerModal').modal("show");
     });
@@ -18,9 +18,10 @@ $(".createCustomerModalStore").click(function(){
             },
             success:function(response){
                 // var res = JSON.parse(response);
+                console.log('_id',response);
                 var customerData = response.success[0].customer[0];
 
-                console.log("edit_id", customerData.factoryCode);
+                //console.log("customer_id", customerData.factoryCode);
                 // console.log("_id", response.success[0]); // Logging _id for debugging
                 $('#edit_customer_id').val(customerData._id); // Setting _id value
                 $('#edit_custName').val(customerData.custName);
