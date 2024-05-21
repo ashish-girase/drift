@@ -114,46 +114,54 @@ $(".createOrderModalStore").click(function(){
 
 });
 
-$("#saveproduct").click(function(){
-
-    var prodName=$('#prodName').val();
-    if(prodName=='')
-    {
-    Swal.fire( "Enter Product Name");
-    $('#prodName').focus();
-    return false;
+$("#saveOrder").click(function() {
+    var custName = $('#custName').val();
+    if (custName == '') {
+        Swal.fire("Enter Customer Name");
+        $('#custName').focus();
+        return false;
     }
-    var prodName=$('#prodName').val();
-    var product_type=$('#product_type').val();
-    var colour_id=$('#colour_id').val();
-    var product_type=$('#product_type').val();
-    var prod_code=$('#prod_code').val();
-    var prod_qty=$('#prod_qty').val();
-    var Thickness=$('#Thickness').val();
-    var Width=$('#Width').val();
-    var Roll_weight=$('#Roll_weight').val();
+
+    var orderData = {
+        _token: $("#_tokenOrder").val(),
+        custName: $('#custName').val(),
+        companylistcust: $('#companylistcust').val(),
+        email: $('#email').val(),
+        phoneno: $('#phoneno').val(),
+        address: $('#address').val(),
+        city: $('#city').val(),
+        zipcode: $('#zipcode').val(),
+        state: $('#state').val(),
+        country: $('#country').val(),
+        custref: $('#custref').val(),
+        prodName: $('#prodName').val(),
+        product_type: $('#product_type').val(),
+        prod_code: $('#prod_code').val(),
+        prod_qty: $('#prod_qty').val(),
+        Thickness: $('#Thickness').val(),
+        Width: $('#Width').val(),
+        ColourName: $('#ColourName').val(),
+        Roll_weight: $('#Roll_weight').val(),
+        Total_quantity: $('#Total_quantity').val(),
+        price: $('#price').val(),
+        Billing_address: $('#Billing_address').val(),
+        Delivery_address: $('#Delivery_address').val(),
+        status: $('#status').val(),
+        price_type: $('#price_type').val(),
+        notes: $('#notes').val()
+    };
+
     $.ajax({
-        url: base_path+"/admin/add_product",
+        url: base_path + "/admin/add_order",
         type: "POST",
-        datatype:"JSON",
-        data: {
-            _token: $("#_tokenproduct").val(),
-            prodName: prodName,
-            product_type: product_type,
-            colour_id: colour_id,
-            prod_code: prod_code,
-            prod_qty: prod_qty,
-            Thickness: Thickness,
-            Width: Width,
-            Roll_weight: Roll_weight
-        },
+        datatype: "JSON",
+        data: orderData,
         cache: false,
-        success: function(Result){
+        success: function(Result) {
             console.log(Result);
             $("#addOrderModal").modal("hide");
-            // Store the success message in session storage
-            sessionStorage.setItem('successMessage_ord', 'Product added successfully');
-            window.location.href = base_path + "/product";
+            sessionStorage.setItem('successMessage_ord', 'Order added successfully');
+            window.location.href = base_path + "/order";
         }
     });
 });
@@ -163,6 +171,7 @@ if (successMessage_ord) {
     Swal.fire(successMessage_ord);
     sessionStorage.removeItem('successMessage_ord');
 }
+
 
 function doSearch_cust(dom, funname, val) {
     var active_id = val;
@@ -242,15 +251,17 @@ function updatecustomerfield(value) {
                     console.log("Customer Data:", response.GstDetails);
                 
                 // Check if properties exist before accessing them
-                $('#cust_GstDetails').val(customerData.GstDetails || '');
-                $('#cust_custEmail').val(customerData.custEmail || ''); 
-                $('#cust_custAddress').val(customerData.custAddress || ''); 
-                $('#cust_cust_Billing_address').val(customerData.cust_Billing_address || ''); 
-                $('#cust_cust_Delivery_address').val(customerData.cust_Delivery_address || ''); 
-                $('#cust_custCity').val(customerData.custCity || ''); 
-                $('#cust_custState').val(customerData.custState || ''); 
-                $('#cust_custCountry').val(customerData.custCountry || ''); 
-                $('#cust_custZip').val(customerData.custZip || ''); 
+                $('#custName').val(customerData.custName || '');
+                $('#companylistcust').val(customerData.companylistcust || ''); 
+                $('#email').val(customerData.email || ''); 
+                $('#phoneno').val(customerData.phoneno || ''); 
+                $('#address').val(customerData.address || ''); 
+                $('#city').val(customerData.city || ''); 
+                $('#zipcode').val(customerData.custState || ''); 
+                $('#state').val(customerData.zipcode || ''); 
+                $('#country').val(customerData.country || ''); 
+                $('#custref').val(customerData.custref || ''); 
+           // console.log(customerData);
             } else {
                 console.error('Empty response or missing data');
             }
@@ -301,6 +312,42 @@ function updatecustomerfield(value) {
             Swal.fire('Please input alphanumeric characters only');
         }
     }
+    $(document).ready(function() {
+        $('#custName').on('input', function() {
+            var customerName = $(this).val();
+            if (customerName.length > 2) { // Wait until user has entered at least 3 characters
+                $.ajax({
+                    type: 'POST',
+                    url: '/admin/get_customer_by_name',
+                    data: {
+                        name: customerName,
+                        _token: $('#_tokeupdatencustomer').val() // Passing the CSRF token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var companyData = response.success[0];
+                            $('#custName').val(companyData.custName);
+                            $('#companylistcust').val(companyData.companylistcust);
+                            $('#email').val(companyData.email);
+                            $('#phoneno').val(companyData.phoneno);
+                            $('#address').val(companyData.address);
+                            $('#city').val(companyData.city);
+                            $('#zipcode').val(companyData.zipcode);
+                            $('#state').val(companyData.state);
+                            $('#country').val(companyData.country);
+                            $('#custref').val(companyData.custref);
+                        } else {
+                            // Handle case where no data is found
+                            console.log('No customer data found');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching customer data:', error);
+                    }
+                });
+            }
+        });
+    });
     
     
 }

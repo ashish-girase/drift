@@ -334,142 +334,70 @@
 
 
                         <!-- Edit user -->
-                        <div class="modal fade" id="edit_customerModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit Customer</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                        <form method="post">
-                                                @csrf
-                                                <input type="hidden" name="_token" id="_tokeupdatencustomer" value="{{Session::token()}}">
-                                                <input type="hidden" name="customer_id"  id="edit_customer_id">
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Customer Name<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="edit_custName"
-                                                            id="edit_custName" placeholder="Customer Name">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Company Name<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="edit_companylistcust"
-                                                            id="edit_companylistcust" placeholder="Company Name">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Customer Email<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_email"
-                                                            id="edit_email" placeholder="Enter Email">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Customer Phone Number<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_phoneno"
-                                                            id="edit_phoneno" placeholder="phone No">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Customer Address<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_address"
-                                                            id="edit_address" placeholder="Enter Address">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        < <label for="user_firstname">City<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_city"
-                                                            id="edit_city" placeholder="City">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Zip Code<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_zipcode"
-                                                            id="edit_zipcode" placeholder="Enter ZipCode">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">State<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_state"
-                                                            id="edit_state" placeholder="State">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Country<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_country"
-                                                            id="edit_country" placeholder="country">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                    <label for="user_firstname">Customer Reference<span
-                                                                class="required"></span></label>
-                                                            <input type="text" class="form-control" name="edit_custref"
-                                                            id="edit_custref" placeholder="Add Reference">
-                                                    </div>
-                                                </div>
-                                               <!-- <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Customer Country<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="custCountry"
-                                                            id="edit_custCountry" placeholder="Customer Country">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Customer Zip<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="custZip"
-                                                            id="edit_custZip" placeholder="Customer Zip">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Customer Phone number<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="custTelephone"
-                                                            id="edit_custTelephone" placeholder="Customer Phone number">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Note<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="briefInformation"
-                                                            id="edit_briefInformation" placeholder="Note">
-                                                    </div>
-                                                </div>-->
+                        <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        @csrf
+                        <input type="hidden" name="_token" id="_tokeupdatencustomer" value="{{Session::token()}}">
+                        <input type="hidden" name="customer_id" id="edit_customer_id">
+                        <div class="mb-3">
+                            <label for="edit_custName" class="form-label">Customer Name<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_custName" id="edit_custName" placeholder="Customer Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_companylistcust" class="form-label">Company Name<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_companylistcust" id="edit_companylistcust" placeholder="Company Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_email" class="form-label">Customer Email<span class="required"></span></label>
+                            <input type="email" class="form-control" name="edit_email" id="edit_email" placeholder="Enter Email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_phoneno" class="form-label">Customer Phone Number<span class="required"></span></label>
+                            <input type="tel" class="form-control" name="edit_phoneno" id="edit_phoneno" placeholder="Phone No">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_address" class="form-label">Customer Address<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_address" id="edit_address" placeholder="Enter Address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_city" class="form-label">City<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_city" id="edit_city" placeholder="City">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_zipcode" class="form-label">Zip Code<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_zipcode" id="edit_zipcode" placeholder="Enter ZipCode">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_state" class="form-label">State<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_state" id="edit_state" placeholder="State">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_country" class="form-label">Country<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_country" id="edit_country" placeholder="Country">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_custref" class="form-label">Customer Reference<span class="required"></span></label>
+                            <input type="text" class="form-control" name="edit_custref" id="edit_custref" placeholder="Add Reference">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="updatecustomer">Update changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                                                </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn bg-gradient-primary " id="updatecustomer">Update changes</button>
-                                    </div>
-                                    </div>
-                                </div>
-                                </div>
+    
+
 
 
 

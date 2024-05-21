@@ -20,6 +20,85 @@ use Validator;
 
 class OrderController extends Controller
 {
+    public function addOrder(Request $request)
+    {
+        $maxLength = 2000;
+        $new_id = Order::max('_id') + 1;
+        $companyId = 1;
+
+        $docAvailable = AppHelper::instance()->checkDoc(Order::raw(), $companyId, $maxLength);
+
+        $orderData = [
+            '_id' => $new_id,
+            'counter' => 1,
+            'customer' => [
+                'cust_id' => $request->input('_id'),
+                'custName' => $request->input('custName'),
+                'companylistcust' => $request->input('companylistcust'),
+                'email' => $request->input('email'),
+                'phoneno' => $request->input('phoneno'),
+                'address' => $request->input('address'),
+                'city' => $request->input('city'),
+                'zipcode' => $request->input('zipcode'),
+                'state' => $request->input('state'),
+                'country' => $request->input('country'),
+                'custref' => $request->input('custref'),
+            ],
+            'product' => [
+                'prodName' => $request->input('prodName'),
+                'product_type' => $request->input('product_type'),
+                'prod_code' => $request->input('prod_code'),
+                'prod_qty' => $request->input('prod_qty'),
+                'Thickness' => $request->input('Thickness'),
+                'Width' => $request->input('Width'),
+                'ColourName' => $request->input('ColourName'),
+                'Roll_weight' => $request->input('Roll_weight'),
+                'Total_qty' => $request->input('Total_quantity'),
+                'price' => $request->input('price'),
+                'Billing_address' => $request->input('Billing_address'),
+                'Delivery_address' => $request->input('Delivery_address'),
+                'status' => $request->input('status'),
+                'price_type' => $request->input('price_type'),
+                'notes' => $request->input('notes'),
+            ],
+            'insertedTime' => time(),
+            'delete_status' => "NO",
+            'deleteOrder' => "",
+            'deleteTime' => "",
+            'Status' => "New",
+        ];
+
+        if ($docAvailable != "No") {
+            $info = explode("^", $docAvailable);
+            $docId = $info[1];
+            $orderid = AppHelper::instance()->getAdminDocumentSequence(1, Order::raw(), 'order', (int)$docId);
+
+            $orderData['_id'] = $orderid;
+            $orderData['counter'] = 0;
+
+            Order::raw()->updateOne(
+                ['companyID' => $companyId, '_id' => (int)$docId],
+                ['$push' => ['order' => $orderData]]
+            );
+
+            return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
+        } else {
+            $orderData['_id'] = $new_id;
+            $orderData['counter'] = 0;
+            $orderData['companyID'] = $companyId;
+
+            Order::raw()->insertOne([
+                '_id' => $new_id,
+                'counter' => 0,
+                'companyID' => $companyId,
+                'order' => [$orderData],
+            ]);
+
+            return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
+        }
+    }
+
+
     public function searchCustomer(Request $request)
     {
         $val = $request->value;
@@ -29,10 +108,10 @@ class OrderController extends Controller
         $show = \App\Models\Customer::raw()->aggregate([['$match' => ["companyID" => $companyID]],
             ['$unwind' => '$customer'],
             ['$match' => ['customer.custName' => $datasearch,'customer.delete_status' => "NO"]],
-            ['$project' => ['customer._id' => 1,'_id' => 1, 'customer.delete_status' => 1,'customer.custName'=> 1,'customer.factoryCode'=>1,
-            'customer.GstDetails' => 1,'customer.custEmail' => 1,'customer.custAddress' => 1,'customer.cust_Billing_address' => 1,
-            'customer.cust_Delivery_address' => 1,'customer.custCity' => 1,'customer.custState' => 1,'customer.custCountry' => 1,
-            'customer.custZip' => 1,'customer.custTelephone' => 1]],
+            ['$project' => ['customer._id' => 1,'_id' => 1, 'customer.delete_status' => 1,'customer.custName'=> 1,'customer.companylistcust'=>1,
+            'customer.email' => 1,'customer.phoneno' => 1,'customer.address' => 1,'customer.city' => 1,
+            'customer.zipcode' => 1,'customer.state' => 1,'customer.country' => 1,'customer.custref' => 1,
+            ]],
             // ['$limit' => 100]
         ]);
         $customer = array();
@@ -50,7 +129,7 @@ class OrderController extends Controller
             }
 
         }
-        // dd($customerList);
+        dd($customerList);
         echo json_encode($customerList);
     }
 
@@ -75,18 +154,18 @@ class OrderController extends Controller
         // Add customer details to output array
         $output[] = [
             "customerid" => $customerDetails['_id'],
-            "customer_name" => $customerDetails['custName'],
-            "factoryCode" => $customerDetails['factoryCode'],
-            "GstDetails" => $customerDetails['GstDetails'],
-            "custEmail" => $customerDetails['custEmail'],
-            "custAddress" => $customerDetails['custAddress'],
-            "cust_Billing_address" => $customerDetails['cust_Billing_address'],
-            "cust_Delivery_address" => $customerDetails['cust_Delivery_address'],
-            "custCity" => $customerDetails['custCity'],
-            "custState" => $customerDetails['custState'],
-            "custCountry" => $customerDetails['custCountry'],
-            "custZip" => $customerDetails['custZip'],
-            "custTelephone" => $customerDetails['custTelephone']
+            "custName" => $customerDetails['custName'],
+            "companylistcust" => $customerDetails['companylistcust'],
+            "email" => $customerDetails['email'],
+            "phoneno" => $customerDetails['phoneno'],
+            "address" => $customerDetails['address'],
+            "city" => $customerDetails['cust_Billing_address'],
+            "zipcode" => $customerDetails['zipcode'],
+            "state" => $customerDetails['state'],
+            "country" => $customerDetails['country'],
+            "custref" => $customerDetails['custref']
+            //"custZip" => $customerDetails['custZip'],
+            //"custTelephone" => $customerDetails['custTelephone']
         ];
     }
 
@@ -108,23 +187,23 @@ class OrderController extends Controller
         '_id' => null,
         'customer' => ['$push' => [
         'custName' => '$customer.custName',
-        'custEmail' => '$customer.custEmail',
-        'factoryCode' => '$customer.factoryCode',
-        'GstDetails' => '$customer.GstDetails',
-        'custTelephone' => '$customer.custTelephone',
-        'custAddress' => '$customer.custAddress',
-        'custCountry' => '$customer.custCountry',
-        'custState' => '$customer.custState',
-        'custCity' => '$customer.custCity',
-        'custZip' => '$customer.custZip',
-        'briefInformation' => '$customer.briefInformation',
+        'companylistcust' => '$customer.companylistcust',
+        'email' => '$customer.email',
+        'phoneno' => '$customer.phoneno',
+        'address' => '$customer.address',
+        'city' => '$customer.city',
+        'zipcode' => '$customer.zipcode',
+        'state' => '$customer.state',
+        'country' => '$customer.country',
+        'custref' => '$customer.custref'
+       /* 'briefInformation' => '$customer.briefInformation',
         'cust_Billing_address' => '$customer.cust_Billing_address',
         'cust_Delivery_address' => '$customer.cust_Delivery_address'
-        ]],
+        */]],
     ]],
     ['$project' => ['customer' => 1, '_id' => 0]]
     ])->toArray();
-    // dd($customers);
+    dd($customers);
     if (empty($customers)) {
     // dd($customers);
     return response()->json(['status' => false, 'message' => 'No customer found'], 404);
@@ -254,85 +333,7 @@ class OrderController extends Controller
     ], 200);
     }
 
-    public function addOrder(Request $request)
-    {
-    // dd($request);
-    $maxLength = 2000;
-    $new_id = Order::max('_id') + 1;
-    $companyId = 1;
-
-    $docAvailable = AppHelper::instance()->checkDoc(Order::raw(), $companyId, $maxLength);
-
-
-
-    $orderData = [
-    '_id' => $new_id,
-    'counter' => 1,
-    // 'cust_id' => $request->input('customer_id'),
-    'custName' => $request->input('custName'),
-    'factoryCode' => $request->input('factoryCode'),
-    'GstDetails' => $request->input('GstDetails'),
-    'custEmail' => $request->input('custEmail'),
-    'custAddress' => $request->input('custAddress'),
-    'cust_Billing_address' => $request->input('cust_Billing_address'),
-    'cust_Delivery_address' => $request->input('cust_Delivery_address'),
-    'custCity' => $request->input('custCity'),
-    'custState' => $request->input('custState'),
-    'custCountry' => $request->input('custCountry'),
-    'custZip' => $request->input('custZip'),
-    'custTelephone' => $request->input('custTelephone'),
-    'briefInformation' => $request->input('briefInformation'),
-    //'prod_id' => $request->input('product_id'),
-    'prodName' => $request->input('prodName'),
-    'product_type' => $request->input('product_type'),
-    // 'prod_code' => $request->input('prod_code'),
-    'Thickness' => $request->input('Thickness'),
-    'Width' => $request->input('Width'),
-    // 'colour_id' => $request->input('colour_id'),
-    'ColourName' => $request->input('ColourName'),
-    'Roll_weight' => $request->input('Roll_weight'),
-    'Status'=>"New",
-    'Total_qty' => $request->input('Total_qty'),
-    'Detail_inst' => $request->input('Detail_inst'),
-    'Billing_address' => $request->input('Billing_address'),
-    'Delivery_address' => $request->input('Delivery_address'),
-    'Typeof_price' => $request->input('Typeof_price'),
-    'insertedTime' => time(),
-    'delete_status' => "NO",
-    'deleteOrder' => "",
-    'deleteTime' => "",
-    ];
-    //dd($orderData);
-    if ($docAvailable != "No") {
-    $info = explode("^", $docAvailable);
-    $docId = $info[1];
-    $orderid = AppHelper::instance()->getAdminDocumentSequence(1, Order::raw(), 'order', (int)$docId);
-
-    $orderData['_id'] = $orderid;
-    $orderData['counter'] = 0;
-
-    Order::raw()->updateOne(
-    ['companyID' => $companyId, '_id' => (int)$docId],
-    ['$push' => ['order' => $orderData]]
-    );
-
-    return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
-    } else {
-    $orderData['_id'] = $new_id;
-    $orderData['counter'] = 0;
-    $orderData['companyID'] = $companyId;
-
-    Order::raw()->insertOne([
-    '_id' => $new_id,
-    'counter' => 0,
-    'companyID' => $companyId,
-    'order' => [$orderData],
-    ]);
-
-    return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
-    }
-    }
-    public function view_order(Request $request)
+       public function view_order(Request $request)
     {
         $companyID=1;
         $collection=\App\Models\Order::raw();
@@ -398,11 +399,11 @@ class OrderController extends Controller
     'order.$.colour_id' => $request->colour_id,
     'order.$.ColourName' => $request->colours_name,
     'order.$.Roll_weight' => $request->Roll_weight,
-    'order.$.Total_qty' => $request->Total_qty,
-    'order.$.Detail_inst' => $request->Detail_inst,
-    'order.$.Billing_address' => $request->Billing_address,
-    'order.$.Delivery_address' => $request->Delivery_address,
-    'order.$.Typeof_price' => $request->Typeof_price,
+    //'order.$.Total_qty' => $request->Total_qty,
+    //'order.$.Detail_inst' => $request->Detail_inst,
+    //'order.$.Billing_address' => $request->Billing_address,
+   // 'order.$.Delivery_address' => $request->Delivery_address,
+    //'order.$.Typeof_price' => $request->Typeof_price,
     'order.$.insertedTime' => time(),
     'order.$.delete_status' => "NO",
     'order.$.deleteOrder' => "",
@@ -439,4 +440,5 @@ class OrderController extends Controller
     }
 
     }
+    
 }

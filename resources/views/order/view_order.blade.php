@@ -17,90 +17,121 @@
 <div>
 
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card mb-4 mx-4">
-                        <div class="card-header pb-0">
-                            <div class="d-flex flex-row justify-content-between">
-                                <div>
-                                    <h5 class="mb-0">All Order</h5>
-                                </div>
-
-                                <a href="#" class="btn bg-gradient-primary btn-sm mb-0 createOrderModalStore" type="button">+&nbsp; New Order</a>
-                                <!-- <a href="#" class="button-29 createUserModalStore" data-toggle="modal"  data-target="#"><span>Add</span></a> -->
-
-
-                            </div>
-                        </div>
-                        <div class="card-body px-0 pt-0 pb-2">
-                            <div class="table-responsive p-0">
-                                <table class="table align-items-center mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Name</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Type</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Code</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Thickness</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Width</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Colour Name</th>
-                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($order_data)
-
-                                        @foreach($order_data as $key => $cusData_val)
-                                        <tr>
-                                            <td class="ps-4">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->prodName }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->product_type }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->prod_code }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->Thickness }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->Width }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">{{ $cusData_val->product->ColourName }}</p>
-                                            </td>
-
-                                            <td class="text-center">
-                                                <a href="#" class="mx-3 edit-product"  data-user-ids="{{ $cusData_val->product->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
-                                                    <i class="fas fa-user-edit text-secondary"></i>
-                                                </a>
-                                                <a href="#" class="mx-3 delete-product" data-user-ids="{{ $cusData_val->product->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
-                                                  <span>
-                                                        <i class="cursor-pointer fas fa-trash text-secondary"></i>
-                                                    </span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @else
-                                        <tr>
-                                            <td colspan="3"><center>Record Not Found</center></td>
-                                        </tr>
-                                        @endif
-                                    </tbody>
-
-                                </table>
-
-                            </div>
-                        </div>
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4 mx-4">
+            <div class="card-header pb-0">
+                <div class="d-flex flex-row justify-content-between">
+                    <div>
+                        <h5 class="mb-0">All Orders</h5>
                     </div>
+                    <a href="#" class="btn bg-gradient-primary btn-sm mb-0 createOrderModalStore" type="button">+&nbsp; New Order</a>
+                </div>
+            </div>
+            <div class="card-body px-0 pt-0 pb-2">
+                <div class="table-responsive p-0">
+                    <table class="table align-items-center mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Type</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Code</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Thickness</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Width</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Colour Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Price</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Customer Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Email</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Phone No</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Address</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">City</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Zip Code</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">State</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Country</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Status</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if($order_data)
+                                @foreach($order_data as $key => $order)
+                                    <tr>
+                                        <td class="ps-4">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['prodName'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['product_type'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['prod_code'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['Thickness'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['Width'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['ColourName'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['price'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['custName'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['email'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['phoneno'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['address'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['city'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['zipcode'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['state'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['country'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-xs font-weight-bold mb-0">{{ $order['status'] }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" class="mx-3 edit-product" data-user-ids="{{ $order->product['_id'] }}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+                                                <i class="fas fa-user-edit text-secondary"></i>
+                                            </a>
+                                            <a href="#" class="mx-3 delete-product" data-user-ids="{{ $order->product['_id'] }}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+                                                <span>
+                                                    <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                                                </span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                <tr>
+                                    <td colspan="17" class="text-center">No orders found</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 <!--================================= create bank modal ============================= -->
                             <!-- Button trigger modal -->
 
@@ -175,65 +206,7 @@
                         </div>
                     </div>
 
-                    <!--COMPANY DETAILS-->
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">Company Details</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="company_name">Company Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_name" id="company_name" placeholder="Enter Company Name">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="ccode">Company Code<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="ccode" id="ccode" placeholder="Enter Company Code">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="caddress">Company Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="caddress" id="caddress" placeholder="Enter Company Address">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="company_city">City<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_city" id="company_city" placeholder="Enter City">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="company_zipcode">Zip Code<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_zipcode" id="company_zipcode" placeholder="Enter Zip Code">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="company_state">State<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_state" id="company_state" placeholder="State">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="company_country">Country<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_country" id="company_country" placeholder="Country">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="taxgstno">Tax/GST Number<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="taxgstno" id="taxgstno" placeholder="Tax No./GST No.">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="company_phoneno">Phone Number<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_phoneno" id="company_phoneno" placeholder="Phone No.">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="company_email">Email<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="company_email" id="company_email" placeholder="Enter Email">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="website">Website<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="website" id="website" placeholder="Website">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                   
                     <!--PRODUCT DETAILS-->
                     <div class="card mb-3">
                         <div class="card-header">
@@ -243,7 +216,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="prodName">Product Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name">
+                                    <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" onblur="getUserDetails()">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="product_type">Product Type<span class="required"></span></label>
@@ -271,43 +244,38 @@
                                     <label for="Roll_weight">Roll Weight<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="Roll_weight" id="Roll_weight" placeholder="Roll Weight">
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!--COLOR DETAILS-->
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            <h6 class="mb-0">Colour Details</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
                                 <div class="form-group col-md-6">
                                     <label for="color_name">Color Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="color_name" id="color_name" placeholder="Color Name">
+                                    <input type="text" class="form-control custom-width" name="ColourName" id="ColourName" placeholder="Color Name">
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                   
                     <!-- Status Dropdown -->
                     <div class="row">
                     
                    
                     </div>
                     <div class="row">
-                    <div class="form-group col-md-4">
-                                    <label for="total_price">Total price<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="total_price" id="total_price" placeholder="Enter Total Price">
+                                <div class="form-group col-md-3">
+                                    <label for="total_price">Total quantity<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="total_quantity" id="total_quantity" placeholder="Enter Total Quantity">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
+                                    <label for="price">Price<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="price" id="price" placeholder="Enter Price">
+                                </div>
+                                <div class="form-group col-md-3">
                                     <label for="billing_address">Billing Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="billing_address" id="billing_address" placeholder="Billing Address">
+                                    <input type="text" class="form-control custom-width" name="Billing_address" id="Billing_address" placeholder="Billing Address">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label for="delivery_address">Delivery Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="delivery_address" id="delivery_address" placeholder="Delivery Address">
+                                    <input type="text" class="form-control custom-width" name="Delivery_address" id="Delivery_address" placeholder="Delivery Address">
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-3">
                                         <label for="status">Status<span class="required"></span></label>
                                 <select class="form-control custom-width" name="status" id="status">
                                         <option value="new" selected>New</option>
@@ -317,21 +285,26 @@
                                         <option value="cancelled">Cancelled</option>
                                 </select>
                                 </div>
-                                <div class="form-group col-md-6">
+                                <div class="form-group col-md-3">
                                         <label for="price_type">Price Type<span class="required"></span></label>
                                     <select class="form-control custom-width" name="price_type" id="price_type">
                                      <option value="x-factory">X-Factory</option>
                                      <option value="delivery">Delivery Price</option>
                                     </select>
                                 </div>
+                                <div class="form-group col-md-8">
+                                    <label for="notes">Notes<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="notes" id="notes" placeholder="Add Notes">
+                                </div>
 
                         </div>
+                        <form >
                     
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn bg-gradient-primary" id="saveproduct">Save changes</button>
+                <button type="button" class="btn bg-gradient-primary" id="saveOrder">Save changes</button>
             </div>
         </div>
     </div>
@@ -449,6 +422,10 @@
                                     </div>
                                 </div>
                                 </div>
+<!--PRODUCT SCRIPT-->
+
+<!--END PRODUCT SCRIPT-->
+
 
 
 

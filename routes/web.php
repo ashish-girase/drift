@@ -79,8 +79,10 @@ Route::group(['middleware' => 'auth'], function () {
     //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
     //  Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
     //  Route::post('admin/get_colorlist', [OrderController::class, 'get_colorlist']);
+    Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
      Route::post('admin/searchCustomer', [OrderController::class, 'searchCustomer']);
      Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
+     Route::post('/admin/get_customer_by_name', [OrderController::class, 'getCustomerByName']);
 
     Route::get('/logout', [SessionsController::class, 'destroy']);
 	Route::get('/user-profile', [InfoUserController::class, 'create']);

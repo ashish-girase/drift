@@ -10,39 +10,39 @@ $(".createCustomerModalStore").click(function(){
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
         $.ajax({
-            type:'POST',
-            url:base_path+"/admin/edit_customer",
+            type: 'POST',
+            url: base_path + "/admin/edit_customer",
             data: {
                 id: userId,
                 master_id: master_id
             },
-            success:function(response){
+            success: function(response) {
+                console.log("_id", response);
                 // var res = JSON.parse(response);
-                console.log('_id',response);
-                var customerData = response.success[0].customer[0];
-
-                //console.log("customer_id", customerData.factoryCode);
+                var companyData = response.success[0].customer[0];
                 // console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#edit_customer_id').val(customerData._id); // Setting _id value
-                $('#edit_custName').val(customerData.custName);
-                $('#edit_companylistcust').val(customerData.companylistcust);
-                $('#edit_email').val(customerData.email);
-                $('#edit_phoneno').val(customerData.phoneno);
-                $('#edit_address').val(customerData.address);
-                $('#edit_city').val(customerData.city);
-                $('#edit_zipcode').val(customerData.zipcode);
-                $('#edit_state').val(customerData.state);
-                $('#edit_country').val(customerData.country);
-                $('#edit_custref').val(customerData.custref);
-              /*  $('#edit_custState').val(customerData.custState);
-                $('#edit_custCountry').val(customerData.custCountry);
-                $('#edit_custZip').val(customerData.custZip);
-                $('#edit_custTelephone').val(customerData.custTelephone);
-                $('#edit_briefInformation').val(customerData.briefInformation);*/
+                $('#edit_customer_id').val(companyData._id); // Setting _id value
+                $('#edit_custName').val(companyData.custName);
+                $('#edit_companylistcust').val(companyData.companylistcust); 
+                $('#edit_email').val(companyData.email);
+                $('#edit_phoneno').val(companyData.phoneno); 
+                $('#edit_address').val(companyData.address);
+                $('#edit_city').val(companyData.city); 
+                $('#edit_zipcode').val(companyData.zipcode);
+                $('#edit_state').val(companyData.state); 
+                $('#edit_country').val(companyData.country); 
+                $('#edit_custref').val(companyData.custref); 
+                
+                // Show the modal after successfully setting the values
+                $('#editCustomerModal').modal("show");
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.log('Error:', error);
             }
         });
-        $('#edit_customerModel').modal("show");
     });
+    
 
     //Update User
     $(document).on("click", '#updatecustomer', function(event) {

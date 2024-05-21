@@ -15,7 +15,7 @@ class Order extends Model
     protected $keyType = 'int';
     public $incrementing = true;
     protected $connection = 'mongodb';
-    protected $collection = 'order';
+    protected $collection = 'order_data';
     protected $dates = ['deleted_at'];
 
     /**
@@ -24,22 +24,32 @@ class Order extends Model
     * @var array<int, string>
     */
     protected $fillable = [
-
+    '_id',
     'custName',
-    'customer_id',
+    'companylistcust',
+    'email',
+    'phoneno',
+    'address',
+    'city',
+    'zipcode',
+    'state',
+    'country',
+    'custref',
     'prodName',
-    'product_id',
     'product_type',
+    'prod_code',
+    'prod_qty',
     'Thickness',
     'Width',
-    'Colour',
+    'ColourName',
     'Roll_weight',
-    'Status',
-    'Total_qty',
-    'Detail_inst',
+    'total_quantity',
+    'price',
     'Billing_address',
     'Delivery_address',
-    'Typeof_price',
+    'price_type',
+    'notes',
+    'status'
 
     ];
 
