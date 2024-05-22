@@ -22,17 +22,19 @@ class OrderController extends Controller
 {
     public function addOrder(Request $request)
     {
+        //dd($request);
         $maxLength = 2000;
         $new_id = Order::max('_id') + 1;
+        $randomNumber = rand(100000, 999999);
+        $unique_value = $randomNumber . $new_id;
         $companyId = 1;
-
         $docAvailable = AppHelper::instance()->checkDoc(Order::raw(), $companyId, $maxLength);
-
+    
+        // Construct the order data
         $orderData = [
             '_id' => $new_id,
             'counter' => 1,
             'customer' => [
-                'cust_id' => $request->input('_id'),
                 'custName' => $request->input('custName'),
                 'companylistcust' => $request->input('companylistcust'),
                 'email' => $request->input('email'),
@@ -51,52 +53,66 @@ class OrderController extends Controller
                 'prod_qty' => $request->input('prod_qty'),
                 'Thickness' => $request->input('Thickness'),
                 'Width' => $request->input('Width'),
-                'ColourName' => $request->input('ColourName'),
                 'Roll_weight' => $request->input('Roll_weight'),
-                'Total_qty' => $request->input('Total_quantity'),
+                'ColourName' => $request->input('ColourName'),
+                
+            ],
+            'total_quantity' => $request->input('total_quantity'),
                 'price' => $request->input('price'),
                 'Billing_address' => $request->input('Billing_address'),
                 'Delivery_address' => $request->input('Delivery_address'),
-                'status' => $request->input('status'),
                 'price_type' => $request->input('price_type'),
+                'status' => "New",
                 'notes' => $request->input('notes'),
-            ],
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deleteOrder' => "",
             'deleteTime' => "",
-            'Status' => "New",
         ];
-
+        //dd($orderData);
+    
+        // Check document availability
         if ($docAvailable != "No") {
+            // Parse the document ID
             $info = explode("^", $docAvailable);
-            $docId = $info[1];
-            $orderid = AppHelper::instance()->getAdminDocumentSequence(1, Order::raw(), 'order', (int)$docId);
-
+            $docId = (int)$info[1];
+    
+            // Get a new order ID
+            $orderid = AppHelper::instance()->getAdminDocumentSequence(1, Order::raw(), 'order', $docId);
+    
+            // Set the order data
             $orderData['_id'] = $orderid;
             $orderData['counter'] = 0;
-
+    
+            // Update the existing document
             Order::raw()->updateOne(
-                ['companyID' => $companyId, '_id' => (int)$docId],
+                ['companyID' => $companyId, '_id' => $docId],
                 ['$push' => ['order' => $orderData]]
             );
-
+    
             return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
         } else {
+            // Get a new ID for the document
+            $new_id = Order::max('_id') + 1;
+    
+            // Set the order data for a new document
             $orderData['_id'] = $new_id;
             $orderData['counter'] = 0;
             $orderData['companyID'] = $companyId;
-
-            Order::raw()->insertOne([
+    
+            // Insert a new document
+           $orderData= Order::raw()->insertOne([
                 '_id' => $new_id,
                 'counter' => 0,
                 'companyID' => $companyId,
                 'order' => [$orderData],
             ]);
-
+          // dd($orderData);
+    
             return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
         }
     }
+    
 
 
     public function searchCustomer(Request $request)
@@ -129,7 +145,7 @@ class OrderController extends Controller
             }
 
         }
-        dd($customerList);
+      //  dd($customerList);
         echo json_encode($customerList);
     }
 
@@ -203,7 +219,7 @@ class OrderController extends Controller
     ]],
     ['$project' => ['customer' => 1, '_id' => 0]]
     ])->toArray();
-    dd($customers);
+  //  dd($customers);
     if (empty($customers)) {
     // dd($customers);
     return response()->json(['status' => false, 'message' => 'No customer found'], 404);
@@ -336,11 +352,40 @@ class OrderController extends Controller
        public function view_order(Request $request)
     {
         $companyID=1;
-        $collection=\App\Models\Order::raw();
+        $collection=Order::raw();
         $orderCurr= $collection->aggregate([
         ['$match' => ['companyID' => $companyID]],
         ['$unwind' => '$order'],
-        ['$match' => ['order.delete_status' =>"NO"]]
+        ['$match' => ['order.delete_status' =>"NO"]],
+        ['$project' => [
+            'customer._id' => 1,
+            'customer.custName' => 1,
+            'customer.companylistcust' => 1,
+            'customer.email' => 1,
+            'customer.phoneno' => 1,
+            'customer.address' => 1,
+            'customer.city' => 1,
+            'customer.zipcode' => 1,
+            'customer.state' => 1,
+            'customer.country' => 1,
+            'customer.custref' => 1,
+            'product.prodName' => 1,
+            'product.product_type' => 1,
+            'product.prod_code' => 1,
+            'product.prod_qty' => 1,
+            'product.Thickness' => 1,
+            'product.Width' => 1,
+            'product.Roll_weight' => 1,
+            'product.ColourName' => 1,
+            'total_quantity' => 1,
+            'price' => 1,
+            'Billing_address' => 1,
+            'Delivery_address' => 1,
+            'price_type' => 1,
+            'status' => 1,
+            'notes' => 1,
+           
+        ]]
 
 
         ]);

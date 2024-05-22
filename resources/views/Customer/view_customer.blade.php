@@ -86,7 +86,7 @@
                                             </td>
                                            
                                             <td class="text-center">
-                                                <a href="#" class="mx-3 edit-customer"  data-user-ids="{{ $cusData_val->customer->_id}}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                <a href="#" type="button" class="mx-3 edit-customer" id="edit-customer"  data-user-ids="{{ $cusData_val->customer->_id}}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
                                                 <a href="#" class="mx-3 delete-customer" data-user-ids="{{ $cusData_val->customer->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
@@ -334,7 +334,7 @@
 
 
                         <!-- Edit user -->
-                        <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div id="editCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">

@@ -12,46 +12,46 @@ class Order extends Model
     use HasApiTokens;
 
     protected $primaryKey = '_id';
-    protected $keyType = 'int';
-    public $incrementing = true;
+    protected $keyType = 'int'; 
+    public $incrementing = true; // MongoDB IDs are not incrementing integers
     protected $connection = 'mongodb';
     protected $collection = 'order_data';
     protected $dates = ['deleted_at'];
 
     /**
-    * The attributes that are mass assignable.
-    *
-    * @var array<int, string>
-    */
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
-    '_id',
-    'custName',
-    'companylistcust',
-    'email',
-    'phoneno',
-    'address',
-    'city',
-    'zipcode',
-    'state',
-    'country',
-    'custref',
-    'prodName',
-    'product_type',
-    'prod_code',
-    'prod_qty',
-    'Thickness',
-    'Width',
-    'ColourName',
-    'Roll_weight',
-    'total_quantity',
-    'price',
-    'Billing_address',
-    'Delivery_address',
-    'price_type',
-    'notes',
-    'status'
-
+        'custName',
+        'companylistcust',
+        'email',
+        'phoneno',
+        'address',
+        'city',
+        'zipcode',
+        'state',
+        'country',
+        'custref',
+        'prodName',
+        'product_type',
+        'prod_code',
+        'prod_qty',
+        'Thickness',
+        'Width',
+        'Roll_weight',
+        'ColourName',
+        'total_quantity',
+        'price',
+        'Billing_address',
+        'Delivery_address',
+        'price_type',
+        'status',
+        'notes'
+        
     ];
+
 
     /**
     * The attributes that should be hidden for serialization.

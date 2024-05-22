@@ -167,6 +167,7 @@ class CustomerController extends Controller
             if ($companyData) {
             // dd($companyData);
             return response()->json(['success' => $companyData]);
+            //dd($companyData);
             }
         }
 

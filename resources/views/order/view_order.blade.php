@@ -30,101 +30,177 @@
             </div>
             <div class="card-body px-0 pt-0 pb-2">
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0">
+                    <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
-                            <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Name</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Type</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Product Code</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Thickness</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Width</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Colour Name</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Price</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Customer Name</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Email</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Phone No</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Address</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">City</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Zip Code</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">State</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Country</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Status</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">Action</th>
-                            </tr>
+                        <tr>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Company List</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Email</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Phone No</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Address</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">City</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Zip Code</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">State</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Country</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Reference</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Name</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Type</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Code</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Quantity</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Thickness</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Width</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Roll-Weight</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Colour Name</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Total Quantity</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Price</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Billing Address</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Delivery Address</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">price_type</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
+                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">notes</th>
+                        </tr>
+
                         </thead>
                         <tbody>
-                            @if($order_data)
-                                @foreach($order_data as $key => $order)
-                                    <tr>
-                                        <td class="ps-4">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['prodName'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['product_type'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['prod_code'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['Thickness'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['Width'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['ColourName'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->product['price'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['custName'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['email'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['phoneno'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['address'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['city'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['zipcode'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['state'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order->customer['country'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-xs font-weight-bold mb-0">{{ $order['status'] }}</p>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="#" class="mx-3 edit-product" data-user-ids="{{ $order->product['_id'] }}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
-                                                <i class="fas fa-user-edit text-secondary"></i>
-                                            </a>
-                                            <a href="#" class="mx-3 delete-product" data-user-ids="{{ $order->product['_id'] }}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
-                                                <span>
-                                                    <i class="cursor-pointer fas fa-trash text-secondary"></i>
-                                                </span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="17" class="text-center">No orders found</td>
-                                </tr>
-                            @endif
+                       
+ @if($order_data)
+ @foreach($order_data as $key => $order)
+<tr>
+<td class="ps-4">
+    <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
+ </td>
+ <td class="text-center">
+    @if(!empty($order->customer->custName))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->custName }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->companylistcust))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->companylistcust }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->email))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->email }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->phoneno))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->phoneno }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->address))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->address }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->city))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->city }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->zipcode))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->zipcode }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->state))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->state }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->country))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->country }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->customer->custref))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->custref }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->prodName))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prodName }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->product_type))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->product_type }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->prod_code))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prod_code }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->prod_qty))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prod_qty }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->Thickness))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Thickness }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->Width))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Width }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->Roll_weight))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Roll_weight }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->product->ColourName))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->product->ColourName }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->total_quantity))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->total_quantity }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->price))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->price }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->Billing_address))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->Billing_address }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->Delivery_address))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->Delivery_address }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->price_type))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->price_type }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->status))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->status }}</p>
+    @endif
+</td>
+<td class="text-center">
+    @if(!empty($order->notes))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->notes }}</p>
+    @endif
+</td>
+
+@endforeach
+@endif
+
+
+
                         </tbody>
                     </table>
                 </div>
@@ -147,9 +223,10 @@
                 </button>
             </div>
             <div class="modal-body">
+            <meta name="csrf-token" content="{{ csrf_token() }}" />
                 <form method="post">
                     @csrf
-                    <input type="hidden" name="_token" id="_tokenproduct" value="{{Session::token()}}">
+                    <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
                     
                     <!--CUSTOMER DETAILS-->
                     <div class="card mb-3">
@@ -216,7 +293,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="prodName">Product Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" onblur="getUserDetails()">
+                                    <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" >
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="product_type">Product Type<span class="required"></span></label>
@@ -276,6 +353,13 @@
                                     <input type="text" class="form-control custom-width" name="Delivery_address" id="Delivery_address" placeholder="Delivery Address">
                                 </div>
                                 <div class="form-group col-md-3">
+                                        <label for="price_type">Price Type<span class="required"></span></label>
+                                    <select class="form-control custom-width" name="price_type" id="price_type">
+                                     <option value="x-factory">X-Factory</option>
+                                     <option value="delivery">Delivery Price</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
                                         <label for="status">Status<span class="required"></span></label>
                                 <select class="form-control custom-width" name="status" id="status">
                                         <option value="new" selected>New</option>
@@ -285,20 +369,14 @@
                                         <option value="cancelled">Cancelled</option>
                                 </select>
                                 </div>
-                                <div class="form-group col-md-3">
-                                        <label for="price_type">Price Type<span class="required"></span></label>
-                                    <select class="form-control custom-width" name="price_type" id="price_type">
-                                     <option value="x-factory">X-Factory</option>
-                                     <option value="delivery">Delivery Price</option>
-                                    </select>
-                                </div>
+                                
                                 <div class="form-group col-md-8">
                                     <label for="notes">Notes<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="notes" id="notes" placeholder="Add Notes">
                                 </div>
 
                         </div>
-                        <form >
+                        
                     
                 </form>
             </div>

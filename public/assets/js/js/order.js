@@ -2,6 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
+   
 $(".createOrderModalStore").click(function(){
         $('#addOrderModal').modal("show");
     });
@@ -115,62 +116,93 @@ $(".createOrderModalStore").click(function(){
 });
 
 $("#saveOrder").click(function() {
+    // Retrieve and validate customer name
     var custName = $('#custName').val();
-    if (custName == '') {
+    if (custName === '') {
         Swal.fire("Enter Customer Name");
         $('#custName').focus();
         return false;
     }
 
-    var orderData = {
-        _token: $("#_tokenOrder").val(),
-        custName: $('#custName').val(),
-        companylistcust: $('#companylistcust').val(),
-        email: $('#email').val(),
-        phoneno: $('#phoneno').val(),
-        address: $('#address').val(),
-        city: $('#city').val(),
-        zipcode: $('#zipcode').val(),
-        state: $('#state').val(),
-        country: $('#country').val(),
-        custref: $('#custref').val(),
-        prodName: $('#prodName').val(),
-        product_type: $('#product_type').val(),
-        prod_code: $('#prod_code').val(),
-        prod_qty: $('#prod_qty').val(),
-        Thickness: $('#Thickness').val(),
-        Width: $('#Width').val(),
-        ColourName: $('#ColourName').val(),
-        Roll_weight: $('#Roll_weight').val(),
-        Total_quantity: $('#Total_quantity').val(),
-        price: $('#price').val(),
-        Billing_address: $('#Billing_address').val(),
-        Delivery_address: $('#Delivery_address').val(),
-        status: $('#status').val(),
-        price_type: $('#price_type').val(),
-        notes: $('#notes').val()
-    };
+    // Prepare order data
+    var companylistcust = $('#companylistcust').val();
+    var email = $('#email').val();
+    var phoneno = $('#phoneno').val();
+    var address = $('#address').val();
+    var city = $('#city').val();
+    var zipcode = $('#zipcode').val();
+    var state = $('#state').val();
+    var country = $('#country').val();
+    var custref = $('#custref').val();
+    var prodName = $('#prodName').val();
+    var product_type = $('#product_type').val();
+    var prod_code = $('#prod_code').val();
+    var prod_qty = $('#prod_qty').val();
+    var Thickness = $('#Thickness').val();
+    var Width = $('#Width').val();
+    var Roll_weight = $('#Roll_weight').val();
+    var ColourName = $('#ColourName').val();
+    var total_quantity = $('#total_quantity').val(); // Adjusted key to match the modal input
+    var price = $('#price').val();
+    var Billing_address = $('#Billing_address').val();
+    var Delivery_address = $('#Delivery_address').val();
+    var price_type = $('#price_type').val();
+    var status = $('#status').val();
+    var notes = $('#notes').val();
 
+    // Send AJAX request to add order
     $.ajax({
-        url: base_path + "/admin/add_order",
+        url: base_path+"/admin/add_order",
         type: "POST",
-        datatype: "JSON",
-        data: orderData,
+        dataType: "json",
+        data: {
+            _token: $("#_tokenOrder").val(),
+            custName: custName,
+            companylistcust: companylistcust,
+            email: email,
+            phoneno: phoneno,
+            address: address,
+            city: city,
+            zipcode: zipcode,
+            state: state,
+            country: country,
+            custref: custref,
+            prodName: prodName,
+            product_type: product_type,
+            prod_code: prod_code,
+            prod_qty: prod_qty,
+            Thickness: Thickness,
+            Width: Width,
+            Roll_weight: Roll_weight,
+            ColourName: ColourName,
+            total_quantity: total_quantity, // Adjusted key to match the modal input
+            price: price,
+            Billing_address: Billing_address,
+            Delivery_address: Delivery_address,
+            price_type: price_type,
+            status: status,
+            notes: notes
+        },
         cache: false,
         success: function(Result) {
             console.log(Result);
-            $("#addOrderModal").modal("hide");
-            sessionStorage.setItem('successMessage_ord', 'Order added successfully');
-            window.location.href = base_path + "/order";
+            if(Result){
+                    swal.fire('order added successfully')
+                    $("#addOrderModal").modal("hide");
+                    sessionStorage.setItem('successMessage_ord', 'Order added successfully');
+                    window.location.href = base_path + "/order";
+        }},
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("AJAX Error:", textStatus, errorThrown);
+            // Handle error here, such as showing an error message to the user
         }
     });
 });
 
-const successMessage_ord = sessionStorage.getItem('successMessage_ord');
-if (successMessage_ord) {
-    Swal.fire(successMessage_ord);
-    sessionStorage.removeItem('successMessage_ord');
-}
+// Display success message if available in session storage
+
+
+
 
 
 function doSearch_cust(dom, funname, val) {
