@@ -32,34 +32,16 @@
                 <div class="table-responsive p-0">
                     <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
-                        <tr>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Company List</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Email</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Phone No</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Address</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">City</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Zip Code</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">State</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Country</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Reference</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Name</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Type</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Code</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Quantity</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Thickness</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Width</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Roll-Weight</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Colour Name</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Total Quantity</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Price</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Billing Address</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Delivery Address</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">price_type</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
-                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">notes</th>
-                        </tr>
+                            <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Name</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Quantity</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">price_type</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">notes</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
+                           </tr>
 
                         </thead>
                         <tbody>
@@ -69,131 +51,80 @@
 <tr>
 <td class="ps-4">
     <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
- </td>
- <td class="text-center">
-    @if(!empty($order->customer->custName))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->custName }}</p>
-    @endif
 </td>
 <td class="text-center">
-    @if(!empty($order->customer->companylistcust))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->companylistcust }}</p>
-    @endif
+<form action="{{ route('showCustomers') }}" method="POST">
+    @csrf <!-- Add CSRF protection -->
+    <select class="form-control custom-width" name="namedropdown">
+        @foreach($customer_data as $customer)
+            <option value="{{ $customer->id }}">{{ $customer->custName }}</option>
+        @endforeach
+    </select>
+</form>
+     
+</td>
+    <td class="text-center">
+        <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->status }}</p>-->
+        <form action="{{ route('orders.updateStatus') }}" method="POST">
+    @csrf
+    <!-- Hidden input fields for each data attribute -->
+    <input type="hidden" name="id" value="{{ $order->_id }}">
+    <input type="hidden" name="oldstatus" value="{{ $order->status }}">
+    <input type="hidden" name="custName" value="{{ $order->custName }}">
+    <!-- Add more hidden input fields for other data attributes -->
+
+    <select class="form-control custom-width" name="newstatus" onchange="submitForm(this)">
+        <option value="new" {{ $order->status == 'new' ? 'selected' : '' }}>New</option>
+        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+        <option value="dispatch" {{ $order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
+        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+    </select>
+</form>
+<script>
+    function submitForm(selectElement) {
+        // Get the form element containing the select dropdown
+        var form = selectElement.form;
+
+        // Submit the form
+        form.submit();
+    }
+</script>
+
+    </td>
+
+<td class="text-center">
+@if(!empty($order->prodName))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->prodName }}</p>
+@endif
 </td>
 <td class="text-center">
-    @if(!empty($order->customer->email))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->email }}</p>
-    @endif
+        @if(!empty($order->prod_qty  ))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->prod_qty }}</p>
+        @endif
 </td>
 <td class="text-center">
-    @if(!empty($order->customer->phoneno))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->phoneno }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->address))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->address }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->city))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->city }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->zipcode))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->zipcode }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->state))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->state }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->country))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->country }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->customer->custref))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->customer->custref }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->prodName))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prodName }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->product_type))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->product_type }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->prod_code))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prod_code }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->prod_qty))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->prod_qty }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->Thickness))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Thickness }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->Width))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Width }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->Roll_weight))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->Roll_weight }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->product->ColourName))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->product->ColourName }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->total_quantity))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->total_quantity }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->price))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->price }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->Billing_address))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->Billing_address }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->Delivery_address))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->Delivery_address }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->price_type))
+        @if(!empty( $order->price_type))    
         <p class="text-xs font-weight-bold mb-0">{{ $order->price_type }}</p>
-    @endif
+        @endif
 </td>
 <td class="text-center">
-    @if(!empty($order->status))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->status }}</p>
-    @endif
-</td>
-<td class="text-center">
-    @if(!empty($order->notes))
+        @if(!empty($order->notes ))    
         <p class="text-xs font-weight-bold mb-0">{{ $order->notes }}</p>
-    @endif
+        @endif
+</td>
+<td class="text-center">
+        <!--EDIT BUTTON-->
+        <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+            <i class="fas fa-user-edit text-secondary"></i>
+        </a>
+        <!--DELETE BUTTON-->
+        <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order->_id}}" data-bs-toggle="tooltip">
+            <span>
+                <i class="cursor-pointer fas fa-trash text-secondary"></i>
+            </span>
+        </a>
+   
 </td>
 
 @endforeach
@@ -209,6 +140,7 @@
     </div>
 </div>
 <!--================================= create bank modal ============================= -->
+
                             <!-- Button trigger modal -->
 
 
@@ -359,17 +291,6 @@
                                      <option value="delivery">Delivery Price</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-3">
-                                        <label for="status">Status<span class="required"></span></label>
-                                <select class="form-control custom-width" name="status" id="status">
-                                        <option value="new" selected>New</option>
-                                        <option value="processing">Processing</option>
-                                        <option value="dispatch">Dispatch</option>
-                                        <option value="completed">Completed</option>
-                                        <option value="cancelled">Cancelled</option>
-                                </select>
-                                </div>
-                                
                                 <div class="form-group col-md-8">
                                     <label for="notes">Notes<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="notes" id="notes" placeholder="Add Notes">

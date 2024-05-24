@@ -28,7 +28,23 @@ use App\Models\LoggedUsers;
 
 class AppHelper
 {
-public function getMasterDocumentSequence($key,$collection,$val)
+    public function getNextSequenceForNewDoc( $collection)//w
+    {
+        $maxId = $collection->aggregate([
+            ['$group' => ['_id' => null, 'max_id' => ['$max' => '$_id']]],
+        ])->toArray();
+
+        if (!empty($maxId)) {
+            $maxId = $maxId[0]['max_id'];
+            // dd( $maxId);
+            $parentId = $maxId + 1;
+        } else {
+            $parentId = 1; // If no documents found for the company, start with 1
+        }
+
+        return $parentId;
+    }
+    public function getMasterDocumentSequence($key,$collection,$val)
 {
 $cursor = $collection->aggregate([
 ['$match' => ['companyID' => (int)$key]],

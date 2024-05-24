@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
 use Illuminate\Http\Request;
 // use App\Models\User;
 use App\Models\Customer;
@@ -17,6 +16,13 @@ use PDF;
 use DB;
 use Illuminate\Validation\Rule;
 use Validator;
+use MongoDB\Client;
+use App\Models\NewOrder;
+use App\Models\Processing;
+use App\Models\Dispatch;
+use App\Models\Cancelled;
+use App\Models\Completed;
+use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
 {
@@ -24,11 +30,11 @@ class OrderController extends Controller
     {
         //dd($request);
         $maxLength = 2000;
-        $new_id = Order::max('_id') + 1;
+        $new_id = NewOrder::max('_id') + 1;
         $randomNumber = rand(100000, 999999);
         $unique_value = $randomNumber . $new_id;
         $companyId = 1;
-        $docAvailable = AppHelper::instance()->checkDoc(Order::raw(), $companyId, $maxLength);
+        $docAvailable = AppHelper::instance()->checkDoc(NewOrder::raw(), $companyId, $maxLength);
     
         // Construct the order data
         $orderData = [
@@ -78,14 +84,14 @@ class OrderController extends Controller
             $docId = (int)$info[1];
     
             // Get a new order ID
-            $orderid = AppHelper::instance()->getAdminDocumentSequence(1, Order::raw(), 'order', $docId);
+            $orderid = AppHelper::instance()->getAdminDocumentSequence(1, NewOrder::raw(), 'order', $docId);
     
             // Set the order data
             $orderData['_id'] = $orderid;
             $orderData['counter'] = 0;
     
             // Update the existing document
-            Order::raw()->updateOne(
+            NewOrder::raw()->updateOne(
                 ['companyID' => $companyId, '_id' => $docId],
                 ['$push' => ['order' => $orderData]]
             );
@@ -93,7 +99,7 @@ class OrderController extends Controller
             return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
         } else {
             // Get a new ID for the document
-            $new_id = Order::max('_id') + 1;
+            $new_id = NewOrder::max('_id') + 1;
     
             // Set the order data for a new document
             $orderData['_id'] = $new_id;
@@ -101,7 +107,7 @@ class OrderController extends Controller
             $orderData['companyID'] = $companyId;
     
             // Insert a new document
-           $orderData= Order::raw()->insertOne([
+           $orderData= NewOrder::raw()->insertOne([
                 '_id' => $new_id,
                 'counter' => 0,
                 'companyID' => $companyId,
@@ -352,55 +358,34 @@ class OrderController extends Controller
        public function view_order(Request $request)
     {
         $companyID=1;
-        $collection=Order::raw();
-        $orderCurr= $collection->aggregate([
-        ['$match' => ['companyID' => $companyID]],
-        ['$unwind' => '$order'],
-        ['$match' => ['order.delete_status' =>"NO"]],
-        ['$project' => [
-            'customer._id' => 1,
-            'customer.custName' => 1,
-            'customer.companylistcust' => 1,
-            'customer.email' => 1,
-            'customer.phoneno' => 1,
-            'customer.address' => 1,
-            'customer.city' => 1,
-            'customer.zipcode' => 1,
-            'customer.state' => 1,
-            'customer.country' => 1,
-            'customer.custref' => 1,
-            'product.prodName' => 1,
-            'product.product_type' => 1,
-            'product.prod_code' => 1,
-            'product.prod_qty' => 1,
-            'product.Thickness' => 1,
-            'product.Width' => 1,
-            'product.Roll_weight' => 1,
-            'product.ColourName' => 1,
-            'total_quantity' => 1,
-            'price' => 1,
-            'Billing_address' => 1,
-            'Delivery_address' => 1,
-            'price_type' => 1,
-            'status' => 1,
-            'notes' => 1,
-           
-        ]]
-
-
+        $collection=NewOrder::raw();
+        $orderCurr = $collection->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],  // Unwind the order array first
+            ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
+            ['$project' => [
+                '_id' => 1, 
+                'custName' =>'$order.customer.custName' ,
+                'status' => '$order.status',
+                'prodName' => '$order.product.prodName',
+                'prod_qty' => '$order.product.prod_qty',
+                'price_type' => '$order.price_type',
+                'notes' => '$order.notes'
+              ]]
         ]);
-
+        
         $order_data = $orderCurr->toArray();
-
-        return view('order.view_order',compact('order_data'));
-
+        //dd($order_data);
+        
+        return view('order.view_order', compact('order_data'));
+        //dd('order_data');
     }
     public function edit_order(Request $request)
     {
     $parent=$request->comId;
     $companyID=1;
     $id=$request->id;
-    $collection=\App\Models\Order::raw();
+    $collection=NewOrder::raw();
     $show1 = $collection->aggregate([
     ['$match' => ['_id' => (int)$parent, 'companyID' => 1]],
     ['$unwind' => ['path' => '$order']],
@@ -429,9 +414,9 @@ class OrderController extends Controller
     $companyId = 1;
     $masterId = (int)$request->masterId;
     $id = (int)$request->id;
-    $collection = \App\Models\Order::raw();
+    $collection = NewOrder::raw();
     // Update the order inside the array
-    $orderCurr=Order::raw()->updateOne(['companyID' => $companyId,'_id' => $masterId,'order._id' => $id],
+    $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'_id' => $masterId,'order._id' => $id],
 
     ['$set' => [
     'order.$.cust_id' => $request->customer_id,
@@ -466,24 +451,161 @@ class OrderController extends Controller
 
     public function delete_order(Request $request)
     {
-    $id = intval($request->id);
-    //dd($id);
-    $companyID=1;
-    $mainId=(int)$request->docid;
-    $orderData=Order::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => (int)$id],
-    ['$set' => [
-    'order.$.insertedTime' => time(),
-    'order.$.delete_status' => "YES",
-    'order.$.deleteOrder' => intval($id),
-    'order.$.deleteTime0' => time(),
-    ]]);
+        $id = intval($request->id);
+        //dd($id);
+        $companyID=1;
+        $mainId=(int)$request->docid;
+        $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => (int)$id],
+        ['$set' => [
+        'order.$.insertedTime' => time(),
+        'order.$.delete_status' => "YES",
+        'order.$.deleteOrder' => intval($id),
+        'order.$.deleteTime0' => time(),
+        ]]);
 
-    if($orderData==true)
+        if($orderData==true)
+        {
+        $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
+        return json_encode($arr);
+        }
+
+    }
+    public function updateStatus(Request $request)
     {
-    $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
-    return json_encode($arr);
-    }
-
-    }
+        //dd($request);
+        $companyID = 1;
+        $id = intval($request->id);
+        $oldStatus = strtolower($request->oldstatus);
+        $newStatus = strtolower($request->newstatus);
     
-}
+        // Define collection map
+        $collectionMap = [
+            'new' => NewOrder::raw(),
+            'processing' => Processing::raw(),
+            'dispatch' => Dispatch::raw(),
+            'completed' => Completed::raw(),
+            'cancelled' => Cancelled::raw()
+        ];
+        //dd($collectionMap);
+        // Determine old collection
+        if (!isset($collectionMap[$oldStatus])) {
+            return response()->json(['success' => false, 'message' => 'Invalid old status.']);
+        }
+        $oldCollection = $collectionMap[$oldStatus];
+    
+        // Aggregate to find the order
+        $orderResult = NewOrder::raw()->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],
+            ['$match' => ['_id' => ['$eq' => (int)$id]]],
+            ['$project' => [
+                '_id' => 1, 
+                'custName' =>'$order.customer.custName' ,
+                'status' => '$order.status',
+                'prodName' => '$order.product.prodName',
+                'prod_qty' => '$order.product.prod_qty',
+                'price_type' => '$order.price_type',
+                'notes' => '$order.notes'
+              ]]
+        ])->toArray();
+        
+       // dd($orderResult);
+        
+    
+        if (empty($orderResult)) {
+            return response()->json(['success' => false, 'message' => 'Order not found.']);
+        }
+    
+        $order = $orderResult[0]['order'];
+        $parentid = $orderResult[0]['_id'];
+    
+        // Update the order status and time
+        $statusTimes = [
+            'new' => 'status_New_time',
+            'processing' => 'status_Processing_time',
+            'dispatch' => 'status_dispatch_time',
+            'completed' => 'status_Completed_time',
+            'cancelled' => 'status_Cancelled_time'
+        ];
+    
+        $order['status'] = $newStatus;
+        if (isset($statusTimes[$newStatus])) {
+            $order[$statusTimes[$newStatus]] = time();
+        }
+    
+        // Determine new collection
+        if (!isset($collectionMap[$newStatus])) {
+            return response()->json(['success' => false, 'message' => 'Invalid new status.']);
+        }
+        $newCollection = $collectionMap[$newStatus];
+    
+        // Check if document is available in the new collection
+        $docAvailable = AppHelper::instance()->checkDoc($newCollection, $companyID, 7000);
+    
+        if ($docAvailable != "No") {
+            $info = explode("^", $docAvailable);
+            $docId = (int)$info[1];
+            $pushResult = $newCollection->updateOne(
+                ['companyID' => $companyID, '_id' => $docId],
+                ['$push' => ['order' => $order]]
+            );
+        } else {
+            $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
+            //dd($parentId);
+            $newDoc = [
+                "_id" => $parentId,
+                "counter" => 1,
+                "companyID" => $companyID,
+                "order" => [$order]
+            ];
+            $pushResult = $newCollection->insertOne($newDoc);
+        }
+    
+        if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
+            $pullResult = $oldCollection->updateOne(
+                ['companyID' => $companyID, '_id' => $parentid],
+                ['$pull' => ['order' => ['_id' => $id]]]
+            );
+    
+            if ($pullResult->getMatchedCount() > 0) {
+                //return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
+                echo "<script>alert('STATUS CHANGED SUCCESSFULLY')</script>";
+                return Redirect::route('orders.updateStatus');
+            } else {
+               // return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
+               echo "<script>alert('Order moved but not removed from the old collection.')</script>";
+               return Redirect::route('orders.updateStatus');
+            }
+        } else {
+           // return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
+            echo "<script>alert('Failed to move the order to the new collection.')</script>";
+            return Redirect::route('orders.updateStatus');
+        }
+    }
+    public function showCustomers()
+    {
+        $companyID=1;
+        $collection=Customer::raw();
+        $customerCurr = Customer::raw()->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$customer'],
+            ['$match' => ['customer.delete_status' =>"NO"]],
+            ['$project' => [
+                'customer._id' => 1,
+                'customer.custName' => 1,
+            ]],
+             ]);
+             
+            $customer_data = $customerCurr->toArray();
+            //dd( $customer_data);
+        //  $customerCurr = Customer::all();
+        
+            //$customer_data = iterator_to_array($customerCurr);
+           
+            return view('order.view_order',compact('customer_data'));
+        }
+        //$order_data = $orderCurr->toArray();
+       // $cusdata= Customer::all(); // Retrieve all customer data
+        //return view('order.view_order', compact('cusdata'));
+        // Pass customer data to the view
+    }

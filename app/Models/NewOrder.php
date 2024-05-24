@@ -7,15 +7,15 @@ namespace App\Models;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Eloquent\Model;
 
-class Order extends Model
+class NewOrder extends Model
 {
     use HasApiTokens;
 
     protected $primaryKey = '_id';
-    protected $keyType = 'int'; 
-    public $incrementing = true; // MongoDB IDs are not incrementing integers
+    protected $keyType = 'int';
+    public $incrementing = true; // Assuming you want this, though MongoDB typically uses ObjectIDs
     protected $connection = 'mongodb';
-    protected $collection = 'order_data';
+    protected $collection = 'new'; // Ensure this matches your collection name
     protected $dates = ['deleted_at'];
 
     /**
@@ -24,6 +24,7 @@ class Order extends Model
      * @var array<string>
      */
     protected $fillable = [
+        
         'custName',
         'companylistcust',
         'email',
@@ -48,8 +49,12 @@ class Order extends Model
         'Delivery_address',
         'price_type',
         'status',
-        'notes'
-        
+        'notes',
+        'status_New_time',
+        'status_Processing_time',
+        'status_dispatch_time',
+        'status_Completed_time',
+        'status_Cancelled_time'
     ];
 
 
