@@ -271,7 +271,7 @@ class OrderController extends Controller
     $products = Product::raw()->aggregate([
     ['$match' => ['companyID' => $companyId]],
     ['$unwind' => '$product'],
-    ['$match' => ['product.prodName' => new \MongoDB\BSON\Regex("{$product_nm}", 'i')]],
+    ['$match' => ['product.prodName' => new Regex("{$product_nm}", 'i')]],
     ['$group' => [
     '_id' => null,
     'products' => ['$push' => [
@@ -285,7 +285,7 @@ class OrderController extends Controller
     if (empty($products)) {
     return response()->json(['status' => false, 'message' => 'No products found'], 404);
     }
-
+   
     return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
 
 

@@ -3,6 +3,7 @@
 @section('content')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
 <style>
     /* Style the dropdown options */
@@ -332,7 +333,7 @@
         margin: 0;
     }
 </style>
-
+{{-- 
 <script>
     //     
     
@@ -402,16 +403,73 @@
     });
 
 </script>
-
+ --}}
 
 <script>
-
-
-
-     $(document).ready(function() {
-        populateBrowserList();
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchProductNames();
     });
+
+    // function fetchProductNames() {
+    //     $.ajax({
+    //         url: 'admin/searchProducts',
+    //         method: 'GET',
+    //         success: function (data) {
+    //             // const datalist = document.getElementById('products');
+    //             // datalist.innerHTML = '';
+    //             // data.forEach(product => {
+    //             //     const option = document.createElement('option');
+    //             //     option.value = product;
+    //             //     console.log(product);
+    //             //     datalist.appendChild(option);
+
+    //                 const datalist = $('#products');
+    //                 datalist.empty(); // Clear previous options
+    //                 data.forEach(product => {
+    //                     console.log(product);
+    //                     datalist.append(`<option value="${product.counter}">${product.counter}</option>`);
+    //                     console.log("product.counter");
+    //             });
+    //         },
+    //         error: function (error) {
+    //             console.error('Error fetching product names:', error);
+    //         }
+    //     });
+    // }
+
+    function fetchProductNames() {
+    
+        $.ajax({
+        url: '/admin/searchProducts',
+        method: 'GET',
+        success: function (data) {
+            const datalist = $('#products');
+            console.log(product);
+            datalist.empty(); // Clear previous options
+            if (Array.isArray(data)) {
+                data.forEach(product => {
+                    datalist.append(`<option value="${product}">${product}</option>`);
+                    console.log(product);
+                    
+                });
+            }else if (typeof data === 'object') {
+                // If data is not an array but an object, handle it accordingly
+                // For example, assuming data is an object with a 'name' property
+                datalist.append(`<option value="${data.name}">${data.name}</option>`);
+                console.log(data);
+            }
+             else {
+                console.error('Expected array data, received:', data);
+            }
+        },
+        error: function (error) {
+            console.error('Error fetching product names:', error.statusText);
+        }
+    });    
+}
+    
 </script>
+
 
 
 

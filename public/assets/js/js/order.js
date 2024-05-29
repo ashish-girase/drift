@@ -4,7 +4,7 @@ var base_path = $("#url").val();
 $(document).ready(function() {
    
 $(".createOrderModalStore").click(function(){
-        populateBrowserList();
+        // populateBrowserList();
         $('#addOrderModal').modal("show");
     });
     $('.edit-order').click(function(e) {

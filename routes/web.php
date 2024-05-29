@@ -71,23 +71,23 @@ Route::group(['middleware' => 'auth'], function () {
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
      Route::get('/admin/get_product', [ProductController::class, 'getProduct'])->name('getProduct');
-     Route::get('/getproducts', [ProductController::class, 'index']);
      Route::get('/products/{id}', [ProductController::class, 'show']);
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
      Route::post('admin/get_colorlist', [ProductController::class, 'get_colorlist']);
-
+     
      //Order master module
      Route::get('/order', [OrderController::class, 'view_order'])->name('order');
-    //  Route::POST('/admin/add_product', [OrderController::class, 'add_product']);
-    //  Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
-    //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
-    //  Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
-    //  Route::post('admin/get_colorlist', [OrderController::class, 'get_colorlist']);
-    Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
-    Route::POST('/admin/edit_order', [ProductController::class, 'edit_order']);
-    Route::POST('/admin/update_order', [ProductController::class, 'update_order']);
-    Route::post('/admin/delete_order', [ProductController::class, 'delete_order'])->name('delete_order');
-    Route::post('admin/searchCustomer', [OrderController::class, 'searchCustomer']);
+     //  Route::POST('/admin/add_product', [OrderController::class, 'add_product']);
+     //  Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
+     //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
+     //  Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
+     //  Route::post('admin/get_colorlist', [OrderController::class, 'get_colorlist']);
+     Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
+     Route::POST('/admin/edit_order', [ProductController::class, 'edit_order']);
+     Route::POST('/admin/update_order', [ProductController::class, 'update_order']);
+     Route::post('/admin/delete_order', [ProductController::class, 'delete_order'])->name('delete_order');
+     Route::post('admin/searchCustomer', [OrderController::class, 'searchCustomer']);
+     Route::get('admin/searchProducts', [OrderController::class, 'searchProduct']);
     Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
    // Route::post('order/view_order', [OrderController::class, ' showCustomers'])->name('showCustomers');
     Route::post('orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');

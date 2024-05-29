@@ -277,4 +277,18 @@ class ProductController extends Controller
             // dd($product);
             return response()->json($product);
         }
+
+        public function index()
+    {
+        $products = Product::all();
+        $product = $products->toArray();
+        //dd($products);
+        return response()->json($product);
+    }
+
+    public function show($id)
+    {
+        $product = Product::find($id);
+        return response()->json($product);
+    }
 }
