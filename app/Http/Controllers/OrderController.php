@@ -127,32 +127,60 @@ class OrderController extends Controller
         $para = '^' . $val;
         $datasearch = new Regex ($para, 'i');
         $companyID=1;
-        $show = \App\Models\Customer::raw()->aggregate([['$match' => ["companyID" => $companyID]],
+        $collection =Customer::raw();
+        $show =$collection ->aggregate([['$match' => ["companyID" => $companyID]],
             ['$unwind' => '$customer'],
             ['$match' => ['customer.custName' => $datasearch,'customer.delete_status' => "NO"]],
-            ['$project' => ['customer._id' => 1,'_id' => 1, 'customer.delete_status' => 1,'customer.custName'=> 1,'customer.companylistcust'=>1,
-            'customer.email' => 1,'customer.phoneno' => 1,'customer.address' => 1,'customer.city' => 1,
-            'customer.zipcode' => 1,'customer.state' => 1,'customer.country' => 1,'customer.custref' => 1,
+            ['$project' => [
+                'customer._id' => 1,
+                '_id' => 1, 
+                'customer.delete_status' => 1,
+                'customer.custName'=> 1,
+                'customer.companylistcust'=>1,
+                'customer.email' => 1,
+                'customer.phoneno' => 1,
+                'customer.address' => 1,
+                'customer.city' => 1,
+                'customer.zipcode' => 1,
+                'customer.state' => 1,
+                'customer.country' => 1,
+                'customer.custref' => 1,
             ]],
-            // ['$limit' => 100]
-        ]);
-        $customer = array();
-        $customerList = array();
-        foreach ($show as $s)
-        {
-            $k = 0;
-            $customer[$k] = $s['customer'];
-            $parent = $s['_id'];
-            $k++;
-            foreach ($customer as $s)
-            {
-                $customerList[] = array("id" => $s['_id'], "custName" => $s['custName']
-            );
-            }
+            // ['$limit' => 1]
+    ]);
 
-        }
-      //  dd($customerList);
-        echo json_encode($customerList);
+        // $customerList = []; // Initialize the array
+        // foreach ($show as $s) {
+        //     $customerList[] = [
+        //         "id" => $s['customer']['_id'], // Access customer ID correctly
+        //         "custName" => $s['customer']['custName'] // Access customer name correctly
+        //         // Add other fields if needed
+        //     ];
+        // }
+
+        $show_data = $show->toArray();
+        dd($show_data);
+        return view('order.view_order', compact('show_data'));
+        // return response()->json($show[0]['customer']);
+        // return response()->json($customerList);
+
+        // $customer = array();
+        // $customerList = array();
+    //     foreach ($show as $s)
+    //     {
+    //         $k = 0;
+    //         $customer[$k] = $s['customer'];
+    //         $parent = $s['_id'];
+    //         $k++;
+    //         foreach ($customer as $s)
+    //         {
+    //             $customerList[] = array("id" => $s['_id'], "custName" => $s['custName']
+    //         );
+    //         }
+
+    //     }
+    //    dd($customerList);
+    //     echo json_encode($customerList);
     }
 
     public function customerdataget_single(Request $request)
@@ -364,20 +392,34 @@ class OrderController extends Controller
             ['$unwind' => '$order'],  // Unwind the order array first
             ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
             ['$project' => [
-                '_id' => 1, 
+                '_id' => '$order._id', 
                 'custName' =>'$order.customer.custName' ,
                 'status' => '$order.status',
                 'prodName' => '$order.product.prodName',
                 'prod_qty' => '$order.product.prod_qty',
                 'price_type' => '$order.price_type',
-                'notes' => '$order.notes'
+                'notes' => '$order.notes',
+                'phoneno' => '$order.customer.phoneno',
+                'email' => '$order.customer.email',
+                'companylistcust' => '$order.customer.companylistcust',
+                'address'=> '$order.customer.address',
+                'city'=> '$order.customer.city',
+                'zipcode'=> '$order.customer.zipcode',
+                'state'=> '$order.customer.state',
+                'country'=> '$order.customer.country',
+                'custref'=> '$order.customer.custref'
+
+
+
+               
               ]]
         ]);
         
         $order_data = $orderCurr->toArray();
-        //dd($order_data);
+        // dd($order_data);
         
         return view('order.view_order', compact('order_data'));
+    
         //dd('order_data');
     }
     public function edit_order(Request $request)
@@ -468,6 +510,7 @@ class OrderController extends Controller
         $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
         return json_encode($arr);
         }
+        
 
     }
     public function updateStatus(Request $request)
@@ -497,16 +540,7 @@ class OrderController extends Controller
         $orderResult = NewOrder::raw()->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],
-            ['$match' => ['_id' => ['$eq' => (int)$id]]],
-            ['$project' => [
-                '_id' => 1, 
-                'custName' =>'$order.customer.custName' ,
-                'status' => '$order.status',
-                'prodName' => '$order.product.prodName',
-                'prod_qty' => '$order.product.prod_qty',
-                'price_type' => '$order.price_type',
-                'notes' => '$order.notes'
-              ]]
+            ['$match' => ['_id' => ['$eq' => (int)$id]]]
         ])->toArray();
         
        // dd($orderResult);
@@ -560,7 +594,7 @@ class OrderController extends Controller
             ];
             $pushResult = $newCollection->insertOne($newDoc);
         }
-    
+        
         if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
             $pullResult = $oldCollection->updateOne(
                 ['companyID' => $companyID, '_id' => $parentid],
@@ -568,18 +602,23 @@ class OrderController extends Controller
             );
     
             if ($pullResult->getMatchedCount() > 0) {
-                //return response()->json(['success' => true, 'message' => 'Status changed successfully.']);
-                echo "<script>alert('STATUS CHANGED SUCCESSFULLY')</script>";
-                return Redirect::route('orders.updateStatus');
+               echo "<script>";
+               echo "alert('Status changed successfully.');";
+               echo 'window.location.href = "' . url("order/view_order") . '";';
+               echo "</script>";
             } else {
-               // return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
-               echo "<script>alert('Order moved but not removed from the old collection.')</script>";
-               return Redirect::route('orders.updateStatus');
+                echo "<script>";
+                echo "alert('Order moved but not removed from the old collection.');";
+                echo 'window.location.href = "' . url("order/view_order") . '";';
+                echo "</script>";
+                //return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
             }
         } else {
-           // return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
-            echo "<script>alert('Failed to move the order to the new collection.')</script>";
-            return Redirect::route('orders.updateStatus');
+            echo "<script>";
+            echo "alert('Failed to move the order to the new collection.');";
+            echo 'window.location.href = "' . url("order/view_order") . '";';
+            echo "</script>";
+            //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
         }
     }
     public function showCustomers()
@@ -596,6 +635,7 @@ class OrderController extends Controller
             ]],
              ]);
              
+            //  $order_data = $orderCurr->toArray();
             $customer_data = $customerCurr->toArray();
             //dd( $customer_data);
         //  $customerCurr = Customer::all();
@@ -604,8 +644,9 @@ class OrderController extends Controller
            
             return view('order.view_order',compact('customer_data'));
         }
-        //$order_data = $orderCurr->toArray();
        // $cusdata= Customer::all(); // Retrieve all customer data
         //return view('order.view_order', compact('cusdata'));
         // Pass customer data to the view
+        
+     
     }

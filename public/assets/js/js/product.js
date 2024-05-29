@@ -221,6 +221,8 @@ function doSearch_sett(dom, funname, val) {
             Swal.fire('Please input alphanumeric characters only');
         }
     }
+
+    
     
     
 }

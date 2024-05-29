@@ -76,6 +76,7 @@
                                                     <i class="fas fa-user-edit text-secondary"></i>
                                                 </a>
                                                 <a href="#" class="mx-3 delete-product" data-user-ids="{{ $cusData_val->product->_id }}" data-user-master_id="{{ $cusData_val['_id'] }}" data-bs-toggle="tooltip">
+                                                  
                                                   <span>
                                                         <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                                     </span>

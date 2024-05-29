@@ -148,12 +148,13 @@ class CustomerController extends Controller
             $companyID=1;
             $parent=$request->master_id;
             $id=$request->id;
-            $collection=\App\Models\Customer::raw();
+            $collection=Customer::raw();
             $show1 = $collection->aggregate([
             ['$match' => ['_id' => (int)$parent, 'companyID' => 1]],
             ['$unwind' => ['path' => '$customer']],
             ['$match' => ['customer._id' => (int)$id]]
             ]);
+            //dd($show1);
             foreach ($show1 as $row) {
             $activeCust= array();
             $k = 0;
@@ -261,5 +262,41 @@ class CustomerController extends Controller
             // dd($companyList);
             echo json_encode($companyList);
         }*/
+        public function view_company()
+        {
+            $companyID=1;
+            $collection=Company::raw();
+            $companyCurr= $collection->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$company'],
+            ['$match' => ['company.delete_status' =>"NO"]],
+            ['$project' => [
+                'company._id' => 1,
+                'company.company_name' => 1,
+                'company.ccode' => 1,
+                'company.caddress'=>1,
+                'company.city' => 1,
+                'company.zipcode' => 1,
+                'company.state' => 1,
+                'company.country' => 1,
+                'company.taxgstno' => 1,
+                'company.phoneno' => 1,
+                'company.email' => 1,
+                'company.website' => 1,
+                //'customer.website' => 1,
+            ]],
+            ]);
+            // Check if company are found
+
+          // $companyCurr = Company::all();
+             //dd($companyCurr);
+           // $companyData = iterator_to_array($companyCurr);
+          
+           $companyData= $companyCurr->toArray();
+            //dd($companyData);
+           
+            return view('Company.view_company',compact('companyData'));
+            
+        }
 
 }

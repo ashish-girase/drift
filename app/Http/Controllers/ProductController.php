@@ -129,7 +129,7 @@ class ProductController extends Controller
         public function view_product()
         {
             $companyID=1;
-            $collection=\App\Models\Product::raw();
+            $collection=Product::raw();
             $productCurr= $collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$product'],
@@ -267,5 +267,14 @@ class ProductController extends Controller
             }
            
             echo json_encode($colorList);
+        }
+
+
+
+        public function getProduct(Request $request){
+            $productdata = Product::all();
+            $product = $productdata->toArray();
+            // dd($product);
+            return response()->json($product);
         }
 }

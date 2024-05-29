@@ -4,9 +4,11 @@ var base_path = $("#url").val();
 $(document).ready(function() {
    
 $(".createOrderModalStore").click(function(){
+        populateBrowserList();
         $('#addOrderModal').modal("show");
     });
-    $('.edit-product').click(function(e) {
+    $('.edit-order').click(function(e) {
+       
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
         $.ajax({
@@ -20,47 +22,116 @@ $(".createOrderModalStore").click(function(){
                 // var res = JSON.parse(response);
                 var productData = response.success[0].product[0];
                 console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#edit_prodid').val(productData._id); // Setting _id value
-                $('#edit_prodName').val(productData.prodName); // Setting _id value
-                $('#edit_colour_id').val(productData.colour_id);
+                $('#edit_custName').val(productData.custName); // Added customer name
+                $('#edit_companylistcust').val(productData.companylistcust);
+                $('#edit_email').val(productData.email);
+                $('#edit_phoneno').val(productData.phoneno);
+                $('#edit_address').val(productData.address);
+                $('#edit_city').val(productData.city);
+                $('#edit_zipcode').val(productData.zipcode);
+                $('#edit_state').val(productData.state);
+                $('#edit_country').val(productData.country);
+                $('#edit_custref').val(productData.custref);
+                $('#edit_prodName').val(productData.prodName);
                 $('#edit_product_type').val(productData.product_type);
                 $('#edit_prod_code').val(productData.prod_code);
                 $('#edit_prod_qty').val(productData.prod_qty);
                 $('#edit_Thickness').val(productData.Thickness);
                 $('#edit_Width').val(productData.Width);
                 $('#edit_Roll_weight').val(productData.Roll_weight);
+                $('#edit_ColourName').val(productData.ColourName);
+                $('#edit_total_quantity').val(productData.total_quantity);
+                $('#edit_price').val(productData.price);
+                $('#edit_Billing_address').val(productData.Billing_address);
+                $('#edit_Delivery_address').val(productData.Delivery_address);
+                $('#edit_price_type').val(productData.price_type);
+                $('#edit_status').val(productData.status);
+                $('#edit_notes').val(productData.notes);
+                
             }
+            
         });
-        $('#edit_productModel').modal("show");
+        $('#editordermodal').modal("show");
+    });
+
+     $('#custNamedrop').change(function() {
+        var selectedName = $(this).val();
+        console.log(selectedName);
+        $.ajax({
+            url: base_path+"/order",
+            method: 'GET',
+            data: {name: selectedName},
+            success: function(response) {
+                $('#companylistcust').val(response.email);
+                $('#email').val(response.phone);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+            
+        });
     });
 
     //Update User
-    $(document).on("click", '#updateproduct', function(event) {
+    $(document).on("click", '#saveOrder', function(event) {
         console.log("Edit User")
         var c_id= $('#edit_prodid').val();
         // var companySubID= $('#up_comSubId').val();
-        var pro_editname= $('#edit_prodid').val();
-        var edit_prodName= $('#edit_prodName').val();
-        var edit_colour_id= $('#edit_colour_id').val();
-        var edit_product_type= $('#edit_product_type').val();
-        var edit_prod_code= $('#edit_prod_code').val();
-        var edit_prod_qty= $('#edit_prod_qty').val();
-        var edit_Thickness= $('#edit_Thickness').val();
-        var edit_Width= $('#edit_Width').val();
-        var edit_Roll_weight= $('#edit_Roll_weight').val();
+        var edit_custName = $('#edit_custName').val();
+        var edit_companylistcust = $('#edit_companylistcust').val();
+        var edit_email = $('#edit_email').val();
+        var edit_phoneno = $('#edit_phoneno').val();
+        var edit_address = $('#edit_address').val();
+        var edit_city = $('#edit_city').val();
+        var edit_zipcode = $('#edit_zipcode').val();
+        var edit_state = $('#edit_state').val();
+        var edit_country = $('#edit_country').val();
+        var edit_custref = $('#edit_custref').val();
+        var edit_prodName = $('#edit_prodName').val();
+        var edit_product_type = $('#edit_product_type').val();
+        var edit_prod_code = $('#edit_prod_code').val();
+        var edit_prod_qty = $('#edit_prod_qty').val();
+        var edit_Thickness = $('#edit_Thickness').val();
+        var edit_Width = $('#edit_Width').val();
+        var edit_Roll_weight = $('#edit_Roll_weight').val();
+        var edit_ColourName = $('#edit_ColourName').val();
+        var edit_total_quantity = $('#edit_total_quantity').val();
+        var edit_price = $('#edit_price').val();
+        var edit_Billing_address = $('#edit_Billing_address').val();
+        var edit_Delivery_address = $('#edit_Delivery_address').val();
+        var edit_price_type = $('#edit_price_type').val();
+        var edit_status = $('#edit_status').val();
+        var edit_notes = $('#edit_notes').val();
+          
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
-        formData.append('_token', $("#_tokeupdatenproduct").val());
-        formData.append('_id', c_id);
+        formData.append('custName', edit_custName);
+        formData.append('companylistcust', edit_companylistcust);
+        formData.append('email', edit_email);
+        formData.append('phoneno', edit_phoneno);
+        formData.append('address', edit_address);
+        formData.append('city', edit_city);
+        formData.append('zipcode', edit_zipcode);
+        formData.append('state', edit_state);
+        formData.append('country', edit_country);
+        formData.append('custref', edit_custref);
         formData.append('prodName', edit_prodName);
-        formData.append('colour_id', edit_colour_id);
         formData.append('product_type', edit_product_type);
         formData.append('prod_code', edit_prod_code);
         formData.append('prod_qty', edit_prod_qty);
         formData.append('Thickness', edit_Thickness);
         formData.append('Width', edit_Width);
         formData.append('Roll_weight', edit_Roll_weight);
-        formData.append('deleteStatus', "NO");
+        formData.append('ColourName', edit_ColourName);
+        formData.append('total_quantity', edit_total_quantity);
+        formData.append('price', edit_price);
+        formData.append('Billing_address', edit_Billing_address);
+        formData.append('Delivery_address', edit_Delivery_address);
+        formData.append('price_type', edit_price_type);
+        formData.append('status', edit_status);
+        formData.append('notes', edit_notes);
+                   
+         
         $.ajax({
             url: base_path + "/admin/update_product",
             type: 'post',
@@ -84,7 +155,7 @@ $(".createOrderModalStore").click(function(){
     });
 
     //delete user
-    $('.delete-product').click(function(e) {
+    $('.delete-order').click(function(e) {
         e.preventDefault();
         // var userId = $(this).data('user-ids').split(',');
         var userId = $(this).data('user-ids');
@@ -95,7 +166,7 @@ $(".createOrderModalStore").click(function(){
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
-        url: base_path+"/admin/delete_product",
+        url: base_path+"/admin/delete_order",
         type: "POST",
         dataType: "json",
         data: {
@@ -104,7 +175,7 @@ $(".createOrderModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/product";
+            window.location.href = base_path+"/order";
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -112,6 +183,26 @@ $(".createOrderModalStore").click(function(){
         });
         }
     });
+
+    function populateBrowserList() {
+        
+        $.ajax({
+            url: base_path + "/admin/get_product",
+            type: 'GET',
+            success: function (response) {
+                var datalist = $('#products');               
+                datalist.empty();
+                console.log("hello");
+                response.forEach(function(browser) {
+                    datalist.append('<option value="' + browser + '">');
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
 
 });
 
@@ -380,6 +471,55 @@ function updatecustomerfield(value) {
             }
         });
     });
-    
-    
+
+    $(document).ready(function() {
+        // Populate dropdown with product options
+        $.ajax({
+            url: '/products', // Replace with your route to fetch products
+            type: 'GET',
+            success: function(response) {
+                if (response.status) {
+                    var dropdown = $('#productDropdown');
+                    $.each(response.data, function(index, product) {
+                        dropdown.append($('<option></option>').val(product.id).text(product.name));
+                    });
+                } else {
+                    console.error(response.message);
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#prodName').on('input', function() {
+            var productName = $(this).val();
+            if (productName === '') {
+                $('products').empty();
+                return;
+            }
+            
+            
+            $.ajax({
+                url: base_path + "/admin/get_product",
+                type: 'GET',
+                success: function (response) {
+                    var datalist = $('products');
+                    var he = "hello0";
+                    console.log(he);
+                    datalist.empty();
+                    response.forEach(function(productName) {
+                        datalist.append('<option value="' + productName + '">');
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+   
+   
 }

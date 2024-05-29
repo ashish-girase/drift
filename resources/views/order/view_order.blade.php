@@ -53,19 +53,13 @@
     <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
 </td>
 <td class="text-center">
-<form action="{{ route('showCustomers') }}" method="POST">
-    @csrf <!-- Add CSRF protection -->
-    <select class="form-control custom-width" name="namedropdown">
-        @foreach($customer_data as $customer)
-            <option value="{{ $customer->id }}">{{ $customer->custName }}</option>
-        @endforeach
-    </select>
-</form>
-     
+    @if(!empty($order->custName))
+            <p class="text-xs font-weight-bold mb-0">{{ $order->custName }}</p>
+    @endif     
 </td>
     <td class="text-center">
         <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->status }}</p>-->
-        <form action="{{ route('orders.updateStatus') }}" method="POST">
+        <form method="POST" action="{{ route('orders.updateStatus') }}" >
     @csrf
     <!-- Hidden input fields for each data attribute -->
     <input type="hidden" name="id" value="{{ $order->_id }}">
@@ -120,6 +114,7 @@
         </a>
         <!--DELETE BUTTON-->
         <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order->_id}}" data-bs-toggle="tooltip">
+       
             <span>
                 <i class="cursor-pointer fas fa-trash text-secondary"></i>
             </span>
@@ -156,7 +151,7 @@
             </div>
             <div class="modal-body">
             <meta name="csrf-token" content="{{ csrf_token() }}" />
-                <form method="post">
+                <form method="post" id="customerForm">
                     @csrf
                     <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
                     
@@ -167,10 +162,25 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="form-group col-md-3">
+                            <div class="form-group col-md-3">
+                                <label for="custName">Customer Name<span class="required"></span></label>
+                                <select class="form-control custom-width" class="form-group col-md-3" name="custName" id="custName">
+                                   
+                                    
+                                   
+                                  <option value="" hidden></option>
+                                    
+                                    @foreach ($order_data as $key => $order)
+                                        <option name="custName" id="custName"  value="{{ $key }}">{{ $order->custName }}</option>
+                                    @endforeach
+                                    
+                                    
+                                </select>
+                            </div>
+                                {{-- <div class="form-group col-md-3">
                                     <label for="custName">Customer Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="custName" id="custName" placeholder="Customer Name">
-                                </div>
+                                </div> --}}
                                 <div class="form-group col-md-3">
                                     <label for="companylistcust">Company Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="companylistcust" id="companylistcust" placeholder="Company Name">
@@ -224,8 +234,12 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-md-3">
-                                    <label for="prodName">Product Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" >
+                                    <label  for="prodName">Product Name<span class="required"></span></label>
+                                    <input class="form-control custom-width" list="browsers" id="products" name="products" placeholder="Select a product">
+                                    <datalist id="products">
+                                        
+                                    </datalist>
+                                    {{-- <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" > --}}
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="product_type">Product Type<span class="required"></span></label>
@@ -319,112 +333,92 @@
     }
 </style>
 
+<script>
+    //     
+    
+
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get a reference to the dropdown and input fields
+        var nameDropdown = document.getElementById('custName');
+        var companylistField = document.getElementById('companylistcust');
+        var emailField = document.getElementById('email');
+        var phonenumberfield = document.getElementById('phoneno');
+        var addressfield = document.getElementById('address')
+        var cityfield = document.getElementById('city') 
+        var zipcodefield = document.getElementById('zipcode')
+        var statefield = document.getElementById('state')
+        var countryfield = document.getElementById('country')
+        var custreffield = document.getElementById('custref')
+        
+        // Define the data JSON variable (replace this with your actual data)
+        var data = @json($order->_id);
+
+        // Add an event listener to the dropdown for the change event
+        nameDropdown.addEventListener('change', function() {
+            // Get the selected name from the dropdown
+            var selectedName = this.value;
+
+            
+            
+            var parts = selectedName.split(',');
+            var orderData = {!! json_encode($order_data) !!}[selectedName];
+            console.log(orderData);
+        
+            companylistField.value = orderData.companylistcust;
+            emailField.value = orderData.email;
+            phonenumberfield.value = orderData.phoneno;
+            addressfield.value = orderData.address;
+            cityfield.value = orderData.city;
+            zipcodefield.value = orderData.zipcode;
+            statefield.value= orderData.state;
+            countryfield.value = orderData.country;
+            custreffield.value = orderData.custref;
+            
+            
+            // console.log(specificOrder);
+           
+            
+
+            // Check if the selected name exists in the data object
+            if (orderData) {
+                // Populate the address and mobile number fields with the corresponding data
+                // emailField.value = parts[0].trim();
+                // phonenumberfield.value = parts[1].trim();
+                // companylistField.value = parts[2].trim();
+                // addressfield.value = parts[3].trim();
+                // cityfield.value = parts[4].trim();
+                // zipcodefield.value = parts[5].trim();
+                // statefield.value = parts[6].trim();
+                // countryfield.value = parts[7].trim();
+                // custreffield.value = parts[8].trim();
+                // mobileNumberField.value = data[selectedName].mobile_number;
+            } else {
+                // Clear the address and mobile number fields if the selected name doesn't have corresponding data
+                addressField.value = '';
+                mobileNumberField.value = '';
+            }
+        });
+    });
+
+</script>
+
+
+<script>
+
+
+
+     $(document).ready(function() {
+        populateBrowserList();
+    });
+</script>
+
+
+
 
 
                         <!-- Edit Product -->
-                        <div class="modal fade" id="edit_productModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                                <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit Product</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                        <form method="post">
-                                                @csrf
-                                                <input type="hidden" name="_token" id="_tokeupdatenproduct" value="{{Session::token()}}">
-                                                <input type="hidden" name="product_id"  id="edit_prodid">
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Product Name<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="prodName"
-                                                            id="edit_prodName" placeholder="Product Name">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Color Name<span
-                                                                class="required"></span></label>
-                                                        <!-- <input type="text" class="form-control" name="company_name"
-                                                            id="company_name" placeholder="Company Name"> -->
-                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="edit_colour_id"
-                                                        name="colour_id" onkeyup="doSearch_sett(this.value,'companylistcust')"  autocomplete="off">
-                                                        <datalist id="companylistcust1">
-                                                        </datalist>
-                                                        </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Prodcut Type<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="edit_product_type"
-                                                            id="edit_product_type" placeholder="Prodcut Type">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Product code<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="prod_code"
-                                                            id="edit_prod_code" placeholder="Product code">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Product Quantity<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="prod_qty"
-                                                            id="edit_prod_qty" placeholder="Product Quantity">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Product Thickness<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="Thickness"
-                                                            id="edit_Thickness" placeholder="Product Thickness">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Product Width<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="Width"
-                                                            id="edit_Width" placeholder="Product Width">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Roll weight<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="Roll_weight"
-                                                            id="edit_Roll_weight" placeholder="Roll weight">
-                                                    </div>
-                                                </div>
-                                                <div class="form-row">
-                                                    <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Color Name<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="color_name"
-                                                            id="color_name" placeholder="Color Name">
-                                                    </div>
-                                                </div>
-                                                </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn bg-gradient-primary " id="updateproduct">Update changes</button>
-                                    </div>
-                                    </div>
-                                </div>
-                                </div>
-<!--PRODUCT SCRIPT-->
-
-<!--END PRODUCT SCRIPT-->
-
+                     
 
 
 

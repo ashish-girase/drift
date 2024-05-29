@@ -34,13 +34,13 @@ $(".createCustomerModalStore").click(function(){
                 $('#edit_custref').val(companyData.custref); 
                 
                 // Show the modal after successfully setting the values
-                $('#editCustomerModal').modal("show");
             },
             error: function(xhr, status, error) {
                 // Handle error
                 console.log('Error:', error);
             }
         });
+        $('#editCustomerModal').modal("show");
     });
     
 
