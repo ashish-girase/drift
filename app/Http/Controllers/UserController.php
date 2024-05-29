@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use File;
 use Image;
+use Ramsey\Uuid\Uuid;
 use MongoDB\BSON\ObjectId;
 use Auth;
 use PDF;
@@ -20,16 +21,26 @@ class UserController extends Controller
 {
         public function add_user(Request $request)
         {
-            //dd($request);
-            $new_id = User::max('_id') + 1;
-            $randomNumber = rand(100000, 999999); // You can adjust the range as needed
-            $unique_value = $randomNumber . $new_id;
-            // Hash the password using bcrypt
-            $password = hash('sha1',$request->user_password);
+            // $maxLength = 2000;
+            // $companyId = 1;
+            // $new_id = User::max('_id') + 1;
+            // $new_id = User::orderBy('_id')->first();
+            $new_id = User::latest('_id')->first()->_id;
+            $increment =  $new_id + 1;
 
-            // Create data array
-            $data = [
-            '_id' => $new_id,
+            
+            
+            
+
+    // Check Document Availability
+    // $docAvailable = AppHelper::instance()->checkDoc(User::raw(), $companyId, $maxLength);
+
+    // Hash the password using bcrypt (consider using bcrypt() instead of sha1)
+    $password = bcrypt($request->user_password);
+
+    // Create data array
+    $data = [
+        '_id' => $increment,
             'userEmail' => $request->input('user_email'),
             // 'userName' => $request->input('userName'),
             'userPass' => $password,
@@ -61,8 +72,8 @@ class UserController extends Controller
             'deleteTime' => "",
             ];
             // dd($data);
-            $result = User::insert($data);
-            
+            $result =  User::insert($data);
+
 
             if ($result) {
             return response()->json([ 'status' => true,'message' => 'User added successfully'], 200);

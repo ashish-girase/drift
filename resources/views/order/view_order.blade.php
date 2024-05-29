@@ -456,7 +456,7 @@
                 else if (typeof data === 'object') {
                 // If data is not an array but an object, handle it accordingly
                 // For example, assuming data is an object with a 'name' property
-                datalist.append(`<option value="${data.name}">${data.name}</option>`);
+                datalist.append(`<option value="${data.prodName}">${data.prodName}</option>`);
                 console.log(data);
             }
              else {

@@ -18,8 +18,16 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    
+    
+    protected $primaryKey = '_id';
+    protected $keyType = 'int';
+    public $incrementing = true;
+
+    public $collection = 'users';
     protected $connection = 'mongodb';
-    protected $collection = 'users';
+    
+
     protected $fillable = [
         'userEmail',
         'userPass',

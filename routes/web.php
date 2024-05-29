@@ -36,7 +36,8 @@ Route::group(['middleware' => 'auth'], function () {
 	})->name('dashboard');
 
     //user Module
-    Route::POST('/admin/add_user', [UserController::class, 'add_user']);
+    Route::get('/user', [UserController::class, 'view_user']);
+    Route::post('/admin/add_user', [UserController::class, 'add_user']);
     Route::POST('/admin/edit_user', [UserController::class, 'edit_user']);
     Route::POST('/admin/update_user', [UserController::class, 'update_user']);
     Route::get('/user', [UserController::class, 'view_user']);
@@ -73,7 +74,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/admin/get_product', [ProductController::class, 'getProduct'])->name('getProduct');
      Route::get('/products/{id}', [ProductController::class, 'show']);
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
-     Route::post('admin/get_colorlist', [ProductController::class, 'get_colorlist']);
+     Route::post('/admin/get_colorlist', [ProductController::class, 'get_colorlist']);
      
      //Order master module
      Route::get('/order', [OrderController::class, 'view_order'])->name('order');

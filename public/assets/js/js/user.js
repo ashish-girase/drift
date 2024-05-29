@@ -115,102 +115,102 @@ $(".createUserModalStore").click(function(){
 });
 
 //////////////SAVE USER///////////////
+// $("#saveuser").click(function(){
+
+// var user_firstname=$('#user_firstname').val();
+// if(user_firstname=='')
+// {
+// Swal.fire( "Enter First Name");
+// $('#user_firstname').focus();
+// return false;
+// }
+
+// var user_lastname=$('#user_lastname').val();
+// if(user_lastname=='')
+// {
+// Swal.fire( "Enter Last Name");
+// $('#user_lastname').focus();
+// return false;
+// }
+
+// var user_email=$('#user_email').val();
+// if(user_email=='')
+// {
+// Swal.fire( "Enter Email Address");
+// $('#user_email').focus();
+// return false;
+// }
+// var user_password=$('#user_password').val();
+// if(user_password=='')
+// {
+// Swal.fire( "Enter Password");
+// $('#user_email').focus();
+// return false;
+// }
+// var user_phoneno=$('#user_phoneno').val();
+// var user_department=$('#user_department').val();
+// var user_note=$('#user_note').val();
+// var user_dob=$('#user_dob').val();
+// var user_code=$('#user_code').val();
+// var user_type=$('#user_type').val();
+// var user_address=$('#user_address').val();
+
+
+// //alert(currencyName);
+// // $('body').append(loadfunct);
+
+// $.ajax({
+// url: base_path+"/admin/add_user",
+// type: "POST",
+// datatype:"JSON",
+// data: {
+//     _token: $("#_tokenuser").val(),
+//     user_firstname: user_firstname,
+//     user_lastname: user_lastname,
+//     user_email: user_email,
+//     user_password: user_password,
+//     user_type: user_type,
+//     user_address: user_address,
+//     user_code: user_code,
+//     user_dob: user_dob,
+//     user_phoneno: user_phoneno,
+//     user_department: user_department,
+//     user_note: user_note,
+// },
+// cache: false,
+// success: function(Result){
+//     if(Result){
+//         Swal.fire('User added successfully')
+//         // $("#addLeadboardModal").css("z-index","");
+//         // $("#editLeadboardModal").css("z-index","");
+//         $("#addUserModal").modal("hide");
+//         $("#addUserModal form").trigger("reset");
+//         window.location.href = base_path + "/user";
+//         // if ($("#departmentModal").is(":visible")) {
+//         //     $.ajax({
+//         //         type: "GET",
+//         //         url: base_path+"/admin/view_user",
+
+//         //         success: function(text) {
+//         //         var res = JSON.parse(text);
+//         //         createdepartmentRows(res);
+//         //         }
+//         //     });
+//         //     $('#departmentModal').modal('show');
+//         // }
+//     }else{
+//         Swal.fire("department Type not added successfully.");
+//     }
+// }
+// });
+// // loadfunct.remove();
+// });
+
+
+
+
+
 $("#saveuser").click(function(){
-
-var user_firstname=$('#user_firstname').val();
-if(user_firstname=='')
-{
-Swal.fire( "Enter First Name");
-$('#user_firstname').focus();
-return false;
-}
-
-var user_lastname=$('#user_lastname').val();
-if(user_lastname=='')
-{
-Swal.fire( "Enter Last Name");
-$('#user_lastname').focus();
-return false;
-}
-
-var user_email=$('#user_email').val();
-if(user_email=='')
-{
-Swal.fire( "Enter Email Address");
-$('#user_email').focus();
-return false;
-}
-var user_password=$('#user_password').val();
-if(user_password=='')
-{
-Swal.fire( "Enter Password");
-$('#user_email').focus();
-return false;
-}
-var user_phoneno=$('#user_phoneno').val();
-var user_department=$('#user_department').val();
-var user_note=$('#user_note').val();
-var user_dob=$('#user_dob').val();
-var user_code=$('#user_code').val();
-var user_type=$('#user_type').val();
-var user_address=$('#user_address').val();
-
-
-//alert(currencyName);
-// $('body').append(loadfunct);
-
-$.ajax({
-url: base_path+"/admin/add_user",
-type: "POST",
-datatype:"JSON",
-data: {
-    _token: $("#_tokenuser").val(),
-    user_firstname: user_firstname,
-    user_lastname: user_lastname,
-    user_email: user_email,
-    user_password: user_password,
-    user_type: user_type,
-    user_address: user_address,
-    user_code: user_code,
-    user_dob: user_dob,
-    user_phoneno: user_phoneno,
-    user_department: user_department,
-    user_note: user_note,
-},
-cache: false,
-success: function(Result){
-    if(Result){
-        Swal.fire('User added successfully')
-        // $("#addLeadboardModal").css("z-index","");
-        // $("#editLeadboardModal").css("z-index","");
-        $("#addUserModal").modal("hide");
-        $("#addUserModal form").trigger("reset");
-        window.location.href = base_path + "/user";
-        // if ($("#departmentModal").is(":visible")) {
-        //     $.ajax({
-        //         type: "GET",
-        //         url: base_path+"/admin/view_user",
-
-        //         success: function(text) {
-        //         var res = JSON.parse(text);
-        //         createdepartmentRows(res);
-        //         }
-        //     });
-        //     $('#departmentModal').modal('show');
-        // }
-    }else{
-        Swal.fire("department Type not added successfully.");
-    }
-}
-});
-// loadfunct.remove();
-});
-
-
-
-
-
-/*$("#saveuser").click(function(){
 
     var user_firstname=$('#user_firstname').val();
     if(user_firstname=='')
@@ -249,8 +249,8 @@ success: function(Result){
     var user_code=$('#user_code').val();
     var user_type=$('#user_type').val();
     var user_address=$('#user_address').val();
-
-
+   
+    
     //alert(currencyName);
     // $('body').append(loadfunct);
 
@@ -275,10 +275,12 @@ success: function(Result){
     cache: false,
     success: function(Result){
         if(Result){
+            $("#addLeadboardModal").css("z-index","");
+        $("#editLeadboardModal").css("z-index","");
             Swal.fire('User added successfully')
 
             $("#addUserModal").modal("hide");
-            $("#addUserModal form").trigger("reset");
+            // $("#addUserModal form").trigger("reset");
             window.location.href = base_path + "/user";
 
         }else{
@@ -288,4 +290,3 @@ success: function(Result){
     });
     // loadfunct.remove();
     });
-*/

@@ -102,7 +102,7 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                        <form method="post">
+                                        <form method="post" enctype="multipart/form-data">
                                                 @csrf
                                                 <input type="hidden" name="_token" id="_tokenuser" value="{{Session::token()}}">
                                                 <div class="form-row">
