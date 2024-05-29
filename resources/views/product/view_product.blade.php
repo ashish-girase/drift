@@ -131,7 +131,7 @@
                                                                 class="required"></span></label>
                                                         <!-- <input type="text" class="form-control" name="company_name"
                                                             id="company_name" placeholder="Company Name"> -->
-                                                            <input list="colorlistcust" placeholder="search here..." class="form-control" id="colour_id" name="colour_id" onkeyup="doSearch_sett(this.value,'colorlistcust')" autocomplete="off">
+                                                            <input list="colorlistcust" placeholder="search here..." class="form-control" id="color_name" name="color_name" onkeyup="doSearch_sett(this.value,'colorlistcust')" autocomplete="off">
                                                             <datalist id="colorlistcust1">
                                                                 <!-- Options will be populated here -->
                                                             </datalist>
@@ -226,7 +226,7 @@
                                                                 class="required"></span></label>
                                                         <!-- <input type="text" class="form-control" name="company_name"
                                                             id="company_name" placeholder="Company Name"> -->
-                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="edit_colour_id"
+                                                        <input list="companylistcust" placeholder="search here..." class="form-control" id="colour_id"
                                                         name="colour_id" onkeyup="doSearch_sett(this.value,'companylistcust')"  autocomplete="off">
                                                         <datalist id="companylistcust1">
                                                         </datalist>
@@ -291,5 +291,37 @@
                                 </div>
 
 
+  <script>
+    $(document).ready(function() {
+    // Function to fetch color names and update datalist
+    function fetchColorNames() {
+        $.ajax({
+            url: '/admin/get_colorlist', // Replace with your route URL
+            method: 'GET',
+            success: function(response) {
+                // Clear existing options
+                $('#companylistcust1').empty();
+                // Populate datalist with fetched color names
+                response.forEach(function(colorName) {
+                    $('#companylistcust1').append(`<option value="${colorName}">${colorName}</option>`);
+                    console.log(colorName);
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color names:', error);
+            }
+        });
+    }
+
+    // Fetch color names when document is ready
+    fetchColorNames();
+
+    // Optional: Refresh color names when input field is focused
+    $('#colour_id').on('input', function() {
+        var searchTerm = $(this).val();
+        fetchColorNames(searchTerm);
+    });
+});
+    </script>                              
 
    @endsection

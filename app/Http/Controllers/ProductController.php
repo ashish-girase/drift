@@ -36,7 +36,8 @@ class ProductController extends Controller
 
             $docAvailable = AppHelper::instance()->checkDoc(Product::raw(), $companyId, $maxLength);
 
-            $colour_id = (int)$request->input('colour_id');
+            // dd($colour_id);
+             $colour_id = (int)$request->input('colour_id');
 
             // Fetching colour name based on colour_id
             $colour = Color::raw()->aggregate([
@@ -89,7 +90,7 @@ class ProductController extends Controller
             'deleteProduct' => "",
             'deleteTime' => "",
             );
-
+        //     dd($cons_data);
             Product::raw()->updateOne(['companyID' => $companyId, '_id' => (int)$docId], ['$push' => ['product' => $cons_data]]);
 
             return response()->json(['status' => true, 'message' => 'Product added successfully'], 200);
@@ -245,7 +246,7 @@ class ProductController extends Controller
             $datasearch = new Regex ($para, 'i');
             // dd($datasearch);
             $companyID=1;
-            $show = \App\Models\Color::raw()->aggregate([['$match' => ["companyID" => $companyID]],
+            $show = Color::raw()->aggregate([['$match' => ["companyID" => $companyID]],
                 ['$unwind' => '$color'],
                 ['$match' => ['color.color_name' => $datasearch,'color.delete_status' => "NO"]],
                 ['$project' => ['color._id' => 1,'_id' => 1, 'color.color_name' => 1,'color.delete_status'=>1]],
@@ -290,5 +291,16 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         return response()->json($product);
+    }
+
+    public function fetchColorNames(Request $request){
+        // $colors = Color::all()->toArray();
+        $searchTerm = $request->input('searchTerm');
+
+        // Fetch color names from the database based on the search term
+        $colors =  $colors = Color::where('colorName')->get();
+        dd($colors);
+
+        return response()->json($colors);
     }
 }

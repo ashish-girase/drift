@@ -2,8 +2,10 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-$(".createProductModalStore").click(function(){
+    $(".createProductModalStore").click(function(){
         $('#addProdcutModal').modal("show");
+        
+       
     });
     $('.edit-product').click(function(e) {
         var userId = $(this).data('user-ids');
@@ -21,14 +23,16 @@ $(".createProductModalStore").click(function(){
                 console.log("_id", response.success[0]); // Logging _id for debugging
                 $('#edit_prodid').val(productData._id); // Setting _id value
                 $('#edit_prodName').val(productData.prodName); // Setting _id value
-                $('#edit_colour_id').val(productData.colour_id);
+                $('#edit_colour_name').val(productData.ColorName);
                 $('#edit_product_type').val(productData.product_type);
                 $('#edit_prod_code').val(productData.prod_code);
                 $('#edit_prod_qty').val(productData.prod_qty);
                 $('#edit_Thickness').val(productData.Thickness);
                 $('#edit_Width').val(productData.Width);
                 $('#edit_Roll_weight').val(productData.Roll_weight);
-            }
+
+                // Assuming no arguments needed
+            }   
         });
         $('#edit_productModel').modal("show");
     });
@@ -116,6 +120,7 @@ $(".createProductModalStore").click(function(){
 
 $("#saveproduct").click(function(){
 
+    
     var prodName=$('#prodName').val();
     if(prodName=='')
     {
@@ -126,12 +131,14 @@ $("#saveproduct").click(function(){
     var prodName=$('#prodName').val();
     var product_type=$('#product_type').val();
     var colour_id=$('#colour_id').val();
+    var colour_name=$('#colour_name').val();
     var product_type=$('#product_type').val();
     var prod_code=$('#prod_code').val();
     var prod_qty=$('#prod_qty').val();
     var Thickness=$('#Thickness').val();
     var Width=$('#Width').val();
     var Roll_weight=$('#Roll_weight').val();
+    console.log(Thickness);
     $.ajax({
         url: base_path+"/admin/add_product",
         type: "POST",
@@ -141,6 +148,7 @@ $("#saveproduct").click(function(){
             prodName: prodName,
             product_type: product_type,
             colour_id: colour_id,
+            ColorName: colour_name,
             prod_code: prod_code,
             prod_qty: prod_qty,
             Thickness: Thickness,
@@ -158,6 +166,8 @@ $("#saveproduct").click(function(){
     });
 });
 
+
+
 const successMessage_pro = sessionStorage.getItem('successMessage_pro');
 if (successMessage_pro) {
     Swal.fire(successMessage_pro);
@@ -169,6 +179,7 @@ function doSearch_sett(dom, funname, val) {
     var func = funname;
     var dom = dom;
     var timeout;
+   
     if (timeout) {
         clearTimeout(timeout);
       }
@@ -186,7 +197,7 @@ function doSearch_sett(dom, funname, val) {
         formData.append('_token', $(".laravel_csrf_tokn").val());
         formData.append('value', value);
         formData.append('main', "admin");
-        
+
         if (value.match(value) || value == '') {
             $.ajax({
                 url: base_path + "/admin/get_colorlist",
@@ -199,6 +210,7 @@ function doSearch_sett(dom, funname, val) {
                 success: function (response) {
                     var result = response; // Assuming response is already parsed as JSON
                     var dropdown = document.getElementById(id);
+                   
                     if (dropdown) {
                         if (result.length == 0) {
                             dropdown.innerHTML = "<option value='No results Found ...'></option>";
