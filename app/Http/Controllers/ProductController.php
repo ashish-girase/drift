@@ -17,15 +17,7 @@ use Validator;
 
 class ProductController extends Controller
 {
-            // public function generateUniqueNumber()
-            // {
-            // do {
-            // $randomNumber = rand(100000, 999999); // You can adjust the range as needed
-            // $exists = Product::where('_id', $randomNumber)->exists();
-            // } while ($exists);
-
-            // return $randomNumber;
-            // }
+          
             public function add_product(Request $request)
             {
             $maxLength = 2000;
@@ -38,6 +30,8 @@ class ProductController extends Controller
 
             // dd($colour_id);
              $colour_id = (int)$request->input('colour_id');
+             $colour_name = $request->input('colours_name');
+            
 
             // Fetching colour name based on colour_id
             $colour = Color::raw()->aggregate([
@@ -66,6 +60,7 @@ class ProductController extends Controller
             'deleteProduct' => "",
             'deleteTime' => "",
             ];
+           // dd($cons);
 
             if ($docAvailable != "No")
             {
@@ -83,7 +78,7 @@ class ProductController extends Controller
             'Thickness' => $request->input('Thickness'),
             'Width' => $request->input('Width'),
             'colour_id' => $colour_id,
-            'ColourName' => $colours_name, // Storing colour name
+            'ColorName' => $colours_name, // Storing colour name
             'Roll_weight' => $request->input('Roll_weight'),
             'insertedTime' => time(),
             'delete_status' => "NO",
@@ -297,10 +292,14 @@ class ProductController extends Controller
         // $colors = Color::all()->toArray();
         $searchTerm = $request->input('searchTerm');
 
+        $colour = Color::raw()->aggregate([
+            ['$unwind' => '$color'],
+            ['$match' => ['color.delete_status'=>'NO']],
+            ])->toArray();
         // Fetch color names from the database based on the search term
-        $colors =  $colors = Color::where('colorName')->get();
-        dd($colors);
+        // $colors =  $colors = Color::where('_id')->get();
+        // dd($colour);
 
-        return response()->json($colors);
+        return response()->json($colour);
     }
 }

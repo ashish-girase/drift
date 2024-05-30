@@ -165,18 +165,13 @@
                             <div class="row">
                             <div class="form-group col-md-3">
                                 <label for="custName">Customer Name<span class="required"></span></label>
-                                <select class="form-control custom-width" class="form-group col-md-3" name="custName" id="custName">
-                                   
-                                    
-                                   
-                                  <option value="" hidden></option>
-                                    
-                                    @foreach ($order_data as $key => $order)
-                                        <option name="custName" id="custName"  value="{{ $key }}">{{ $order->custName }}</option>
-                                    @endforeach
-                                    
-                                    
-                                </select>
+                                
+                                <input type="text" id="customerInput" list="browsers" placeholder="e.g. datalist">
+                                <datalist id="customer_list">
+                                    {{-- @foreach($customers as $customer)
+                                        <option value="{{ $customer->_id  }}">{{ $customer->custName }}</option>
+                                        @endforeach --}}
+                                </datalist>
                             </div>
                                 {{-- <div class="form-group col-md-3">
                                     <label for="custName">Customer Name<span class="required"></span></label>
@@ -333,151 +328,7 @@
         margin: 0;
     }
 </style>
-{{-- 
-<script>
-    //     
-    
 
-
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get a reference to the dropdown and input fields
-        var nameDropdown = document.getElementById('custName');
-        var companylistField = document.getElementById('companylistcust');
-        var emailField = document.getElementById('email');
-        var phonenumberfield = document.getElementById('phoneno');
-        var addressfield = document.getElementById('address')
-        var cityfield = document.getElementById('city') 
-        var zipcodefield = document.getElementById('zipcode')
-        var statefield = document.getElementById('state')
-        var countryfield = document.getElementById('country')
-        var custreffield = document.getElementById('custref')
-        
-        // Define the data JSON variable (replace this with your actual data)
-        var data = @json($order->_id);
-
-        // Add an event listener to the dropdown for the change event
-        nameDropdown.addEventListener('change', function() {
-            // Get the selected name from the dropdown
-            var selectedName = this.value;
-
-            
-            
-            var parts = selectedName.split(',');
-            var orderData = {!! json_encode($order_data) !!}[selectedName];
-            console.log(orderData);
-        
-            companylistField.value = orderData.companylistcust;
-            emailField.value = orderData.email;
-            phonenumberfield.value = orderData.phoneno;
-            addressfield.value = orderData.address;
-            cityfield.value = orderData.city;
-            zipcodefield.value = orderData.zipcode;
-            statefield.value= orderData.state;
-            countryfield.value = orderData.country;
-            custreffield.value = orderData.custref;
-            
-            
-            // console.log(specificOrder);
-           
-            
-
-            // Check if the selected name exists in the data object
-            if (orderData) {
-                // Populate the address and mobile number fields with the corresponding data
-                // emailField.value = parts[0].trim();
-                // phonenumberfield.value = parts[1].trim();
-                // companylistField.value = parts[2].trim();
-                // addressfield.value = parts[3].trim();
-                // cityfield.value = parts[4].trim();
-                // zipcodefield.value = parts[5].trim();
-                // statefield.value = parts[6].trim();
-                // countryfield.value = parts[7].trim();
-                // custreffield.value = parts[8].trim();
-                // mobileNumberField.value = data[selectedName].mobile_number;
-            } else {
-                // Clear the address and mobile number fields if the selected name doesn't have corresponding data
-                addressField.value = '';
-                mobileNumberField.value = '';
-            }
-        });
-    });
-
-</script>
- --}}
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetchProductNames();
-    });
-
-    // function fetchProductNames() {
-    //     $.ajax({
-    //         url: 'admin/searchProducts',
-    //         method: 'GET',
-    //         success: function (data) {
-    //             // const datalist = document.getElementById('products');
-    //             // datalist.innerHTML = '';
-    //             // data.forEach(product => {
-    //             //     const option = document.createElement('option');
-    //             //     option.value = product;
-    //             //     console.log(product);
-    //             //     datalist.appendChild(option);
-
-    //                 const datalist = $('#products');
-    //                 datalist.empty(); // Clear previous options
-    //                 data.forEach(product => {
-    //                     console.log(product);
-    //                     datalist.append(`<option value="${product.counter}">${product.counter}</option>`);
-    //                     console.log("product.counter");
-    //             });
-    //         },
-    //         error: function (error) {
-    //             console.error('Error fetching product names:', error);
-    //         }
-    //     });
-    // }
-
-    function fetchProductNames() {
-    
-        $.ajax({
-        url: '/admin/searchProducts',
-        method: 'GET',
-        success: function (data) {
-            const datalist = $('#products');
-            
-            datalist.empty(); // Clear previous options
-            if (Array.isArray(data)) {
-                data.forEach(product => {
-                    datalist.append(`<option value="${product}">${product}</option>`);
-                   
-                    
-                });
-            }
-                else if (typeof data === 'object') {
-                // If data is not an array but an object, handle it accordingly
-                // For example, assuming data is an object with a 'name' property
-                datalist.append(`<option value="${data.prodName}">${data.prodName}</option>`);
-                console.log(data);
-            }
-             else {
-                console.error('Expected array data, received:', data);
-            }
-        },
-        error: function (error) {
-            console.error('Error fetching product names:', error.statusText);
-        }
-    });    
-}
-    
-</script>
-
-
-
-
-
-
-                        <!-- Edit Product -->
-                     
 
 
 

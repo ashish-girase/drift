@@ -203,6 +203,66 @@ $(".createOrderModalStore").click(function(){
         });
     }
 
+    fetchusers();
+    function fetchusers(searchTerm) {
+        $.ajax({
+            url: '/admin/serchcustomerdata', // Replace with your route URL
+            method: 'GET',
+            data: { searchTerm: searchTerm }, // Pass search term if needed
+            success: function(data) {
+                var colorSelect = $('#customer_list');
+                console.log("colorSelect");
+                data.forEach(function(customer) {
+                colorSelect.append('<option value="' +customer._id+ '">' + customer.custName + '</option>');
+                console.log(customer.customer._id);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching customer names:', error);
+        }
+        });
+    }
+
+//     var dataList = $('#customer_list');
+// var input = $('#customerInput');
+
+// // Update the placeholder text.
+// input.attr('placeholder', 'Loading options...');
+
+// // Make the AJAX request.
+// $.ajax({
+//     url: '/admin/searchcustomerdata', // Assuming this is the route to your controller method
+//     type: 'GET',
+//     dataType: 'json',
+//     data: {
+//         value: input.val() // Assuming you want to pass the input value to the controller
+//     },
+//     success: function(jsonOptions) {
+//         // Loop over the JSON array.
+//         $.each(jsonOptions, function(index, item) {
+//             // Create a new <option> element.
+//             var option = $('<option>');
+//             // Set the value using the item in the JSON array.
+//             option.attr('value', item.customer._id); // Assuming 'id' is the property you want to use
+//             // Add the <option> element to the <datalist>.
+//             dataList.append(option);
+//             console.log("item._id");
+//         });
+
+//         // Update the placeholder text.
+//         input.attr('placeholder', 'e.g. datalist');
+//     },
+//     error: function() {
+//         // An error occured :(
+//         input.attr('placeholder', "Couldn't load datalist options :(");
+        
+//     }
+// });
+
+    
+
+   
+
 
 });
 
@@ -322,25 +382,24 @@ function doSearch_cust(dom, funname, val) {
         formData.append('main', "admin");
         if (value.match(value) || value == '') {
           $.ajax({
-            url: base_path + "/admin/searchCustomer",
-            type: "POST",
+            url: base_path + "/admin/serchcustomerdata",
+            type: "GET",
             dataType: "JSON",
             contentType: false,
             processData: false,
             data: formData,
             cache: false,
-            success: function (result) {
-                var options = `<select class="form-control" id="companyfield" onchange="updatecustomerfield(this.value)">`;
-            if (result.length == 0) {
-                options += "<option value=''>No Record Found ...</option>";
-            } else {
-                options += "<option value='' disabled selected>---Select Customer---</option>";
-                for (var i = 0; i < result.length; i++) {
-                    options += `<option value="${result[i].id}">${result[i].custName}</option>`;
+            success: function(result) {
+            
+                var options = '';
+                if (result.customers.length == 0) {
+                    options += "<option value=''>No Record Found ...</option>";
+                } else {
+                    for (var i = 0; i < result.customers.length; i++) {
+                        options += `<option value="${result.customers[i]._id}">${result.customers[i].custName}</option>`;
+                    }
                 }
-            }
-            options += `</select>`;
-            $('#customer_list').html(options);
+                $('#customer_list').html(options);
             },
             error: function(xhr, status, error) {
               console.error(xhr.responseText); // Log any errors

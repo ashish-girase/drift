@@ -68,6 +68,7 @@ Route::group(['middleware' => 'auth'], function () {
 
      //Product master module
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
+    
      Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
@@ -75,6 +76,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/products/{id}', [ProductController::class, 'show']);
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
      Route::get('/admin/get_colorlist', [ProductController::class, 'fetchColorNames']);
+    // Route::get('/fetch-color-name', 'ProductController@fetchColorName');
      
      //Order master module
      Route::get('/order', [OrderController::class, 'view_order'])->name('order');
@@ -92,6 +94,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
    // Route::post('order/view_order', [OrderController::class, ' showCustomers'])->name('showCustomers');
     Route::post('orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::get('/admin/serchcustomerdata', [OrderController::class, 'serchcustomerdata']);
+    
+    // Route::get('/admin/create', [OrderController::class, 'create'])->name('create');
 
 
 

@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
 {
+  
     public function addOrder(Request $request)
     {
         //dd($request);
@@ -35,13 +36,35 @@ class OrderController extends Controller
         $unique_value = $randomNumber . $new_id;
         $companyId = 1;
         $docAvailable = AppHelper::instance()->checkDoc(NewOrder::raw(), $companyId, $maxLength);
-    
+
+        $cust_id = (int)$request->input('cust_id');
+        $prod_id = (int)$request->input('prod_id');
+        // Fetch customer details
+        $customer = Customer::raw()->aggregate([
+        ['$match' => ['companyID' => $companyId]],
+        ['$unwind' => '$customer'],
+        ['$match' => ['customer._id' => $cust_id]],
+        ['$limit' => 1]
+        ])->toArray();
+
+        $customers_name = $customer ? $customer[0]['customer']['custName'] : '';
+
+        // Fetch product details
+        $product = Product::raw()->aggregate([
+        ['$match' => ['companyID' => $companyId]],
+        ['$unwind' => '$product'],
+        ['$match' => ['product._id' => $prod_id]],
+        ['$limit' => 1]
+        ])->toArray();
+
+        $products_name = $product ? $product[0]['product']['prodName'] : '';
         // Construct the order data
         $orderData = [
             '_id' => $new_id,
             'counter' => 1,
             'customer' => [
-                'custName' => $request->input('custName'),
+                'cust_id' => $cust_id,
+                'custName' => $customers_name,
                 'companylistcust' => $request->input('companylistcust'),
                 'email' => $request->input('email'),
                 'phoneno' => $request->input('phoneno'),
@@ -53,7 +76,8 @@ class OrderController extends Controller
                 'custref' => $request->input('custref'),
             ],
             'product' => [
-                'prodName' => $request->input('prodName'),
+                'prod_id' => $prod_id,
+                'prodName' => $products_name,
                 'product_type' => $request->input('product_type'),
                 'prod_code' => $request->input('prod_code'),
                 'prod_qty' => $request->input('prod_qty'),
@@ -63,7 +87,7 @@ class OrderController extends Controller
                 'ColourName' => $request->input('ColourName'),
                 
             ],
-            'total_quantity' => $request->input('total_quantity'),
+                'total_quantity' => $request->input('total_quantity'),
                 'price' => $request->input('price'),
                 'Billing_address' => $request->input('Billing_address'),
                 'Delivery_address' => $request->input('Delivery_address'),
@@ -146,21 +170,13 @@ class OrderController extends Controller
                 'customer.country' => 1,
                 'customer.custref' => 1,
             ]],
-            // ['$limit' => 1]
+          
     ]);
 
-        // $customerList = []; // Initialize the array
-        // foreach ($show as $s) {
-        //     $customerList[] = [
-        //         "id" => $s['customer']['_id'], // Access customer ID correctly
-        //         "custName" => $s['customer']['custName'] // Access customer name correctly
-        //         // Add other fields if needed
-        //     ];
-        // }
-
+    
         $show_data = $show->toArray();
-        dd($show_data);
-        return view('order.view_order', compact('show_data'));
+       dd($show_data);
+       return response()->json($show_data);
         // return response()->json($show[0]['customer']);
         // return response()->json($customerList);
 
@@ -250,9 +266,10 @@ class OrderController extends Controller
         'cust_Billing_address' => '$customer.cust_Billing_address',
         'cust_Delivery_address' => '$customer.cust_Delivery_address'
         */]],
-    ]],
-    ['$project' => ['customer' => 1, '_id' => 0]]
-    ])->toArray();
+        ]],
+        ['$project' => ['customer' => 1, '_id' => 0]]
+        ])->toArray();
+        dd($customers);
   //  dd($customers);
     if (empty($customers)) {
     // dd($customers);
@@ -387,6 +404,16 @@ class OrderController extends Controller
     {
         $companyID=1;
         $collection=NewOrder::raw();
+        // $customers = Customer::select('_id', 'custName')->get();
+        $cust_id=$request->input('cust_id');
+        $customers = Customer::raw()->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$customer'],
+            ['$match' => ['customer._id' => $cust_id]],
+            ['$limit' => 1]
+            ])->toArray();
+    
+            $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
         $orderCurr = $collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],  // Unwind the order array first
@@ -416,10 +443,9 @@ class OrderController extends Controller
         ]);
         
         $order_data = $orderCurr->toArray();
-        // dd($order_data);
         
-        return view('order.view_order', compact('order_data'));
-    
+        return view('order.view_order', compact('order_data','customers'));
+        
         //dd('order_data');
     }
     public function edit_order(Request $request)
@@ -647,6 +673,43 @@ class OrderController extends Controller
        // $cusdata= Customer::all(); // Retrieve all customer data
         //return view('order.view_order', compact('cusdata'));
         // Pass customer data to the view
+
+
+        public function serchcustomerdata(Request $request){
+            $companyID=1;
+            $cust_id=$request->input('value');
+            $customers = Customer::all();
+            $colour = Customer::raw()->aggregate([
+                ['$unwind' => '$customer'],
+                ['$match' => ['customer.delete_status'=>'NO']],
+                ])->toArray();
+    
+            // $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
+            dd($customers);
+            return response()->json($customers);
+        }
+
+        // $companyID = 1;
+        // $cust_id = $request->input('value');
+
+        // // Fetch customers based on companyID and cust_id
+        // $customers = Customer::where('company_id', $companyID)
+        //     ->where('id', $cust_id)
+        //     ->get();
+
+        // // Append additional data to the existing $customers array
+        // $additionalCustomers = Customer::raw()->aggregate([
+        //     ['$unwind' => '$customer'],
+        //     ['$match' => ['customer.delete_status' => 'NO']],
+        // ])->toArray();
+
+        // // Merge the additional customers to the existing array
+        // $customers = $customers->merge($additionalCustomers);
+
+        // // Return JSON response
+        // return response()->json($customers);
+    }
+
         
      
-    }
+

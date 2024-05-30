@@ -35,6 +35,7 @@ $(document).ready(function() {
             }   
         });
         $('#edit_productModel').modal("show");
+
     });
 
     //Update User
@@ -115,8 +116,74 @@ $(document).ready(function() {
         });
         }
     });
+    
 
+    fetchColorNames();
+
+    function fetchColorNames(searchTerm) {
+        $.ajax({
+            url: '/admin/get_colorlist', // Replace with your route URL
+            method: 'GET',
+            data: { searchTerm: searchTerm }, // Pass search term if needed
+            success: function(data) {
+                var colorSelect = $('#colorlistcust1');
+                data.forEach(function(color) {
+                colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+                });
+                },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color names:', error);
+            }
+        });
+    }
+    
+
+
+    // $('#colorlistcust1').change(function() {
+    //     var colour_id = $(this).val();
+   
+    //     var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
+        
+        
+    //     $.ajax({
+    //         url: '/admin/add_product', // URL to your backend route
+    //         method: 'POST',
+    //         data: { colour_id: colour_id, color_name: color_name }, // Pass both color ID and name
+    //         success: function(response) {
+    //             // Handle success if needed
+    //             console.log(data);
+                
+    //         },
+    //         error: function(xhr, status, error) {
+    //             console.error('Error fetching color name:', error);
+    //         }
+    //     });
+    // });
+
+
+    
+    $('#colorlistcust1').change(function() {
+        var colour_id = $(this).val();
+    
+        var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
+    
+        $.ajax({
+            url:  base_path+'/admin/add_product', // URL to your backend route
+            method: 'POST',
+            
+            data: { _token: $("#_tokenproduct").val(), colour_id: colour_id, colours_name: color_name }, // Pass both color ID and name
+            success: function(response) {
+                // Handle success if needed
+                console.log(response); // Log the response from the server
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color name:', error);
+            }
+        });
+    });
+    
 });
+
 
 $("#saveproduct").click(function(){
 
@@ -130,15 +197,15 @@ $("#saveproduct").click(function(){
     }
     var prodName=$('#prodName').val();
     var product_type=$('#product_type').val();
-    var colour_id=$('#colour_id').val();
-    var colour_name=$('#colour_name').val();
+    var colour_id=$('#colorlistcust1').val();
+    var colour_name= $('#colorlistcust1 option:selected').text();
     var product_type=$('#product_type').val();
     var prod_code=$('#prod_code').val();
     var prod_qty=$('#prod_qty').val();
     var Thickness=$('#Thickness').val();
     var Width=$('#Width').val();
     var Roll_weight=$('#Roll_weight').val();
-    console.log(Thickness);
+   
     $.ajax({
         url: base_path+"/admin/add_product",
         type: "POST",
@@ -157,6 +224,19 @@ $("#saveproduct").click(function(){
         },
         cache: false,
         success: function(Result){
+            console.log("Data being sent:", {
+                _token: $("#_tokenproduct").val(),
+                prodName: prodName,
+                product_type: product_type,
+                colour_id: colour_id,
+                ColorName: ColourName,
+                prod_code: prod_code,
+                prod_qty: prod_qty,
+                Thickness: Thickness,
+                Width: Width,
+                Roll_weight: Roll_weight
+            });
+            console.log($("#_tokenproduct").val());
             console.log(Result);
             $("#addProdcutModal").modal("hide");
             // Store the success message in session storage
@@ -234,7 +314,29 @@ function doSearch_sett(dom, funname, val) {
         }
     }
 
-    
+    function fetchColorNames(searchTerm) {
+        $.ajax({
+            url: '/admin/get_colorlist', // Replace with your route URL
+            method: 'GET',
+            data: { searchTerm: searchTerm }, // Pass search term if needed
+            success: function(response) {
+                // Clear existing options
+                $('#companylistcust1').empty();
+                // Populate datalist with fetched color names
+                response.forEach(function(colorName) {
+                    $('#companylistcust1').append(`<option value="${colorName.color_name}">${colorName.color_name}</option>`);
+                    console.log(colorName.color_name, colorName._id); // Access directly without color.color_name
+                    
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color names:', error);
+            }
+        });
+    }
+    $(document).ready(function() {
+     
+    });
     
     
 }
