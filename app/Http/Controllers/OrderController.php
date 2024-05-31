@@ -29,7 +29,7 @@ class OrderController extends Controller
   
     public function addOrder(Request $request)
     {
-        //dd($request);
+        // dd($request);
         $maxLength = 2000;
         $new_id = NewOrder::max('_id') + 1;
         $randomNumber = rand(100000, 999999);
@@ -37,7 +37,8 @@ class OrderController extends Controller
         $companyId = 1;
         $docAvailable = AppHelper::instance()->checkDoc(NewOrder::raw(), $companyId, $maxLength);
 
-        $cust_id = (int)$request->input('cust_id');
+        $cust_id = (int)$request->input('');
+        // dd($cust_id);
         $prod_id = (int)$request->input('prod_id');
         // Fetch customer details
         $customer = Customer::raw()->aggregate([
@@ -63,8 +64,8 @@ class OrderController extends Controller
             '_id' => $new_id,
             'counter' => 1,
             'customer' => [
-                'cust_id' => $cust_id,
-                'custName' => $customers_name,
+                'cust_id' => $request->input('cusrID'),
+                'custName' => $request->input('custName'),
                 'companylistcust' => $request->input('companylistcust'),
                 'email' => $request->input('email'),
                 'phoneno' => $request->input('phoneno'),
@@ -76,8 +77,8 @@ class OrderController extends Controller
                 'custref' => $request->input('custref'),
             ],
             'product' => [
-                'prod_id' => $prod_id,
-                'prodName' => $products_name,
+                'prod_id' => $request->input('prodID'),
+                'prodName' => $request->input('prodName'),
                 'product_type' => $request->input('product_type'),
                 'prod_code' => $request->input('prod_code'),
                 'prod_qty' => $request->input('prod_qty'),
@@ -99,7 +100,10 @@ class OrderController extends Controller
             'deleteOrder' => "",
             'deleteTime' => "",
         ];
-        //dd($orderData);
+
+        // dd($orderData);
+        
+       
     
         // Check document availability
         if ($docAvailable != "No") {
@@ -119,6 +123,7 @@ class OrderController extends Controller
                 ['companyID' => $companyId, '_id' => $docId],
                 ['$push' => ['order' => $orderData]]
             );
+            // dd($orderData);
     
             return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
         } else {
@@ -137,7 +142,7 @@ class OrderController extends Controller
                 'companyID' => $companyId,
                 'order' => [$orderData],
             ]);
-          // dd($orderData);
+          
     
             return response()->json(['status' => true, 'message' => 'Order added successfully'], 200);
         }
@@ -435,14 +440,12 @@ class OrderController extends Controller
                 'state'=> '$order.customer.state',
                 'country'=> '$order.customer.country',
                 'custref'=> '$order.customer.custref'
-
-
-
-               
-              ]]
+              ]],
+              ['$sort' => ['_id' => -1]]
         ]);
         
         $order_data = $orderCurr->toArray();
+        // dd($order_data);
         
         return view('order.view_order', compact('order_data','customers'));
         
@@ -520,7 +523,7 @@ class OrderController extends Controller
     public function delete_order(Request $request)
     {
         $id = intval($request->id);
-        //dd($id);
+        dd($id);
         $companyID=1;
         $mainId=(int)$request->docid;
         $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => (int)$id],
@@ -675,39 +678,30 @@ class OrderController extends Controller
         // Pass customer data to the view
 
 
-        public function serchcustomerdata(Request $request){
-            $companyID=1;
-            $cust_id=$request->input('value');
-            $customers = Customer::all();
-            $colour = Customer::raw()->aggregate([
+        public function searchcustomerdata(Request $request){
+            $customers = Customer::raw()->aggregate([
                 ['$unwind' => '$customer'],
                 ['$match' => ['customer.delete_status'=>'NO']],
                 ])->toArray();
     
             // $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
-            dd($customers);
+            // dd($customers);
             return response()->json($customers);
         }
 
-        // $companyID = 1;
-        // $cust_id = $request->input('value');
+    
 
-        // // Fetch customers based on companyID and cust_id
-        // $customers = Customer::where('company_id', $companyID)
-        //     ->where('id', $cust_id)
-        //     ->get();
+        public function searchproductdata(Request $request){
+            $products = Product::raw()->aggregate([
+                ['$unwind' => '$product'],
+                ['$match' => ['product.delete_status'=>'NO']],
+                ])->toArray();
+    
+            // $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
+            // dd($products);
+            return response()->json($products);
+        }
 
-        // // Append additional data to the existing $customers array
-        // $additionalCustomers = Customer::raw()->aggregate([
-        //     ['$unwind' => '$customer'],
-        //     ['$match' => ['customer.delete_status' => 'NO']],
-        // ])->toArray();
-
-        // // Merge the additional customers to the existing array
-        // $customers = $customers->merge($additionalCustomers);
-
-        // // Return JSON response
-        // return response()->json($customers);
     }
 
         

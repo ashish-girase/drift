@@ -17,6 +17,7 @@ use Validator;
 
 class ProductController extends Controller
 {
+
           
             public function add_product(Request $request)
             {
@@ -30,7 +31,7 @@ class ProductController extends Controller
 
             // dd($colour_id);
              $colour_id = (int)$request->input('colour_id');
-             $colour_name = $request->input('colours_name');
+             $colours_name = $request->input('colours_name');
             
 
             // Fetching colour name based on colour_id
@@ -85,7 +86,7 @@ class ProductController extends Controller
             'deleteProduct' => "",
             'deleteTime' => "",
             );
-        //     dd($cons_data);
+            // dd($cons_data);
             Product::raw()->updateOne(['companyID' => $companyId, '_id' => (int)$docId], ['$push' => ['product' => $cons_data]]);
 
             return response()->json(['status' => true, 'message' => 'Product added successfully'], 200);

@@ -138,32 +138,9 @@ $(document).ready(function() {
     }
     
 
-
-    // $('#colorlistcust1').change(function() {
-    //     var colour_id = $(this).val();
-   
-    //     var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
-        
-        
-    //     $.ajax({
-    //         url: '/admin/add_product', // URL to your backend route
-    //         method: 'POST',
-    //         data: { colour_id: colour_id, color_name: color_name }, // Pass both color ID and name
-    //         success: function(response) {
-    //             // Handle success if needed
-    //             console.log(data);
-                
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error('Error fetching color name:', error);
-    //         }
-    //     });
-    // });
-
-
-    
     $('#colorlistcust1').change(function() {
         var colour_id = $(this).val();
+        
     
         var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
     
@@ -186,6 +163,7 @@ $(document).ready(function() {
 
 
 $("#saveproduct").click(function(){
+    var colour_id = $(this).val();
 
     
     var prodName=$('#prodName').val();

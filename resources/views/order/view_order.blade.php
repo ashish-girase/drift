@@ -115,7 +115,7 @@
         </a>
         <!--DELETE BUTTON-->
         <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order->_id}}" data-bs-toggle="tooltip">
-       
+
             <span>
                 <i class="cursor-pointer fas fa-trash text-secondary"></i>
             </span>
@@ -163,15 +163,11 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                            <div class="form-group col-md-3">
+                                <div class="form-group col-md-3">
+                                <input type="text" name="custid" id="custid" hidden>
                                 <label for="custName">Customer Name<span class="required"></span></label>
-                                
-                                <input type="text" id="customerInput" list="browsers" placeholder="e.g. datalist">
-                                <datalist id="customer_list">
-                                    {{-- @foreach($customers as $customer)
-                                        <option value="{{ $customer->_id  }}">{{ $customer->custName }}</option>
-                                        @endforeach --}}
-                                </datalist>
+                                <input class="form-control custom-width" id="customerInput" name="customerInput" list="customer_list" placeholder="Select a Customer">
+                                <datalist id="customer_list"></datalist>
                             </div>
                                 {{-- <div class="form-group col-md-3">
                                     <label for="custName">Customer Name<span class="required"></span></label>
@@ -231,11 +227,11 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label  for="prodName">Product Name<span class="required"></span></label>
-                                    <input class="form-control custom-width" list="browsers" id="products" name="products" placeholder="Select a product">
-                                    <datalist id="products">
-                                        
-                                    </datalist>
-                                    {{-- <input type="text" class="form-control custom-width" name="prodName" id="prodName" placeholder="Product Name" > --}}
+                                    <input type="text" name="prodid" id="prodid" hidden>
+                                    <input type="text" class="form-control custom-width" list="product_list" id="productsInput" name="productsInput" placeholder="Select a Product">
+                                    <datalist id="product_list"></datalist>
+
+                                    
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="product_type">Product Type<span class="required"></span></label>

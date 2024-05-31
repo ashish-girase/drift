@@ -94,7 +94,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
    // Route::post('order/view_order', [OrderController::class, ' showCustomers'])->name('showCustomers');
     Route::post('orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
-    Route::get('/admin/serchcustomerdata', [OrderController::class, 'serchcustomerdata']);
+    Route::get('/admin/searchcustomerdata', [OrderController::class, 'searchcustomerdata']);
+    Route::get('/admin/searchproductdata', [OrderController::class, 'searchproductdata']);
     
     // Route::get('/admin/create', [OrderController::class, 'create'])->name('create');
 

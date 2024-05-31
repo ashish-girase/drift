@@ -1,3 +1,5 @@
+// const { method } = require("lodash");
+
 var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
@@ -73,8 +75,7 @@ $(".createOrderModalStore").click(function(){
     });
 
     //Update User
-    $(document).on("click", '#saveOrder', function(event) {
-        console.log("Edit User")
+    $(document).on("click", '#updateOrder', function(event) {
         var c_id= $('#edit_prodid').val();
         // var companySubID= $('#up_comSubId').val();
         var edit_custName = $('#edit_custName').val();
@@ -172,10 +173,14 @@ $(".createOrderModalStore").click(function(){
         data: {
             id: userId,
             master_id: master_id,
-            _token: "{{ csrf_token() }}"
+            _token: $('meta[name="csrf-token"]').attr('content')
+            // _token: "{{ csrf_token() }}"
         },
         success: function(response) {
+            if (response.status === 'success') {
+                alert(response.message);
             window.location.href = base_path+"/order";
+            }
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -184,83 +189,122 @@ $(".createOrderModalStore").click(function(){
         }
     });
 
-    function populateBrowserList() {
-        
+
+        function populateCustomerList() {
         $.ajax({
-            url: base_path + "/admin/get_product",
-            type: 'GET',
-            success: function (response) {
-                var datalist = $('#products');               
+            url: base_path +'/admin/searchcustomerdata',
+            method: 'GET',
+            
+            success: function(data){
+                var datalist = $('#customer_list');
                 datalist.empty();
-                console.log("hello");
-                response.forEach(function(browser) {
-                    datalist.append('<option value="' + browser + '">');
+                data.forEach(function(customer){
+                    datalist.append('<option value="'+customer.customer.custName+'" data-email="'+customer.customer.email+'"data-phoneno="'+customer.customer.phoneno+'"data-companylistcust="'+customer.customer.companylistcust+'"data-address="'+customer.customer.address+'"data-city="'+customer.customer.city+'"data-zipcode="'+customer.customer.zipcode+'"data-state="'+customer.customer.state+'"data-country="'+customer.customer.country+'"data-custref="'+customer.customer.custref+'"data-custid="'+customer.customer._id+'">');   
+                });
+                
+                // Event listener for selecting an option
+                $('#customerInput').on('input', function() {
+                    var selectedName = $(this).val();
+                    var selectedOption = $('option[value="' + selectedName + '"]');
+                    var selectedEmail = selectedOption.data('email');
+                    var selectedPhone = selectedOption.data('phoneno');
+                    var selectedcompanylistcust = selectedOption.data('companylistcust');
+                    var selectedaddress = selectedOption.data('address');
+                    var selectedcity = selectedOption.data('city');
+                    var selectedzipcode = selectedOption.data('zipcode');
+                    var selectedstate = selectedOption.data('state');
+                    var selectedcountry = selectedOption.data('country');
+                    var selectedcustref = selectedOption.data('custref');
+                    var selectedcustid = selectedOption.data('custid');
+
+                    
+                
+                    $('#email').val(selectedEmail);
+                    $('#phoneno').val(selectedPhone);
+                    $('#companylistcust').val(selectedcompanylistcust);
+                    $('#address').val(selectedaddress);
+                    $('#city').val(selectedcity);
+                    $('#zipcode').val(selectedzipcode);
+                    $('#state').val(selectedstate);
+                    $('#country').val(selectedcountry);
+                    $('#custref').val(selectedcustref);
+                    $('#custid').val(selectedcustid);
+                    
                 });
             },
-            error: function (xhr, status, error) {
-                console.error(xhr.responseText);
+            error: function(error){
+                console.error("data not fetched", error);
             }
         });
+
     }
 
-    fetchusers();
-    function fetchusers(searchTerm) {
-        $.ajax({
-            url: '/admin/serchcustomerdata', // Replace with your route URL
-            method: 'GET',
-            data: { searchTerm: searchTerm }, // Pass search term if needed
-            success: function(data) {
-                var colorSelect = $('#customer_list');
-                console.log("colorSelect");
-                data.forEach(function(customer) {
-                colorSelect.append('<option value="' +customer._id+ '">' + customer.custName + '</option>');
-                console.log(customer.customer._id);
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching customer names:', error);
-        }
+    
+        populateCustomerList();
+
+        // Trigger AJAX request and populate customer list when typing in the input field
+        $('#customerInput').on('input', function() {
+            populateCustomerList();
         });
-    }
 
-//     var dataList = $('#customer_list');
-// var input = $('#customerInput');
 
-// // Update the placeholder text.
-// input.attr('placeholder', 'Loading options...');
+        function populateProductList() {
+            $.ajax({
+                url: base_path +'/admin/searchproductdata',
+                method: 'GET',
+                success: function(data){
+                    var datalist = $('#product_list');
+                    datalist.empty();
+                    data.forEach(function(product){
+                        datalist.append('<option value="'+product.product.prodName+'" data-product_type="'+product.product.product_type+'"data-prod_code="'+product.product.prod_code+'"data-prod_qty="'+product.product.prod_qty+'"data-thickness="'+product.product.Thickness+'"data-width="'+product.product.Width+'"data-colorname="'+product.product.ColorName+'"data-roll_weight="'+product.product.Roll_weight+'"data-prodid="'+product.product._id+'">');
+                        
+                    });
+                    
+                    // Event listener for selecting an option
+                    $('#productsInput').on('input', function() {
+                        var selectedName = $(this).val();
+                        var selectedOption = $('option[value="' + selectedName + '"]');
+                        var selectedproduct_type = selectedOption.data('product_type');
+                        var selectedprod_code = selectedOption.data('prod_code');
+                        var selectedprod_qty = selectedOption.data('prod_qty');
+                        var selectedThickness = selectedOption.data('thickness');
+                        var selectedWidth = selectedOption.data('width');
+                        var selectedColorName = selectedOption.data('colorname');
+                        var selectedRoll_weight = selectedOption.data('roll_weight');
+                        var selectedRoll_weight = selectedOption.data('prodid');
+                    
+                        
+                     
+                        $('#product_type').val(selectedproduct_type);
+                        $('#prod_code').val(selectedprod_code);
+                        $('#prod_qty').val(selectedprod_qty);
+                        $('#Thickness').val(selectedThickness);
+                        $('#Width').val(selectedWidth);
+                        $('#ColourName').val(selectedColorName);
+                        $('#Roll_weight').val(selectedRoll_weight);
+                        $('#prodid').val(selectedRoll_weight);
+                        
+                    });
+                },
+                error: function(error){
+                    console.error("data not fetched", error);
+                }
+            });
+    
+        }
+    
+        populateProductList();
+    
+            // Trigger AJAX request and populate customer list when typing in the input field
+            $('#customerInput').on('input', function() {
+                populateProductList();
+            });
 
-// // Make the AJAX request.
-// $.ajax({
-//     url: '/admin/searchcustomerdata', // Assuming this is the route to your controller method
-//     type: 'GET',
-//     dataType: 'json',
-//     data: {
-//         value: input.val() // Assuming you want to pass the input value to the controller
-//     },
-//     success: function(jsonOptions) {
-//         // Loop over the JSON array.
-//         $.each(jsonOptions, function(index, item) {
-//             // Create a new <option> element.
-//             var option = $('<option>');
-//             // Set the value using the item in the JSON array.
-//             option.attr('value', item.customer._id); // Assuming 'id' is the property you want to use
-//             // Add the <option> element to the <datalist>.
-//             dataList.append(option);
-//             console.log("item._id");
-//         });
-
-//         // Update the placeholder text.
-//         input.attr('placeholder', 'e.g. datalist');
-//     },
-//     error: function() {
-//         // An error occured :(
-//         input.attr('placeholder', "Couldn't load datalist options :(");
-        
-//     }
-// });
 
     
 
+
+        
    
 
 
@@ -268,12 +312,14 @@ $(".createOrderModalStore").click(function(){
 
 $("#saveOrder").click(function() {
     // Retrieve and validate customer name
-    var custName = $('#custName').val();
+    var custName = $('#customerInput').val();
     if (custName === '') {
         Swal.fire("Enter Customer Name");
-        $('#custName').focus();
+        $('#customerInput').focus();
         return false;
     }
+    
+    
 
     // Prepare order data
     var companylistcust = $('#companylistcust').val();
@@ -285,7 +331,7 @@ $("#saveOrder").click(function() {
     var state = $('#state').val();
     var country = $('#country').val();
     var custref = $('#custref').val();
-    var prodName = $('#prodName').val();
+    var prodName = $('#productsInput').val();
     var product_type = $('#product_type').val();
     var prod_code = $('#prod_code').val();
     var prod_qty = $('#prod_qty').val();
@@ -300,6 +346,13 @@ $("#saveOrder").click(function() {
     var price_type = $('#price_type').val();
     var status = $('#status').val();
     var notes = $('#notes').val();
+    var customer_id = $('#custid').val();
+    var product_id = $('#prodid').val();
+    
+  
+
+    
+    
 
     // Send AJAX request to add order
     $.ajax({
@@ -308,6 +361,7 @@ $("#saveOrder").click(function() {
         dataType: "json",
         data: {
             _token: $("#_tokenOrder").val(),
+            cusrID:customer_id,
             custName: custName,
             companylistcust: companylistcust,
             email: email,
@@ -318,6 +372,7 @@ $("#saveOrder").click(function() {
             state: state,
             country: country,
             custref: custref,
+            prodID:product_id,
             prodName: prodName,
             product_type: product_type,
             prod_code: prod_code,
@@ -333,10 +388,11 @@ $("#saveOrder").click(function() {
             price_type: price_type,
             status: status,
             notes: notes
+            
         },
         cache: false,
         success: function(Result) {
-            console.log(Result);
+
             if(Result){
                     swal.fire('order added successfully')
                     $("#addOrderModal").modal("hide");
@@ -382,7 +438,7 @@ function doSearch_cust(dom, funname, val) {
         formData.append('main', "admin");
         if (value.match(value) || value == '') {
           $.ajax({
-            url: base_path + "/admin/serchcustomerdata",
+            url: base_path + "/admin/searchcustomerdata",
             type: "GET",
             dataType: "JSON",
             contentType: false,

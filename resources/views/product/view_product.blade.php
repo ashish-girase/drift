@@ -139,7 +139,7 @@
 
                                                         <div class="form-group col-md-12">
                                                             <label for="colorSelect">Color Name</label>
-                                                            <input list="browsers" name="browser" id="browser">
+                                                           
                                                             <select  class="form-control" id="colorlistcust1">
                     
                                                                 <option value="" selected>Select a color</option>
