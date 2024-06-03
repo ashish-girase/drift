@@ -146,32 +146,33 @@ class ProductController extends Controller
                 $companyID=1;
                 $id=$request->id;
                 // dd($parent);
-                $collection=\App\Models\Product::raw();
+                $collection=Product::raw();
                 $show1 = $collection->aggregate([
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
                 ['$unwind' => ['path' => '$product']],
                 ['$match' => ['product._id' => (int)$id]]
-                ]);
+                ])->toArray();
                 foreach ($show1 as $row) {
                     $activeProduct12 = array();
                     $k = 0;
                     $activeProduct12[$k] = $row['product'];
                     $k++;
                 }
-
+                // dd($show1);
                 $colors = Color::raw();
                 $color_name = $colors->aggregate([
                     ['$match' => ['companyID' => $companyID]],
                     ['$unwind' => '$color'],
-                    ['$match' => ['product.delete_status' =>"NO"]]
+                    ['$match' => ['color.delete_status' =>"NO"]]
                 ]);
-                $productData = $color_name->toArray();
-                dd($productData);
-                // dd($activeProduct12);
+                $colorData = $color_name->toArray();
+               
+                // dd($productData);
                 $productData[]=array("product" => $activeProduct12);
-                if ($productData) {
+                if ($productData && $colorData) {
                     return response()->json([
                     'success' => $productData,
+                    'colors' => $colorData,
                 ]);
                 } else {
                     return response()->json([

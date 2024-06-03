@@ -60,15 +60,15 @@
 </td>
     <td class="text-center">
         <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->order->status }}</p>-->
-        <form method="POST" action="{{ route('orders.updateStatus') }}" >
+        <form method="POST"  >
     @csrf
     <!-- Hidden input fields for each data attribute -->
-    <input type="hidden" name="id" value="{{ $order->order->_id }}">
-    <input type="hidden" name="oldstatus" value="{{ $order->order->status }}">
+    <input type="hidden" name="id" id="orderid" value="{{ $order->order->_id }}">
+    <input type="hidden" name="oldstatus" id="oldstatus" value="{{ $order->order->status }}">
     <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
     <!-- Add more hidden input fields for other data attributes -->
 
-    <select class="form-control custom-width" name="newstatus" onchange="submitForm(this)">
+    <select class="form-control custom-width" name="newstatus"  onchange="openModal(this)">
         <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
         <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
         <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
@@ -76,11 +76,14 @@
         <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
     </select>
 </form>
+
+
+
 <script>
     function submitForm(selectElement) {
         // Get the form element containing the select dropdown
         var form = selectElement.form;
-
+        console.log(form);
         // Submit the form
         form.submit();
     }
@@ -134,6 +137,7 @@
         </div>
     </div>
 </div>
+
 <!--================================= create bank modal ============================= -->
 
                             <!-- Button trigger modal -->
@@ -154,7 +158,7 @@
                 <form method="post" id="customerForm">
                     @csrf
                     <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
-                    
+                    <input type="checkbox" id="myCheckbox" name="myCheckbox"> Sample Checkbox<br>
                     <!--CUSTOMER DETAILS-->
                     <div class="card mb-3">
                         <div class="card-header">
@@ -492,6 +496,69 @@
         </div>
     </div>
 </div>
+
+{{-- ------------------------status change----------------------- --}}
+
+<div class="modal fade" id="statusChange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                  
+                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Add Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        @csrf
+                        <input type="hidden" name="_token" id="_tokenOrder" value="{{ Session::token() }}">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Status<span class="required"></span></label>
+                                <input type="text" class="form-control" name="status" id="status"
+                                    placeholder="Status">
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="user_firstname">Receipy Code<span class="required"></span></label>
+                            <input type="text" class="form-control" name="receipy_code" id="receipy_code"
+                                placeholder="Receipy Code">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Delivary Date<span class="required"></span></label>
+                                <input type="date" class="form-control" name="delivary_date" id="delivary_date"
+                                    placeholder="Delivary Date">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Time<span class="required"></span></label>
+                                <input type="time" class="form-control" name="time" id="time"
+                                    placeholder="Time">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Note<span class="required"></span></label>
+                                <input type="text" class="form-control" name="note" id="note"
+                                    placeholder="Note">
+                            </div>
+                        </div>
+                       
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn bg-gradient-primary " id="savesatatus">Save Status</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 <style>
     .custom-width {

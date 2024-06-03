@@ -3,14 +3,12 @@ var base_path = $("#url").val();
 
 $(document).ready(function() {
     $(".createProductModalStore").click(function(){
-        $('#addProdcutModal').modal("show");
-        
-       
+        $('#addProdcutModal').modal("show"); 
     });
     $('.edit-product').click(function(e) {
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
-       
+        
         $.ajax({
             type:'POST',
             url:base_path+"/admin/edit_product",
@@ -31,21 +29,18 @@ $(document).ready(function() {
                 $('#edit_Thickness').val(productData.Thickness);
                 $('#edit_Width').val(productData.Width);
                 $('#edit_Roll_weight').val(productData.Roll_weight);
+                
 
-
-                var colorDropdown = $('#editcolorlistcust1');
-                var currentColor = productData.ColorName;
-                colorDropdown.empty(); // Clear existing options
-    
-                response.colors.forEach(function(color) {
-                    var option = $('<option></option>')
-                        .attr("value", color)
-                        .text(color);
-                    colorDropdown.append(option);
+                $('#edit_colour_name').empty();
+                $.each(colors, function(index, color) {
+                    $('#edit_colour_name').append('<option value="' + color.colorName + '">' + color.colorName + '</option>');
+                    console.log(colors);
                 });
-                colorDropdown.val(currentColor);
+               
+
                 // Assuming no arguments needed
             }   
+            
         });
         $('#edit_productModel').modal("show");
 
@@ -131,8 +126,46 @@ $(document).ready(function() {
     });
     
 
-    
     fetchColorNames();
+
+    function fetchColorNames(searchTerm) {
+        $.ajax({
+            url: '/admin/get_colorlist', // Replace with your route URL
+            method: 'GET',
+            data: { searchTerm: searchTerm }, // Pass search term if needed
+            success: function(data) {
+                var colorSelect = $('#colorlistcust1');
+                data.forEach(function(color) {
+                colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+                });
+                },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color names:', error);
+            }
+        });
+    }
+    
+
+    $('#colorlistcust1').change(function() {
+        var colour_id = $(this).val();
+        
+    
+        var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
+    
+        $.ajax({
+            url:  base_path+'/admin/add_product', // URL to your backend route
+            method: 'POST',
+            
+            data: { _token: $("#_tokenproduct").val(), colour_id: colour_id, colours_name: color_name }, // Pass both color ID and name
+            success: function(response) {
+                // Handle success if needed
+                console.log(response);   // Log the response from the server
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color name:', error);
+            }
+        });
+    });
     
 });
 
@@ -182,7 +215,7 @@ $("#saveproduct").click(function(){
                 prodName: prodName,
                 product_type: product_type,
                 colour_id: colour_id,
-                // ColorName: ColorName,
+                ColorName: ColourName,
                 prod_code: prod_code,
                 prod_qty: prod_qty,
                 Thickness: Thickness,
@@ -194,7 +227,7 @@ $("#saveproduct").click(function(){
             $("#addProdcutModal").modal("hide");
             // Store the success message in session storage
             sessionStorage.setItem('successMessage_pro', 'Product added successfully');
-            window.location.href =  "/product";
+            window.location.href = base_path + "/product";
         }
     });
 });
@@ -205,23 +238,6 @@ const successMessage_pro = sessionStorage.getItem('successMessage_pro');
 if (successMessage_pro) {
     Swal.fire(successMessage_pro);
     sessionStorage.removeItem('successMessage_pro');
-}
-
-function fetchColorNames(searchTerm) {
-    $.ajax({
-        url: '/admin/get_colorlist', // Replace with your route URL
-        method: 'GET',
-        data: { searchTerm: searchTerm }, // Pass search term if needed
-        success: function(data) {
-            var colorSelect = $('#colorlistcust1');
-            data.forEach(function(color) {
-                colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
-            });
-        },
-        error: function(xhr, status, error) {
-            console.error('Error fetching color names:', error);
-        }
-    });
 }
 
 function doSearch_sett(dom, funname, val) {

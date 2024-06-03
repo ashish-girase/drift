@@ -22,6 +22,7 @@ use App\Models\Processing;
 use App\Models\Dispatch;
 use App\Models\Cancelled;
 use App\Models\Completed;
+use App\Models\new_notes;
 use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
@@ -30,6 +31,7 @@ class OrderController extends Controller
     public function addOrder(Request $request)
     {
         // dd($request);
+        $isChecked = $request->input('isChecked');
         $maxLength = 2000;
         $new_id = NewOrder::max('_id') + 1;
         $randomNumber = rand(100000, 999999);
@@ -88,6 +90,7 @@ class OrderController extends Controller
                 'ColourName' => $request->input('ColourName'),
                 
             ],
+                'sample_data' =>  $request->input('isChecked'),
                 'total_quantity' => $request->input('total_quantity'),
                 'price' => $request->input('price'),
                 'Billing_address' => $request->input('Billing_address'),
@@ -274,7 +277,7 @@ class OrderController extends Controller
         ]],
         ['$project' => ['customer' => 1, '_id' => 0]]
         ])->toArray();
-        dd($customers);
+        // dd($customers);
   //  dd($customers);
     if (empty($customers)) {
     // dd($customers);
@@ -562,7 +565,7 @@ class OrderController extends Controller
             'completed' => Completed::raw(),
             'cancelled' => Cancelled::raw()
         ];
-        //dd($collectionMap);
+        dd($id);
         // Determine old collection
         if (!isset($collectionMap[$oldStatus])) {
             return response()->json(['success' => false, 'message' => 'Invalid old status.']);
@@ -573,10 +576,10 @@ class OrderController extends Controller
         $orderResult = NewOrder::raw()->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],
-            ['$match' => ['_id' => ['$eq' => (int)$id]]]
+            ['$match' => ['order._id' => $id]]
         ])->toArray();
         
-       // dd($orderResult);
+    //    dd($orderResult);
         
     
         if (empty($orderResult)) {
@@ -637,19 +640,19 @@ class OrderController extends Controller
             if ($pullResult->getMatchedCount() > 0) {
                echo "<script>";
                echo "alert('Status changed successfully.');";
-               echo 'window.location.href = "' . url("order/view_order") . '";';
+               echo 'window.location.href = "' . url("order") . '";';
                echo "</script>";
             } else {
                 echo "<script>";
                 echo "alert('Order moved but not removed from the old collection.');";
-                echo 'window.location.href = "' . url("order/view_order") . '";';
+                echo 'window.location.href = "' . url("order") . '";';
                 echo "</script>";
                 //return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
             }
         } else {
             echo "<script>";
             echo "alert('Failed to move the order to the new collection.');";
-            echo 'window.location.href = "' . url("order/view_order") . '";';
+            echo 'window.location.href = "' . url("order") . '";';
             echo "</script>";
             //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
         }
@@ -704,6 +707,37 @@ class OrderController extends Controller
             // $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
             // dd($products);
             return response()->json($products);
+        }
+
+        public function addnewStatus(Request $request) {
+            $latestNote = new_notes::latest()->first();
+        
+            if ($latestNote) {
+                $new_id = $latestNote->_id + 1;
+            } else {
+                // If the collection is empty, start from 1
+                $new_id = 1;
+            }
+       
+            // Prepare data for insertion
+            $data = array(
+                '_id' => $new_id,
+                'counter' => 0,
+                'status' => $request->input('status'),
+                'receipy_code' => $request->input('receipy_code'), 
+                'delivery_date' => $request->input('delivery_date'),
+                'time' => $request->input('time'),
+                'note' => $request->input('note'),
+                'orderid' => $request->input('id'),
+                'insertedTime' => time(),
+                'delete_status' => "NO",
+                'deleteCustomer' => "",
+                'deleteTime' => "",
+            );
+            dd($data);
+            new_notes::raw()->updateOne(['companyID' => 1,'_id' => (int)$new_id], ['$push' => ['order' => $data]]);
+            // Return success response
+            return response()->json(['status' => true, 'message' => 'Notes added successfully'], 200);
         }
 
     }

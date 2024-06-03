@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
+use App\Http\Controllers\NewstatudController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
@@ -94,6 +95,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
    // Route::post('order/view_order', [OrderController::class, ' showCustomers'])->name('showCustomers');
     Route::post('orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::post('orders/addnewStatus', [OrderController::class, 'addnewStatus'])->name('orders.addnewStatus');
     Route::get('/admin/searchcustomerdata', [OrderController::class, 'searchcustomerdata']);
     Route::get('/admin/searchproductdata', [OrderController::class, 'searchproductdata']);
     

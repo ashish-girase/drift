@@ -250,9 +250,11 @@
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="colorSelect">Color Name</label>
-                                <select class="form-control" id="edit_colour_name">
+                                <input type="text" class="form-control" name="edit_colour_name" id="edit_colour_name"
+                                placeholder="color name">
+                                {{-- <select class="form-control" id="edit_colour_name">
                                     <option value="" selected>Select a color</option>
-                                </select>
+                                </select> --}}
                             </div>
                         </div>
                         <div class="form-row">

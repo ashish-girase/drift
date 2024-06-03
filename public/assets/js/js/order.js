@@ -4,6 +4,11 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
+
+$("#chan").click(function(){
+    $('#statusChange').modal("show");
+});
+    
    
 $(".createOrderModalStore").click(function(){
         // populateBrowserList();
@@ -336,9 +341,77 @@ $(".createOrderModalStore").click(function(){
 
 
 });
+function openModal(selectElement) {
+    var selectedStatus = selectElement.value;
+    var oldStatus = document.getElementById('oldstatus').value;
+    var newStatus = selectElement.value;
+    var orderId = document.getElementById('orderid').value;
+    
+    // console.log(orderId);
+    if (selectedStatus === 'processing') {
+        $('#statusChange').modal('show');
+    }
+    $.ajax({
+        url: 'orders/updateStatus',
+        type: 'POST',
+        data: {
+            oldstatus: oldStatus,
+            newstatus: newStatus,
+            id:orderId,
+            '_token': $('#_tokenOrder').val()
+        },
+        success: function(response) {
+            // Handle success response
+            console.log(response);
+        },
+        error: function(xhr, status, error) {
+            // Handle error
+            console.error(xhr.responseText);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('#savesatatus').on('click', function() {
+        // Get the form data
+        // var oldStatus = document.getElementById('oldstatus').value;
+        // var newStatus = selectElement.value;
+        var orderId = document.getElementById('orderid').value;
+        var formData = {
+            'status': $('#status').val(),
+            'receipy_code': $('#receipy_code').val(),
+            'delivery_date': $('#delivary_date').val(),
+            'time': $('#time').val(),
+            'note': $('#note').val(),
+            'id': orderId,
+            '_token': $('#_tokenOrder').val()
+        };
+        
+        // console.log(formData);
+        // Send the AJAX request
+        $.ajax({
+            type: 'POST',
+            url: 'orders/addnewStatus', 
+            data: formData,
+            success: function(data) {
+                // console.log(data);
+                // Handle the success response
+                // For example, close the modal
+                $('#statusChange').modal('hide');
+            },
+            error: function(data) {
+                console.log("hello");
+                // Handle the error response
+                // You can display an error message or handle it as needed
+            }
+        });
+    });
+});
+
 
 $("#saveOrder").click(function() {
     // Retrieve and validate customer name
+    var isChecked = $('#myCheckbox').is(":checked") ? 1 : 0;
     var custName = $('#customerInput').val();
     if (custName === '') {
         Swal.fire("Enter Customer Name");
@@ -388,6 +461,7 @@ $("#saveOrder").click(function() {
         dataType: "json",
         data: {
             _token: $("#_tokenOrder").val(),
+            isChecked: isChecked,
             cusrID:customer_id,
             custName: custName,
             companylistcust: companylistcust,
@@ -494,6 +568,33 @@ function doSearch_cust(dom, funname, val) {
       }
     
 }
+
+// function updateStatus(select) {
+//     // var orderId = {{ $order->id }};
+//     var orderId = $(this).data('user-ids');
+//     var newStatus = select.value;
+
+//     $.ajax({
+//         type: "POST",
+//         url: "{{ route('update_order_status') }}",
+//         data: {
+//             order_id: orderId,
+//             new_status: newStatus,
+//             _token: '{{ csrf_token() }}'
+//         },
+//         success: function(response) {
+//             if (response.success) {
+//                 // Update table dynamically, for example:
+//                 $('#order-table').load(location.href + ' #order-table');
+//             } else {
+//                 alert('Error: ' + response.message);
+//             }
+//         },
+//         error: function(xhr, status, error) {
+//             console.error(xhr.responseText);
+//         }
+//     });
+// }
 function updatecustomerfield(value) {
     var customer_name = $('#customerlist [value="' + value + '"]').data('value');
     // var customer_name = 2;
@@ -662,6 +763,5 @@ function updatecustomerfield(value) {
             });
         });
     });
-   
-   
+
 }
