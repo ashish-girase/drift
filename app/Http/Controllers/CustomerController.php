@@ -202,7 +202,7 @@ class CustomerController extends Controller
             'customer.$.deleteTime' => "",]]
             
             );
-
+            // dd($data);
             if ($data==true) {
             //dd($data);
             return response()->json(['status' => true,'message' => 'Record updated successfully'], 200);

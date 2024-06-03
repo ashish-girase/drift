@@ -46,7 +46,7 @@ $(".createCustomerModalStore").click(function(){
 
     //Update User
     $(document).on("click", '#updatecustomer', function(event) {
-        console.log("Edit User")
+        console.log("Edit Customer");
         var c_id= $('#edit_customer_id').val();
         var edit_custName= $('#edit_custName').val();
         var edit_companylistcust= $('#edit_companylistcust').val();
@@ -91,7 +91,7 @@ $(".createCustomerModalStore").click(function(){
             cache: false,
             success: function (response) {
                 $('#edit_customerModel').modal("hide");
-
+                console.log(response);
                 window.location.href = base_path+"/customer";
 
             },

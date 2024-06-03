@@ -54,26 +54,26 @@
     <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
 </td>
 <td class="text-center">
-    @if(!empty($order->custName))
-            <p class="text-xs font-weight-bold mb-0">{{ $order->custName }}</p>
+    @if(!empty($order->order->customer->custName))
+            <p class="text-xs font-weight-bold mb-0">{{ $order->order->customer->custName }}</p>
     @endif     
 </td>
     <td class="text-center">
-        <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->status }}</p>-->
+        <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->order->status }}</p>-->
         <form method="POST" action="{{ route('orders.updateStatus') }}" >
     @csrf
     <!-- Hidden input fields for each data attribute -->
-    <input type="hidden" name="id" value="{{ $order->_id }}">
-    <input type="hidden" name="oldstatus" value="{{ $order->status }}">
-    <input type="hidden" name="custName" value="{{ $order->custName }}">
+    <input type="hidden" name="id" value="{{ $order->order->_id }}">
+    <input type="hidden" name="oldstatus" value="{{ $order->order->status }}">
+    <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
     <!-- Add more hidden input fields for other data attributes -->
 
     <select class="form-control custom-width" name="newstatus" onchange="submitForm(this)">
-        <option value="new" {{ $order->status == 'new' ? 'selected' : '' }}>New</option>
-        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-        <option value="dispatch" {{ $order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-        <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
+        <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+        <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
+        <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+        <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
     </select>
 </form>
 <script>
@@ -89,33 +89,32 @@
     </td>
 
 <td class="text-center">
-@if(!empty($order->prodName))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->prodName }}</p>
+@if(!empty($order->order->product->prodName))
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prodName }}</p>
 @endif
 </td>
 <td class="text-center">
-        @if(!empty($order->prod_qty  ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->prod_qty }}</p>
+        @if(!empty($order->order->product->prod_qty  ))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prod_qty }}</p>
         @endif
 </td>
 <td class="text-center">
-        @if(!empty( $order->price_type))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->price_type }}</p>
+        @if(!empty( $order->order->price_type))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->price_type }}</p>
         @endif
 </td>
 <td class="text-center">
-        @if(!empty($order->notes ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->notes }}</p>
+        @if(!empty($order->order->notes ))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->notes }}</p>
         @endif
 </td>
 <td class="text-center">
         <!--EDIT BUTTON-->
-        <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+        <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
             <i class="fas fa-user-edit text-secondary"></i>
         </a>
         <!--DELETE BUTTON-->
-        <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->_id}}" data-user-master_id="{{ $order->_id}}" data-bs-toggle="tooltip">
-
+        <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
             <span>
                 <i class="cursor-pointer fas fa-trash text-secondary"></i>
             </span>
@@ -310,6 +309,185 @@
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn bg-gradient-primary" id="saveOrder">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{{-- --------------------Edit Module----------------------- --}}
+
+<div class="modal fade" id="editordermodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-normal" id="exampleModalLabel">Edit Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <meta name="csrf-token" content="{{ csrf_token() }}" />
+                <form method="post" id="customerForm">
+                    @csrf
+                    <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
+                    <input type="hidden" name="color_id"  id="edit_prodid">
+                    
+                    <!--CUSTOMER DETAILS-->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Customer Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                <input type="text" name="custid" id="custid" hidden>
+                                <label for="custName">Customer Name<span class="required"></span></label>
+                                <input class="form-control custom-width" id="edit_custName" name="edit_custName" list="customer_list" placeholder="Select a Customer">
+                                <datalist id="customer_list"></datalist>
+                            </div>
+                                {{-- <div class="form-group col-md-3">
+                                    <label for="custName">Customer Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="custName" id="custName" placeholder="Customer Name">
+                                </div> --}}
+                                <div class="form-group col-md-3">
+                                    <label for="companylistcust">Company Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_companylistcust" id="edit_companylistcust" placeholder="Company Name">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="email">Customer Email<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_email" id="edit_email" placeholder="Enter Email">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="phoneno">Customer Phone Number<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_phoneno" id="edit_phoneno" placeholder="Phone No">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="address">Customer Address<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_address" id="edit_address" placeholder="Enter Address">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="city">City<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_city" id="edit_city" placeholder="City">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="zipcode">Zip Code<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_zipcode" id="edit_zipcode" placeholder="Enter Zip Code">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="state">State<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_state" id="edit_state" placeholder="State">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="country">Country<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_country" id="edit_country" placeholder="Country">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="custref">Customer Reference<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_custref" id="edit_custref" placeholder="Add Reference">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <!--PRODUCT DETAILS-->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">Product Details</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label  for="prodName">Product Name<span class="required"></span></label>
+                                    <input type="text" name="prodid" id="prodid" hidden>
+                                    <input type="text" class="form-control custom-width" list="product_list" id="edit_prodName" name="edit_prodName " placeholder="Select a Product">
+                                    <datalist id="product_list"></datalist>
+
+                                    
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="product_type">Product Type<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_product_type" id="edit_product_type" placeholder="Product Type">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_code">Product Code<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_prod_code" id="edit_prod_code" placeholder="Product Code">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">Product Quantity<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_prod_qty" id="edit_prod_qty" placeholder="Product Quantity">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="Thickness">Product Thickness<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_Thickness" id="edit_Thickness" placeholder="Product Thickness">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="Width">Product Width<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_Width" id="edit_Width" placeholder="Product Width">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="Roll_weight">Roll Weight<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_Roll_weight" id="edit_Roll_weight" placeholder="Roll Weight">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="color_name">Color Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_ColourName" id="edit_ColourName" placeholder="Color Name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                    <!-- Status Dropdown -->
+                    <div class="row">
+                    
+                   
+                    </div>
+                    <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="total_price">Total quantity<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_total_quantity" id="edit_total_quantity" placeholder="Enter Total Quantity">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="price">Price<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_price" id="edit_price" placeholder="Enter Price">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="billing_address">Billing Address<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_Billing_address" id="edit_Billing_address" placeholder="Billing Address">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="delivery_address">Delivery Address<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_Delivery_address" id="edit_Delivery_address" placeholder="Delivery Address">
+                                </div>
+                                <div class="form-group col-md-3">
+                                        <label for="price_type">Price Type<span class="required"></span></label>
+                                    <select class="form-control custom-width" name="edit_price_type" id="edit_price_type">
+                                     <option value="x-factory">X-Factory</option>
+                                     <option value="delivery">Delivery Price</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-8">
+                                    <label for="notes">Notes<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_notes" id="edit_notes" placeholder="Add Notes">
+                                </div>
+
+                        </div>
+                        
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-primary" id="updateOrder">Update changes</button>
             </div>
         </div>
     </div>

@@ -50,6 +50,7 @@ $(".createColorModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
+                console.log(formData);
                 $('#edit_colorModel').modal("hide");
 
                 window.location.href = base_path+"/color";
@@ -69,6 +70,8 @@ $(".createColorModalStore").click(function(){
         // var userId = $(this).data('user-ids').split(',');
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
+        console.log(userId);
+        console.log(master_id);
 
         // var userId = $(this).data('user-id');
         var confirmDelete = confirm("Are you sure you want to delete this user?");

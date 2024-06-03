@@ -415,7 +415,8 @@ class OrderController extends Controller
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$customer'],
             ['$match' => ['customer._id' => $cust_id]],
-            ['$limit' => 1]
+            ['$limit' => 1],
+            
             ])->toArray();
     
             $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
@@ -423,28 +424,11 @@ class OrderController extends Controller
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],  // Unwind the order array first
             ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
-            ['$project' => [
-                '_id' => '$order._id', 
-                'custName' =>'$order.customer.custName' ,
-                'status' => '$order.status',
-                'prodName' => '$order.product.prodName',
-                'prod_qty' => '$order.product.prod_qty',
-                'price_type' => '$order.price_type',
-                'notes' => '$order.notes',
-                'phoneno' => '$order.customer.phoneno',
-                'email' => '$order.customer.email',
-                'companylistcust' => '$order.customer.companylistcust',
-                'address'=> '$order.customer.address',
-                'city'=> '$order.customer.city',
-                'zipcode'=> '$order.customer.zipcode',
-                'state'=> '$order.customer.state',
-                'country'=> '$order.customer.country',
-                'custref'=> '$order.customer.custref'
-              ]],
-              ['$sort' => ['_id' => -1]]
+            ['$sort' => ['order._id' => -1]]
         ]);
         
         $order_data = $orderCurr->toArray();
+        
         // dd($order_data);
         
         return view('order.view_order', compact('order_data','customers'));
@@ -453,45 +437,59 @@ class OrderController extends Controller
     }
     public function edit_order(Request $request)
     {
-    $parent=$request->comId;
-    $companyID=1;
-    $id=$request->id;
-    $collection=NewOrder::raw();
-    $show1 = $collection->aggregate([
-    ['$match' => ['_id' => (int)$parent, 'companyID' => 1]],
-    ['$unwind' => ['path' => '$order']],
-    ['$match' => ['order._id' => (int)$id]]
-    ]);
-    foreach ($show1 as $row) {
-    $activeOrder = array();
-    $k = 0;
-    $activeOrder[$k] = $row['order'];
-    $k++;
-    }
-    $orderData[]=array("order" => $activeOrder);
-    if ($orderData) {
-    return response()->json([
-    'success' => $orderData,
-    ]);
-    } else {
-    return response()->json([
-    'success' => 'No record'
-    ]);
-    }
+        $parent = $request->input('master_id');
+        $companyID = 1;
+        $id = $request->input('id');
+        $collection=NewOrder::raw();
+        $show1 = $collection->aggregate([
+        ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+        ['$unwind' => ['path' => '$order']],
+        ['$match' => ['order._id' => (int)$id]]
+        ])->toArray();
+      
+        // foreach ($show1 as $row) {
+        // $activeOrder = array();
+        // $k = 0;
+        // $activeOrder[$k] = $row['order'];
+        // $k++;
+        // }
+        // $orderData[]=array("order" => $activeOrder);
+        // if ($orderData) {
+        // return response()->json([
+        // 'success' => $orderData,
+        // ]);
+        // } else {
+        // return response()->json([
+        // 'success' => 'No record'
+        // ]);
+        // }
+
+        
+        $activeOrder = [];
+        foreach ($show1 as $row) {
+            $activeOrder[] = $row['order'];
+        }
+
+        if (!empty($activeOrder)) {
+            return response()->json(['success' => $activeOrder]);
+        } else {
+            return response()->json(['success' => 'No record']);
+        }
 
     }
     public function update_order(Request $request)
     {
     $companyId = 1;
     $masterId = (int)$request->masterId;
-    $id = (int)$request->id;
+    $id = (int)$request->_id;
+    // dd( $id);
     $collection = NewOrder::raw();
     // Update the order inside the array
-    $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'_id' => $masterId,'order._id' => $id],
+    $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'order._id' => $id],
 
     ['$set' => [
-    'order.$.cust_id' => $request->customer_id,
-    'order.$.prod_id' => $request->product_id,
+    // 'order.$.cust_id' => $request->customer_id,
+    // 'order.$.prod_id' => $request->product_id,
     'order.$.custName' => $request->customers_name,
     'order.$.prodName' => $request->products_name,
     'order.$.product_type' => $request->product_type,
@@ -500,11 +498,12 @@ class OrderController extends Controller
     'order.$.colour_id' => $request->colour_id,
     'order.$.ColourName' => $request->colours_name,
     'order.$.Roll_weight' => $request->Roll_weight,
-    //'order.$.Total_qty' => $request->Total_qty,
-    //'order.$.Detail_inst' => $request->Detail_inst,
-    //'order.$.Billing_address' => $request->Billing_address,
-   // 'order.$.Delivery_address' => $request->Delivery_address,
-    //'order.$.Typeof_price' => $request->Typeof_price,
+    'order.$.Total_qty' => $request->Total_qty,
+    'order.$.Detail_inst' => $request->Detail_inst,
+    'order.$.Billing_address' => $request->Billing_address,
+    'order.$.Delivery_address' => $request->Delivery_address,
+    'order.$.price_type' => $request->price_type,
+    'order.$.notes' => $request->notes,
     'order.$.insertedTime' => time(),
     'order.$.delete_status' => "NO",
     'order.$.deleteOrder' => "",
@@ -513,26 +512,29 @@ class OrderController extends Controller
     ]
     );
 
-    if ($orderCurr->getModifiedCount() == 0) {
-    return response()->json(['status' => false, 'message' => 'Order not found or not updated'], 404);
-    }
+   
 
-    return response()->json(['status' => true, 'message' => 'Order updated successfully'], 200);
+    if ($orderCurr==true) {
+        // dd($orderCurr);
+        return response()->json(['status' => true,'message' => 'Orrder updated successfully'], 200);
+        } else {
+        return response()->json(['status' => false,'message' => 'Failed to update Product'], 500);
+        }
     }
-
     public function delete_order(Request $request)
     {
         $id = intval($request->id);
-        dd($id);
         $companyID=1;
-        $mainId=(int)$request->docid;
-        $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => (int)$id],
+        $mainId=(int)$request->master_id;
+        // dd($mainId);
+        $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
         ['$set' => [
-        'order.$.insertedTime' => time(),
-        'order.$.delete_status' => "YES",
-        'order.$.deleteOrder' => intval($id),
-        'order.$.deleteTime0' => time(),
-        ]]);
+            'order.$.insertedTime' => time(),
+            'order.$.delete_status' => "YES",
+            'order.$.deleteOrder' => intval($id),
+            'order.$.deleteTime0' => time(),
+            ]]);
+            // dd($mainId);
 
         if($orderData==true)
         {
@@ -542,6 +544,8 @@ class OrderController extends Controller
         
 
     }
+
+
     public function updateStatus(Request $request)
     {
         //dd($request);

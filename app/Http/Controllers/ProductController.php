@@ -158,6 +158,15 @@ class ProductController extends Controller
                     $activeProduct12[$k] = $row['product'];
                     $k++;
                 }
+
+                $colors = Color::raw();
+                $color_name = $colors->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$color'],
+                    ['$match' => ['product.delete_status' =>"NO"]]
+                ]);
+                $productData = $color_name->toArray();
+                dd($productData);
                 // dd($activeProduct12);
                 $productData[]=array("product" => $activeProduct12);
                 if ($productData) {

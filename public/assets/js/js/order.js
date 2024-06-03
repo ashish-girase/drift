@@ -9,56 +9,78 @@ $(".createOrderModalStore").click(function(){
         // populateBrowserList();
         $('#addOrderModal').modal("show");
     });
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+
     $('.edit-order').click(function(e) {
-       
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
+    
         $.ajax({
-            type:'POST',
-            url:base_path+"/admin/edit_product",
+            type: 'POST',
+            url: base_path + "/admin/edit_order",
             data: {
                 id: userId,
                 master_id: master_id
             },
-            success:function(response){
-                // var res = JSON.parse(response);
-                var productData = response.success[0].product[0];
-                console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#edit_custName').val(productData.custName); // Added customer name
-                $('#edit_companylistcust').val(productData.companylistcust);
-                $('#edit_email').val(productData.email);
-                $('#edit_phoneno').val(productData.phoneno);
-                $('#edit_address').val(productData.address);
-                $('#edit_city').val(productData.city);
-                $('#edit_zipcode').val(productData.zipcode);
-                $('#edit_state').val(productData.state);
-                $('#edit_country').val(productData.country);
-                $('#edit_custref').val(productData.custref);
-                $('#edit_prodName').val(productData.prodName);
-                $('#edit_product_type').val(productData.product_type);
-                $('#edit_prod_code').val(productData.prod_code);
-                $('#edit_prod_qty').val(productData.prod_qty);
-                $('#edit_Thickness').val(productData.Thickness);
-                $('#edit_Width').val(productData.Width);
-                $('#edit_Roll_weight').val(productData.Roll_weight);
-                $('#edit_ColourName').val(productData.ColourName);
-                $('#edit_total_quantity').val(productData.total_quantity);
-                $('#edit_price').val(productData.price);
-                $('#edit_Billing_address').val(productData.Billing_address);
-                $('#edit_Delivery_address').val(productData.Delivery_address);
-                $('#edit_price_type').val(productData.price_type);
-                $('#edit_status').val(productData.status);
-                $('#edit_notes').val(productData.notes);
-                
+            success: function(response) {
+                if (response.success && response.success.length > 0) {
+                    var orderData = response.success[0]; // Assuming first item in success array
+                    var productData = orderData.product && orderData.product.length > 0 ? orderData.product[0] : null;
+                    console.log(orderData);
+                    if (orderData) {
+                        // console.log("_id", orderData); // Logging _id for debugging
+                        $('#edit_prodid').val(orderData._id);
+                        $('#edit_custName').val(orderData.customer.custName); // Added customer name
+                        $('#edit_companylistcust').val(orderData.customer.companylistcust);
+                        $('#edit_email').val(orderData.customer.email);
+                        $('#edit_phoneno').val(orderData.customer.phoneno);
+                        $('#edit_address').val(orderData.customer.address);
+                        $('#edit_city').val(orderData.customer.city);
+                        $('#edit_zipcode').val(orderData.customer.zipcode);
+                        $('#edit_state').val(orderData.customer.state);
+                        $('#edit_country').val(orderData.customer.country);
+                        $('#edit_custref').val(orderData.customer.custref);
+                        $('#edit_prodName').val(orderData.product.prodName);
+                        $('#edit_product_type').val(orderData.product.product_type);
+                        $('#edit_prod_code').val(orderData.product.prod_code);
+                        $('#edit_prod_qty').val(orderData.product.prod_qty);
+                        $('#edit_Thickness').val(orderData.product.Thickness);
+                        $('#edit_Width').val(orderData.product.Width);
+                        $('#edit_Roll_weight').val(orderData.product.Roll_weight);
+                        $('#edit_ColourName').val(orderData.product.ColourName);
+                        $('#edit_total_quantity').val(orderData.total_quantity);
+                        $('#edit_price').val(orderData.price);
+                        $('#edit_Billing_address').val(orderData.Billing_address);
+                        $('#edit_Delivery_address').val(orderData.Delivery_address);
+                        $('#edit_price_type').val(orderData.price_type);
+                        $('#edit_status').val(orderData.status);
+                        $('#edit_notes').val(orderData.notes);
+                        
+                    } else {
+                        console.error('Product data is missing or empty');
+                        // Handle missing product data case
+                    }
+                } else {
+                    console.error('No record found');
+                    // Handle no record case
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
             }
-            
         });
         $('#editordermodal').modal("show");
     });
 
      $('#custNamedrop').change(function() {
         var selectedName = $(this).val();
-        console.log(selectedName);
+        // console.log(selectedName);
         $.ajax({
             url: base_path+"/order",
             method: 'GET',
@@ -76,6 +98,7 @@ $(".createOrderModalStore").click(function(){
 
     //Update User
     $(document).on("click", '#updateOrder', function(event) {
+        console.log("Edit Customer");
         var c_id= $('#edit_prodid').val();
         // var companySubID= $('#up_comSubId').val();
         var edit_custName = $('#edit_custName').val();
@@ -106,6 +129,7 @@ $(".createOrderModalStore").click(function(){
           
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
+        formData.append('_id', c_id);
         formData.append('custName', edit_custName);
         formData.append('companylistcust', edit_companylistcust);
         formData.append('email', edit_email);
@@ -134,7 +158,7 @@ $(".createOrderModalStore").click(function(){
                    
          
         $.ajax({
-            url: base_path + "/admin/update_product",
+            url: base_path + "/admin/update_order",
             type: 'post',
             datatype: "JSON",
             contentType: false,
@@ -142,9 +166,10 @@ $(".createOrderModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
-                $('#edit_productModel').modal("hide");
+                console.log("formData");
+                $('#editordermodal').modal("hide");
 
-                window.location.href = base_path+"/product";
+                window.location.href = base_path+"/order";
 
             },
             error: function (data) {
@@ -161,6 +186,8 @@ $(".createOrderModalStore").click(function(){
         // var userId = $(this).data('user-ids').split(',');
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
+        console.log(userId);
+        console.log(master_id);
 
         // var userId = $(this).data('user-id');
         var confirmDelete = confirm("Are you sure you want to delete this user?");
@@ -173,8 +200,8 @@ $(".createOrderModalStore").click(function(){
         data: {
             id: userId,
             master_id: master_id,
+            // _token: "{{ csrf_token() }}" 
             _token: $('meta[name="csrf-token"]').attr('content')
-            // _token: "{{ csrf_token() }}"
         },
         success: function(response) {
             if (response.status === 'success') {

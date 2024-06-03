@@ -144,7 +144,7 @@ class ColorController extends Controller
         // dd($request);
             $id=(int)$request->_id;
             $companyID=1;
-// dd($id);
+        // dd($id);
             $data=Color::raw()->updateOne(['companyID' => $companyID,'color._id' => $id],
 
             ['$set' => [
@@ -156,8 +156,8 @@ class ColorController extends Controller
             'color.$.deleteTime' => "",]]
             );
 
+            dd($data);
             if ($data==true) {
-            //dd($data);
             return response()->json(['status' => true,'message' => 'Color updated successfully'], 200);
             } else {
             return response()->json(['status' => false,'message' => 'Failed to update Company'], 200);
@@ -170,6 +170,7 @@ class ColorController extends Controller
             // dd($id);
             $companyID=1;
             $mainId=(int)$request->master_id;
+            
             $comData=Color::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'color._id' => (int)$id],
             ['$set' => [
             'color.$.insertedTime' => time(),
@@ -177,7 +178,7 @@ class ColorController extends Controller
             'color.$.deletecolor' => intval($id),
             'color.$.deleteTime0' => time(),
             ]]);
-            
+            dd($comData);
             if($comData==true)
             {
             $arr = array('status' => 'success', 'message' => 'Record Deleted successfully.','statusCode' => 200);
