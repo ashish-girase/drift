@@ -76,7 +76,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/admin/get_product', [ProductController::class, 'getProduct'])->name('getProduct');
      Route::get('/products/{id}', [ProductController::class, 'show']);
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
-     Route::get('/admin/get_colorlist', [ProductController::class, 'fetchColorNames']);
+     Route::post('/admin/get_colorlist', [ProductController::class, 'fetchColorNames']);
     // Route::get('/fetch-color-name', 'ProductController@fetchColorName');
      
      //Order master module

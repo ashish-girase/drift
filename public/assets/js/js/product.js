@@ -131,7 +131,7 @@ $(document).ready(function() {
     function fetchColorNames(searchTerm) {
         $.ajax({
             url: '/admin/get_colorlist', // Replace with your route URL
-            method: 'GET',
+            method: 'POST',
             data: { searchTerm: searchTerm }, // Pass search term if needed
             success: function(data) {
                 var colorSelect = $('#colorlistcust1');
