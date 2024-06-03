@@ -99,7 +99,6 @@ $(".createColorModalStore").click(function(){
 });
 
 $("#savecolor").click(function(){
-
     var color_name=$('#color_name').val();
     if(color_name=='')
     {
@@ -118,7 +117,7 @@ $("#savecolor").click(function(){
         },
         cache: false,
         success: function(Result){
-            console.log(Result);
+            // console.log(Result);
             $("#addColorModal").modal("hide");
             // Store the success message in session storage
             sessionStorage.setItem('successMessage_col', 'Color added successfully');

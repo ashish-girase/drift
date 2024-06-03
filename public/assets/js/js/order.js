@@ -377,6 +377,13 @@ $(document).ready(function() {
         // var oldStatus = document.getElementById('oldstatus').value;
         // var newStatus = selectElement.value;
         var orderId = document.getElementById('orderid').value;
+        var status=$('#status').val();
+        var receipy_code=$('#receipy_code').val();
+        var delivary_date=$('#delivary_date').val();
+        var time= $('#time').text();
+        var note=$('#note').val();
+        console.log(orderId);
+        
         var formData = {
             'status': $('#status').val(),
             'receipy_code': $('#receipy_code').val(),
@@ -391,16 +398,31 @@ $(document).ready(function() {
         // Send the AJAX request
         $.ajax({
             type: 'POST',
-            url: 'orders/addnewStatus', 
-            data: formData,
-            success: function(data) {
-                // console.log(data);
-                // Handle the success response
-                // For example, close the modal
-                $('#statusChange').modal('hide');
+            url: 'orders/addnewStatus',
+            datatype:"JSON", 
+            data: {
+                _token: $("#_tokenOrder").val(),
+                status: status,
+                receipy_code: receipy_code,
+                delivary_date: delivary_date,
+                time: time,
+                note: note,
             },
-            error: function(data) {
+            cache: false,
+            // data: formData,
+            success: function(Result){
+                console.log("Data being sent:", {
+                    _token: $("#_tokenOrder").val(),
+                    status: status,
+                    receipy_code: receipy_code,
+                    delivary_date: delivary_date,
+                    time: time,
+                    note: note,
+                 
+                });
                 console.log("hello");
+            },
+            error: function(Result) {
                 // Handle the error response
                 // You can display an error message or handle it as needed
             }

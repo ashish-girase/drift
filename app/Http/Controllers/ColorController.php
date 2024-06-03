@@ -156,7 +156,7 @@ class ColorController extends Controller
             'color.$.deleteTime' => "",]]
             );
 
-            dd($data);
+            // dd($data);
             if ($data==true) {
             return response()->json(['status' => true,'message' => 'Color updated successfully'], 200);
             } else {
@@ -178,7 +178,7 @@ class ColorController extends Controller
             'color.$.deletecolor' => intval($id),
             'color.$.deleteTime0' => time(),
             ]]);
-            dd($comData);
+            // dd($comData);
             if($comData==true)
             {
             $arr = array('status' => 'success', 'message' => 'Record Deleted successfully.','statusCode' => 200);
