@@ -136,8 +136,7 @@
                                                         <input type="password" class="form-control"
                                                             name="user_password" id="user_password"
                                                             placeholder="Password">
-                                                        <input type="checkbox"  class="show_Password_user" id="show_Password"
-                                                           >
+                                                        
                                                         <!-- <label for="showPassword">Show Password</label> -->
                                                     </div>
                                                     <div class="form-group col-md-12">

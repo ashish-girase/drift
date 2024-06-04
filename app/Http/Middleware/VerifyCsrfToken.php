@@ -21,6 +21,8 @@ class VerifyCsrfToken extends Middleware
         '/admin/get_companylist',
         '/admin/edit_color',
         '/admin/delete_color',
+        '/admin/edit_design',
+        '/admin/delete_design',
         '/admin/edit_product',
         '/admin/delete_product',
         '/admin/get_colorlist',

@@ -148,23 +148,8 @@ $(document).ready(function() {
 
     $('#colorlistcust1').change(function() {
         var colour_id = $(this).val();
-        
-    
         var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
     
-        $.ajax({
-            url:  base_path+'/admin/add_product', // URL to your backend route
-            method: 'POST',
-            
-            data: { _token: $("#_tokenproduct").val(), colour_id: colour_id, colours_name: color_name }, // Pass both color ID and name
-            success: function(response) {
-                // Handle success if needed
-                console.log(response);   // Log the response from the server
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching color name:', error);
-            }
-        });
     });
     
 });
@@ -209,26 +194,14 @@ $("#saveproduct").click(function(){
             Roll_weight: Roll_weight
         },
         cache: false,
-        success: function(Result){
-            console.log("Data being sent:", {
-                _token: $("#_tokenproduct").val(),
-                prodName: prodName,
-                product_type: product_type,
-                colour_id: colour_id,
-                ColorName: ColourName,
-                prod_code: prod_code,
-                prod_qty: prod_qty,
-                Thickness: Thickness,
-                Width: Width,
-                Roll_weight: Roll_weight
-            });
-            console.log($("#_tokenproduct").val());
-            console.log(Result);
-            $("#addProdcutModal").modal("hide");
-            // Store the success message in session storage
-            sessionStorage.setItem('successMessage_pro', 'Product added successfully');
-            window.location.href = base_path + "/product";
-        }
+        success: function(Result) {
+
+            if(Result){
+                    swal.fire('order added successfully')
+                    $("#addProdcutModal").modal("hide");
+                    sessionStorage.setItem('successMessage_ord', 'Product added successfully');
+                    window.location.href = base_path + "/product";
+        }},
     });
 });
 

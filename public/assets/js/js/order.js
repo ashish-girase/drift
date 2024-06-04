@@ -54,18 +54,39 @@ $(".createOrderModalStore").click(function(){
                         $('#edit_prodName').val(orderData.product.prodName);
                         $('#edit_product_type').val(orderData.product.product_type);
                         $('#edit_prod_code').val(orderData.product.prod_code);
-                        $('#edit_prod_qty').val(orderData.product.prod_qty);
-                        $('#edit_Thickness').val(orderData.product.Thickness);
-                        $('#edit_Width').val(orderData.product.Width);
-                        $('#edit_Roll_weight').val(orderData.product.Roll_weight);
+                        $('#edit_designName').val(orderData.product.design_name);
                         $('#edit_ColourName').val(orderData.product.ColourName);
                         $('#edit_total_quantity').val(orderData.total_quantity);
                         $('#edit_price').val(orderData.price);
                         $('#edit_Billing_address').val(orderData.Billing_address);
                         $('#edit_Delivery_address').val(orderData.Delivery_address);
-                        $('#edit_price_type').val(orderData.price_type);
                         $('#edit_status').val(orderData.status);
-                        $('#edit_notes').val(orderData.notes);
+                        $('#edit_quantity_in_soft').val(orderData.quantity_in_soft);
+                        $('#edit_quantity_in_pieces').val(orderData.quantity_in_pieces);
+                        $('#edit_order_remark').val(orderData.order_remark);
+                        $('#edit_dispatch_remark').val(orderData.dispatch_remark);
+                        $('#edit_order_date').val(orderData.order_date);
+                        $('#edit_disptach_date').val(orderData.disptach_date);
+                        $('#edit_tentative_date').val(orderData.tentative_date);
+        
+                        if (orderData.box_packed == 1) {
+                            $('#edit_box_packed').prop('checked', true);
+                        } else {
+                            $('#edit_box_packed').prop('checked', false);
+                        }
+                        if (orderData.ordertype == "Sample Order") {
+                            $('#editsampleOrderFields').show();
+                            $('#editordertype').val(orderData.ordertype);
+                            $('#edittransportname').val(orderData.transportname);
+                            $('#edittrackingdetails').val(orderData.trackingdetails);
+                        } else {
+                            $('#editordertype').val(orderData.ordertype);
+                            $('#editsampleOrderFields').hide();
+                        }
+                        $('#edit_box_packed').on('change', function() {
+                            orderData.box_packed = $(this).prop('checked') ? 1 : 0;
+                        });
+                        
                         
                     } else {
                         console.error('Product data is missing or empty');
@@ -119,18 +140,28 @@ $(".createOrderModalStore").click(function(){
         var edit_prodName = $('#edit_prodName').val();
         var edit_product_type = $('#edit_product_type').val();
         var edit_prod_code = $('#edit_prod_code').val();
-        var edit_prod_qty = $('#edit_prod_qty').val();
-        var edit_Thickness = $('#edit_Thickness').val();
-        var edit_Width = $('#edit_Width').val();
-        var edit_Roll_weight = $('#edit_Roll_weight').val();
         var edit_ColourName = $('#edit_ColourName').val();
         var edit_total_quantity = $('#edit_total_quantity').val();
         var edit_price = $('#edit_price').val();
         var edit_Billing_address = $('#edit_Billing_address').val();
         var edit_Delivery_address = $('#edit_Delivery_address').val();
-        var edit_price_type = $('#edit_price_type').val();
-        var edit_status = $('#edit_status').val();
-        var edit_notes = $('#edit_notes').val();
+        var edit_quantity_in_soft = $('#edit_quantity_in_soft').val();
+        var edit_quantity_in_pieces = $('#edit_quantity_in_pieces').val();
+        var edit_order_remark = $('#edit_order_remark').val();
+        var edit_dispatch_remark = $('#edit_dispatch_remark').val();
+        var edit_order_date = $('#edit_order_date').val();
+        var edit_disptach_date = $('#edit_disptach_date').val();
+        var edit_tentative_date = $('#edit_tentative_date').val();
+        var edit_designName = $('#edit_designName').val();
+        var edit_box_packed = $('#edit_box_packed').val();
+        var edittransportname = $('#edittransportname').val();
+        var edittrackingdetails = $('#edittrackingdetails').val();
+        // var edit_box_packed = $('#edit_box_packed').on('change', function() {
+        //     orderData.box_packed = $(this).prop('checked') ? 1 : 0;
+        // });
+      
+        
+
           
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
@@ -148,18 +179,26 @@ $(".createOrderModalStore").click(function(){
         formData.append('prodName', edit_prodName);
         formData.append('product_type', edit_product_type);
         formData.append('prod_code', edit_prod_code);
-        formData.append('prod_qty', edit_prod_qty);
-        formData.append('Thickness', edit_Thickness);
-        formData.append('Width', edit_Width);
-        formData.append('Roll_weight', edit_Roll_weight);
         formData.append('ColourName', edit_ColourName);
         formData.append('total_quantity', edit_total_quantity);
         formData.append('price', edit_price);
         formData.append('Billing_address', edit_Billing_address);
         formData.append('Delivery_address', edit_Delivery_address);
-        formData.append('price_type', edit_price_type);
-        formData.append('status', edit_status);
-        formData.append('notes', edit_notes);
+        formData.append('quantity_in_soft', edit_quantity_in_soft);
+        formData.append('quantity_in_pieces', edit_quantity_in_pieces);
+        formData.append('order_remark', edit_order_remark);
+        formData.append('dispatch_remark', edit_dispatch_remark);
+        formData.append('order_date', edit_order_date);
+        formData.append('disptach_date', edit_disptach_date);
+        formData.append('tentative_date', edit_tentative_date);
+        formData.append('design_name', edit_designName);
+        formData.append('box_packed', edit_box_packed);
+        formData.append('transportname', edittransportname);
+        formData.append('trackingdetails', edittrackingdetails);
+        
+        
+    
+        
                    
          
         $.ajax({
@@ -171,7 +210,7 @@ $(".createOrderModalStore").click(function(){
             processData: false,
             cache: false,
             success: function (response) {
-                console.log("formData");
+                console.log(formData);
                 $('#editordermodal').modal("hide");
 
                 window.location.href = base_path+"/order";
@@ -332,12 +371,65 @@ $(".createOrderModalStore").click(function(){
                 populateProductList();
             });
 
+            fetchDesignNames();
 
-    
+            function fetchDesignNames(searchTerm) {
+                $.ajax({
+                    url: '/admin/get_designlist', // Replace with your route URL
+                    method: 'POST',
+                    data: { searchTerm: searchTerm }, // Pass search term if needed
+                    success: function(data) {
+                        var colorSelect = $('#designlist');
+                        data.forEach(function(design) {
+                        colorSelect.append('<option value="' + design.design._id + '">' + design.design.design_name + '</option>');
+                        });
+                        },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching color names:', error);
+                    }
+                });
+            }
+
+            $('#designlist').change(function() {
+                var design_id = $(this).val();
+                
+            
+                var design_name = $('#designlist option[value="' + design_id + '"]').text(); // Get selected color name
+
+            });
 
 
+
+            fetchColorsNames();
+
+            function fetchColorsNames(searchTerm) {
+                $.ajax({
+                    url: '/admin/find_color', // Replace with your route URL
+                    method: 'POST',
+                    data: { searchTerm: searchTerm }, // Pass search term if needed
+                    success: function(data) {
+                        var colorSelect = $('#colorlist');
+
+                        data.forEach(function(color) {
+                        colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+                        });
         
-   
+                        },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching color names:', error);
+                    }
+                });
+            }
+            
+        
+            $('#colorlist').change(function() {
+                var colour_id = $(this).val();
+                
+                var color_name = $('#colorlist option[value="' + colour_id + '"]').text(); // Get selected color name
+            
+               
+            });
+
 
 
 });
@@ -350,6 +442,7 @@ function openModal(selectElement) {
     // console.log(orderId);
     if (selectedStatus === 'processing') {
         $('#statusChange').modal('show');
+        $('#status  ').val(newStatus);
     }
     $.ajax({
         url: 'orders/updateStatus',
@@ -375,14 +468,14 @@ $(document).ready(function() {
     $('#savesatatus').on('click', function() {
         // Get the form data
         // var oldStatus = document.getElementById('oldstatus').value;
-        // var newStatus = selectElement.value;
+        var newStatus = selectElement.value;
         var orderId = document.getElementById('orderid').value;
         var status=$('#status').val();
         var receipy_code=$('#receipy_code').val();
         var delivary_date=$('#delivary_date').val();
         var time= $('#time').text();
         var note=$('#note').val();
-        console.log(orderId);
+        console.log(newStatus);
         
         var formData = {
             'status': $('#status').val(),
@@ -433,18 +526,26 @@ $(document).ready(function() {
 
 $("#saveOrder").click(function() {
     // Retrieve and validate customer name
-    var isChecked = $('#myCheckbox').is(":checked") ? 1 : 0;
+    var isChecked = $('#box_packed').is(":checked") ? 1 : 0;
     var custName = $('#customerInput').val();
     if (custName === '') {
         Swal.fire("Enter Customer Name");
         $('#customerInput').focus();
         return false;
     }
+
+    var colour_id = $(this).val();
+    var design_id = $(this).val();
+
+    
     
     
 
     // Prepare order data
     var companylistcust = $('#companylistcust').val();
+    var ordertype = $('#ordertype option:selected').text();
+    var transportname = $('#transportname').val();
+    var trackingdetails = $('#trackingdetails').val();
     var email = $('#email').val();
     var phoneno = $('#phoneno').val();
     var address = $('#address').val();
@@ -460,17 +561,26 @@ $("#saveOrder").click(function() {
     var Thickness = $('#Thickness').val();
     var Width = $('#Width').val();
     var Roll_weight = $('#Roll_weight').val();
-    var ColourName = $('#ColourName').val();
+    var colour_name = $('#colorlist option:selected').text();
+    var colour_id=$('#colorlist').val();
     var total_quantity = $('#total_quantity').val(); // Adjusted key to match the modal input
     var price = $('#price').val();
     var Billing_address = $('#Billing_address').val();
     var Delivery_address = $('#Delivery_address').val();
     var price_type = $('#price_type').val();
     var status = $('#status').val();
-    var notes = $('#notes').val();
+    var order_remark = $('#order_remark').val();
+    var dispatch_remark = $('#dispatch_remark').val();
+    var order_date = $('#order_date').val();
+    var disptach_date = $('#disptach_date').val();
+    var tentative_date = $('#tentative_date').val();
     var customer_id = $('#custid').val();
     var product_id = $('#prodid').val();
-    
+    var design_name = $('#designlist option:selected').val();
+    var design_id = $('#designlist').val();
+    var quantity_in_soft = $('#quantity_in_soft').val();
+    var quantity_in_pieces = $('#quantity_in_pieces').val();
+    // console.log(colour_name);
   
 
     
@@ -484,6 +594,9 @@ $("#saveOrder").click(function() {
         data: {
             _token: $("#_tokenOrder").val(),
             isChecked: isChecked,
+            ordertype:ordertype,
+            transportname:transportname,
+            trackingdetails:trackingdetails,
             cusrID:customer_id,
             custName: custName,
             companylistcust: companylistcust,
@@ -492,6 +605,9 @@ $("#saveOrder").click(function() {
             address: address,
             city: city,
             zipcode: zipcode,
+            ColorName: colour_name,
+            colour_id: colour_id,
+            design_id:design_id,
             state: state,
             country: country,
             custref: custref,
@@ -503,14 +619,20 @@ $("#saveOrder").click(function() {
             Thickness: Thickness,
             Width: Width,
             Roll_weight: Roll_weight,
-            ColourName: ColourName,
             total_quantity: total_quantity, // Adjusted key to match the modal input
             price: price,
             Billing_address: Billing_address,
             Delivery_address: Delivery_address,
             price_type: price_type,
             status: status,
-            notes: notes
+            order_remark:order_remark,
+            dispatch_remark:dispatch_remark,
+            order_date:order_date,
+            disptach_date:disptach_date,
+            tentative_date:tentative_date,
+            design_name:design_name,
+            quantity_in_soft:quantity_in_soft,
+            quantity_in_pieces:quantity_in_pieces,
             
         },
         cache: false,
@@ -544,8 +666,8 @@ function doSearch_cust(dom, funname, val) {
         clearTimeout(timeout);
       }
       timeout = setTimeout(function () {
-        if (func == 'colorlistcust') {
-            colorlistcust(dom, 'colorlistcust1');
+        if (func == 'colorlist') {
+            colorlistcust(dom, 'colorlist');
           } else if (func == 'customerlist') {
             customerlist(dom, 'customerlist');
           }

@@ -2,18 +2,19 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-    $('#colorTable').DataTable();
-    
-$(".createColorModalStore").click(function(){
-        $('#addColorModal').modal("show");
-        
+    // $('#designTable').DataTable();
+ 
+    $(".createDesignModalStore").click(function(){
+        $('#addDesignModal').modal("show");
+       
     });
-    $('.edit-color').click(function(e) {
+
+    $('.edit-design').click(function(e) {
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
         $.ajax({
             type:'POST',
-            url:base_path+"/admin/edit_color",
+            url:base_path+"/admin/edit_design",
             data: {
                 id: userId,
                 master_id: master_id
@@ -21,29 +22,29 @@ $(".createColorModalStore").click(function(){
             success:function(response){
                 console.log("_id", response);
                 // var res = JSON.parse(response);
-                var colorData = response.success[0].color[0];
+                var designData = response.success[0].design[0];
                 // console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#color_editid').val(colorData._id); // Setting _id value
-                $('#color_editname').val(colorData.color_name);
+                $('#design_editid').val(designData._id); // Setting _id value
+                $('#design_editname').val(designData.design_name);
             }
         });
-        $('#edit_colorModel').modal("show");
+        $('#edit_designModel').modal("show");
     });
 
     //Update User
-    $(document).on("click", '#updatecolor', function(event) {
+    $(document).on("click", '#updatedesign', function(event) {
         console.log("Edit User")
-        var c_id= $('#color_editid').val();
+        var c_id= $('#design_editid').val();
         // var companySubID= $('#up_comSubId').val();
-        var color_editname= $('#color_editname').val();
+        var design_editname= $('#design_editname').val();
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
-        formData.append('_token', $("#_tokeupdatencolor").val());
+        formData.append('_token', $("#_tokeupdatendesign").val());
         formData.append('_id', c_id);
-        formData.append('color_name', color_editname);
+        formData.append('design_name', design_editname);
         formData.append('deleteStatus', "NO");
         $.ajax({
-            url: base_path + "/admin/update_color",
+            url: base_path + "/admin/update_design",
             type: 'post',
             datatype: "JSON",
             contentType: false,
@@ -52,9 +53,9 @@ $(".createColorModalStore").click(function(){
             cache: false,
             success: function (response) {
                 console.log(formData);
-                $('#edit_colorModel').modal("hide");
+                $('#edit_designModel').modal("hide");
 
-                window.location.href = base_path+"/color";
+                window.location.href = base_path+"/design";
 
             },
             error: function (data) {
@@ -66,7 +67,7 @@ $(".createColorModalStore").click(function(){
     });
 
     //delete user
-    $('.delete-color').click(function(e) {
+    $('.delete-design').click(function(e) {
         e.preventDefault();
         // var userId = $(this).data('user-ids').split(',');
         var userId = $(this).data('user-ids');
@@ -75,11 +76,11 @@ $(".createColorModalStore").click(function(){
         console.log(master_id);
 
         // var userId = $(this).data('user-id');
-        var confirmDelete = confirm("Are you sure you want to delete this user?");
+        var confirmDelete = confirm("Are you sure you want to delete this design?");
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
-        url: base_path+"/admin/delete_color",
+        url: base_path+"/admin/delete_design",
         type: "POST",
         dataType: "json",
         data: {
@@ -88,7 +89,7 @@ $(".createColorModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/color";
+            window.location.href = base_path+"/design";
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);
@@ -99,36 +100,36 @@ $(".createColorModalStore").click(function(){
 
 });
 
-$("#savecolor").click(function(){
-    var color_name=$('#color_name').val();
-    if(color_name=='')
+$("#savedesign").click(function(){
+    var design_name=$('#design_name').val();
+    if(design_name=='')
     {
     Swal.fire( "Enter Company Name");
-    $('#color_name').focus();
+    $('#design_name').focus();
     return false;
     }
-    var color_name=$('#color_name').val();
+    var design_name=$('#design_name').val();
     $.ajax({
-        url: base_path+"/admin/add_color",
+        url: base_path+"/admin/add_design",
         type: "POST",
         datatype:"JSON",
         data: {
-            _token: $("#_tokencolor").val(),
-            color_name: color_name,
+            _token: $("#_tokendesign").val(),
+            design_name: design_name,
         },
         cache: false,
         success: function(Result){
             // console.log(Result);
-            $("#addColorModal").modal("hide");
+            $("#addDesignModal").modal("hide");
             // Store the success message in session storage
-            sessionStorage.setItem('successMessage_col', 'Color added successfully');
-            window.location.href = base_path + "/color";
+            sessionStorage.setItem('successMessage_des', 'Design added successfully');
+            window.location.href = base_path + "/design";
         }
     });
 });
 
-const successMessage_col = sessionStorage.getItem('successMessage_col');
-if (successMessage_col) {
-    Swal.fire(successMessage_col);
-    sessionStorage.removeItem('successMessage_col');
+const successMessage_des = sessionStorage.getItem('successMessage_des');
+if (successMessage_des) {
+    Swal.fire(successMessage_des);
+    sessionStorage.removeItem('successMessage_des');
 }

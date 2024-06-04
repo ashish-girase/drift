@@ -7,7 +7,7 @@
     
 <style>
     /* Style the dropdown options */
-    #colorlistcust1 option {
+    #colorlist option {
         font-size: 14px; /* Set font size */
         color: #333; /* Set font color */
         padding: 5px 10px; /* Set padding */
@@ -38,9 +38,9 @@
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Name</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Quantity</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">price_type</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">notes</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Remarks</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Dispatch Remarks</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
                            </tr>
 
@@ -97,18 +97,18 @@
 @endif
 </td>
 <td class="text-center">
-        @if(!empty($order->order->product->prod_qty  ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prod_qty }}</p>
+        @if(!empty($order->order->order_date  ))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_date }}</p>
         @endif
 </td>
 <td class="text-center">
-        @if(!empty( $order->order->price_type))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->price_type }}</p>
+        @if(!empty( $order->order->dispatch_remark))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
         @endif
 </td>
 <td class="text-center">
-        @if(!empty($order->order->notes ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->notes }}</p>
+        @if(!empty($order->order->order_remark ))    
+        <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_remark }}</p>
         @endif
 </td>
 <td class="text-center">
@@ -158,38 +158,37 @@
                 <form method="post" id="customerForm">
                     @csrf
                     <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
-                    <input type="checkbox" id="myCheckbox" name="myCheckbox"> Sample Checkbox<br>
+                    
                     <!--CUSTOMER DETAILS-->
                     <div class="card mb-3">
                         <div class="card-header">
                             <h6 class="mb-0">Customer Details</h6>
                         </div>
                         <div class="card-body">
+                            <div class="form-group col-md-2">
+                                <label for="custName">Order Type<span class="required"></span></label>
+                                <select  class="form-control custom-width" name="ordertype" id="ordertype">
+                                    <option value="normalorder">Normal Order</option>
+                                    <option value="sampleorder">Sample Order</option>
+                                </select>
+                            </div>
+                        
                             <div class="row">
                                 <div class="form-group col-md-3">
                                 <input type="text" name="custid" id="custid" hidden>
-                                <label for="custName">Customer Name<span class="required"></span></label>
+                                <label for="custName">PARTY NAME<span class="required"></span></label>
                                 <input class="form-control custom-width" id="customerInput" name="customerInput" list="customer_list" placeholder="Select a Customer">
                                 <datalist id="customer_list"></datalist>
                             </div>
-                                {{-- <div class="form-group col-md-3">
-                                    <label for="custName">Customer Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="custName" id="custName" placeholder="Customer Name">
-                                </div> --}}
-                                <div class="form-group col-md-3">
-                                    <label for="companylistcust">Company Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="companylistcust" id="companylistcust" placeholder="Company Name">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="email">Customer Email<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="email" id="email" placeholder="Enter Email">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="phoneno">Customer Phone Number<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="phoneno" id="phoneno" placeholder="Phone No">
-                                </div>
+                            <div class="form-group col-md-3">
+                                <label for="city">Email<span class="required"></span></label>
+                                <input type="text" class="form-control custom-width" name="email" id="email" placeholder="Enter Email">
                             </div>
-                            <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="city">Company Name<span class="required"></span></label>
+                                <input type="text" class="form-control custom-width" name="companylistcust" id="companylistcust" placeholder="Enter Company Name">
+                            </div>
+                        
                                 <div class="form-group col-md-3">
                                     <label for="address">Customer Address<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="address" id="address" placeholder="Enter Address">
@@ -197,6 +196,12 @@
                                 <div class="form-group col-md-3">
                                     <label for="city">City<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="city" id="city" placeholder="City">
+                                </div>
+                        
+                                
+                                <div class="form-group col-md-3">
+                                    <label for="phoneno">Customer Phone Number<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="phoneno" id="phoneno" placeholder="Phone No">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="zipcode">Zip Code<span class="required"></span></label>
@@ -209,14 +214,15 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-3">
-                                    <label for="country">Country<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="country" id="country" placeholder="Country">
-                                </div>
-                                <div class="form-group col-md-3">
                                     <label for="custref">Customer Reference<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="custref" id="custref" placeholder="Add Reference">
                                 </div>
+                                <div class="form-group col-md-3">
+                                    <label for="country">Country<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="country" id="country" placeholder="Country">
+                                </div>
                             </div>
+
                         </div>
                     </div>
 
@@ -245,38 +251,48 @@
                                     <input type="text" class="form-control custom-width" name="prod_code" id="prod_code" placeholder="Product Code">
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="prod_qty">Product Quantity<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="prod_qty" id="prod_qty" placeholder="Product Quantity">
+                                    <label for="email">DESIGN NAME<span class="required"></span></label>
+                                    <select class="form-control" id="designlist">
+                                        <option value="" selected>Select a color</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="colorSelect">Color Name</label>
+    
+                                    <select class="form-control" id="colorlist">
+                                        <option value="" selected>Select a color</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="quantity_in_soft" id="quantity_in_soft" placeholder="Product Quantity">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN PIECES<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="quantity_in_pieces" id="quantity_in_pieces" placeholder="Product Quantity">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="Thickness">Product Thickness<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="Thickness" id="Thickness" placeholder="Product Thickness">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="Width">Product Width<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="Width" id="Width" placeholder="Product Width">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="Roll_weight">Roll Weight<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="Roll_weight" id="Roll_weight" placeholder="Roll Weight">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label for="color_name">Color Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="ColourName" id="ColourName" placeholder="Color Name">
-                                </div>
-                            </div>
+                  
                         </div>
                     </div>
 
                    
                     <!-- Status Dropdown -->
                     <div class="row">
-                    
-                   
-                    </div>
-                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust">ORDER DATE<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="order_date" id="order_date" placeholder="Company Name">
+                        </div>
+                       
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="disptach_date" id="disptach_date" placeholder="Company Name">
+                        </div>
+                       
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="tentative_date" id="tentative_date" placeholder="Company Name">
+                        </div>
                                 <div class="form-group col-md-3">
                                     <label for="total_price">Total quantity<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="total_quantity" id="total_quantity" placeholder="Enter Total Quantity">
@@ -294,20 +310,30 @@
                                     <input type="text" class="form-control custom-width" name="Delivery_address" id="Delivery_address" placeholder="Delivery Address">
                                 </div>
                                 <div class="form-group col-md-3">
-                                        <label for="price_type">Price Type<span class="required"></span></label>
-                                    <select class="form-control custom-width" name="price_type" id="price_type">
-                                     <option value="x-factory">X-Factory</option>
-                                     <option value="delivery">Delivery Price</option>
-                                    </select>
+                                    <label for="notes">BOXES PACKED<span class="required"></span></label><br>   
+                                    <input type="checkbox"  name="box_packed" id="box_packed" placeholder="ADD ORDER REMARKS">
                                 </div>
-                                <div class="form-group col-md-8">
-                                    <label for="notes">Notes<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="notes" id="notes" placeholder="Add Notes">
+                               
+                                <div class="form-group col-md-6">
+                                    <label for="order remark">ORDER REMARKS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="order_remark" id="order_remark" placeholder="ADD ORDER REMARKS">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="order remark">DISPATCH REMARKS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="dispatch_remark" id="dispatch_remark" placeholder="ADD ORDER REMARKS">
                                 </div>
 
+                                <div class="row" id="sampleOrderFields" style="display: none;">
+                                    <div class="form-group col-md-6">
+                                        <label for="transportname">COURIER/TRANSPORT NAME</label>
+                                        <input type="text" class="form-control custom-width" name="transportname" id="transportname" placeholder="Enter Transport NAME">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="trackingdetails">TRACKING DETAILS</label>
+                                        <input type="text" class="form-control custom-width" name="trackingdetails" id="trackingdetails" placeholder="Enter Tracking Details">
+                                    </div>
+                                </div>
                         </div>
-                        
-                    
                 </form>
             </div>
             <div class="modal-footer">
@@ -317,6 +343,9 @@
         </div>
     </div>
 </div>
+
+<!-- Additional fields for sample orders -->
+
 
 
 
@@ -337,13 +366,21 @@
                     @csrf
                     <input type="hidden" name="_token" id="_tokenOrder" value="{{Session::token()}}">
                     <input type="hidden" name="color_id"  id="edit_prodid">
-                    
+                   
                     <!--CUSTOMER DETAILS-->
                     <div class="card mb-3">
                         <div class="card-header">
                             <h6 class="mb-0">Customer Details</h6>
                         </div>
                         <div class="card-body">
+                        <div class="form-group col-md-3">
+                            <label for="custName">Order Type<span class="required"></span></label>
+                            <input class="form-control custom-width" id="editordertype" name="editordertype" list="customer_list" placeholder="Select a Customer">
+                            {{-- <select  class="form-control custom-width" name="editordertype" id="editordertype">
+                                <option value="normalorder">Normal Order</option>
+                                <option value="sampleorder">Sample Order</option>
+                            </select> --}}
+                        </div>
                             <div class="row">
                                 <div class="form-group col-md-3">
                                 <input type="text" name="custid" id="custid" hidden>
@@ -424,26 +461,26 @@
                                     <input type="text" class="form-control custom-width" name="edit_prod_code" id="edit_prod_code" placeholder="Product Code">
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="prod_qty">Product Quantity<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_prod_qty" id="edit_prod_qty" placeholder="Product Quantity">
+                                    <label for="email">DESIGN NAME<span class="required"></span></label>
+                                    {{-- <select class="form-control" id="edit_designlist">
+                                        <option value="" selected>Select a color</option>
+                                    </select> --}}
+                                    <input type="text" class="form-control custom-width" name="edit_designName" id="edit_designName" placeholder="Color Name">
                                 </div>
+        
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-3">
-                                    <label for="Thickness">Product Thickness<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_Thickness" id="edit_Thickness" placeholder="Product Thickness">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="Width">Product Width<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_Width" id="edit_Width" placeholder="Product Width">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="Roll_weight">Roll Weight<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_Roll_weight" id="edit_Roll_weight" placeholder="Roll Weight">
-                                </div>
-                                <div class="form-group col-md-6">
                                     <label for="color_name">Color Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_ColourName" id="edit_ColourName" placeholder="Color Name">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_soft" id="edit_quantity_in_soft" placeholder="Product Quantity">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN PIECES<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_pieces" id="edit_quantity_in_pieces" placeholder="Product Quantity">
                                 </div>
                             </div>
                         </div>
@@ -456,10 +493,25 @@
                    
                     </div>
                     <div class="row">
-                                <div class="form-group col-md-3">
-                                    <label for="total_price">Total quantity<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_total_quantity" id="edit_total_quantity" placeholder="Enter Total Quantity">
-                                </div>
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust">ORDER DATE<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="edit_order_date" id="edit_order_date" placeholder="Company Name">
+                        </div>
+                       
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="edit_disptach_date" id="edit_disptach_date" placeholder="Company Name">
+                        </div>
+                       
+                        <div class="form-group col-md-3">
+                            <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
+                            <input type="date" class="form-control custom-width" name="edit_tentative_date" id="edit_tentative_date" placeholder="Company Name">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="total_price">Total quantity<span class="required"></span></label>
+                            <input type="text" class="form-control custom-width" name="edit_total_quantity" id="edit_total_quantity" placeholder="Enter Total Quantity">
+                        </div>
+                               
                                 <div class="form-group col-md-3">
                                     <label for="price">Price<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_price" id="edit_price" placeholder="Enter Price">
@@ -473,16 +525,29 @@
                                     <input type="text" class="form-control custom-width" name="edit_Delivery_address" id="edit_Delivery_address" placeholder="Delivery Address">
                                 </div>
                                 <div class="form-group col-md-3">
-                                        <label for="price_type">Price Type<span class="required"></span></label>
-                                    <select class="form-control custom-width" name="edit_price_type" id="edit_price_type">
-                                     <option value="x-factory">X-Factory</option>
-                                     <option value="delivery">Delivery Price</option>
-                                    </select>
+                                    <label for="notes">BOXES PACKED<span class="required"></span></label><br>   
+                                    <input type="checkbox"  name="edit_box_packed" id="edit_box_packed" placeholder="ADD ORDER REMARKS">
                                 </div>
-                                <div class="form-group col-md-8">
-                                    <label for="notes">Notes<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_notes" id="edit_notes" placeholder="Add Notes">
+                               
+                                <div class="form-group col-md-6">
+                                    <label for="order remark">ORDER REMARKS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_order_remark" id="edit_order_remark" placeholder="ADD ORDER REMARKS">
                                 </div>
+                                <div class="form-group col-md-6">
+                                    <label for="order remark">DISPATCH REMARKS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_dispatch_remark" id="edit_dispatch_remark" placeholder="ADD ORDER REMARKS">
+                                </div>
+                                <div class="row" id="editsampleOrderFields" style="display: none;">
+                                    <div class="form-group col-md-6">
+                                        <label for="transportname">COURIER/TRANSPORT NAME</label>
+                                        <input type="text" class="form-control custom-width" name="edittransportname" id="edittransportname" placeholder="Enter Transport NAME">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="trackingdetails">TRACKING DETAILS</label>
+                                        <input type="text" class="form-control custom-width" name="edittrackingdetails" id="edittrackingdetails" placeholder="Enter Tracking Details">
+                                    </div>
+                                </div>
+                                
 
                         </div>
                         
@@ -569,6 +634,23 @@
         margin: 0;
     }
 </style>
+
+
+<script>
+    $(document).ready(function(){
+        // Add event listener to the ordertype dropdown
+        $('#ordertype').change(function(){
+            var selectedOrderType = $(this).val();
+            if(selectedOrderType == 'sampleorder') {
+                // If sample order is selected, show additional fields
+                $('#sampleOrderFields').show();
+            } else {
+                // Otherwise, hide additional fields
+                $('#sampleOrderFields').hide();
+            }
+        });
+    });
+</script>
 
 
 

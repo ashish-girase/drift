@@ -14,7 +14,7 @@ class RegisterController extends Controller
         return view('session.register');
     }
 
-    public function store()
+    public function store(Request $request)
     {
         $attributes = request()->validate([
             'name' => ['required', 'max:50'],

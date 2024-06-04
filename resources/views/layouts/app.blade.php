@@ -85,6 +85,7 @@
 <script src="{{URL::to('/')}}/assets/js/js/company.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/customer.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/color.js"></script>
+<script src="{{URL::to('/')}}/assets/js/js/design.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/product.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/order.js"></script>
   @stack('rtl')

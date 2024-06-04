@@ -61,7 +61,7 @@ class ProductController extends Controller
             'deleteProduct' => "",
             'deleteTime' => "",
             ];
-           // dd($cons);
+        //    dd($cons);
 
             if ($docAvailable != "No")
             {

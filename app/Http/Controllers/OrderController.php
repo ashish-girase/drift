@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Design;
 use Illuminate\Http\Request;
 // use App\Models\User;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Colour;
+use App\Models\Color;
 use App\Helpers\AppHelper;
 use App\Models\API\Login_History;
 use MongoDB\BSON\Regex;
@@ -39,7 +41,7 @@ class OrderController extends Controller
         $companyId = 1;
         $docAvailable = AppHelper::instance()->checkDoc(NewOrder::raw(), $companyId, $maxLength);
 
-        $cust_id = (int)$request->input('');
+        $cust_id = (int)$request->input('cust_id');
         // dd($cust_id);
         $prod_id = (int)$request->input('prod_id');
         // Fetch customer details
@@ -61,6 +63,31 @@ class OrderController extends Controller
         ])->toArray();
 
         $products_name = $product ? $product[0]['product']['prodName'] : '';
+
+        $colour_id = (int)$request->input('colour_id');
+        $colour = Color::raw()->aggregate([
+            ['$match' => ['companyID' => $companyId]],
+            ['$unwind' => '$color'],
+            ['$match' => ['color._id' => $colour_id]],
+            ['$limit' => 1]
+            ])->toArray();
+
+            
+            $colours_name = $colour ? $colour[0]['color']['color_name'] : '';
+            // dd($colours_name);
+
+            $design_id = (int)$request->input('design_id');
+            $design = Design::raw()->aggregate([
+                ['$match' => ['companyID' => $companyId]],
+                ['$unwind' => '$design'],
+                ['$match' => ['design._id' => $design_id]],
+                ['$limit' => 1]
+                ])->toArray();
+    
+                $design_name = $design ? $design[0]['design']['design_name'] : '';
+            
+
+
         // Construct the order data
         $orderData = [
             '_id' => $new_id,
@@ -83,21 +110,33 @@ class OrderController extends Controller
                 'prodName' => $request->input('prodName'),
                 'product_type' => $request->input('product_type'),
                 'prod_code' => $request->input('prod_code'),
-                'prod_qty' => $request->input('prod_qty'),
-                'Thickness' => $request->input('Thickness'),
-                'Width' => $request->input('Width'),
-                'Roll_weight' => $request->input('Roll_weight'),
-                'ColourName' => $request->input('ColourName'),
+                // 'prod_qty' => $request->input('prod_qty'),
+                'color_id'=>$colour_id,
+                'ColourName' => $colours_name,
+                'design_id'=>$design_id,
+                'design_name' => $design_name, 
                 
             ],
-                'sample_data' =>  $request->input('isChecked'),
+                'box_packed' =>  $request->input('isChecked'),
                 'total_quantity' => $request->input('total_quantity'),
+                'order_date' => $request->input('order_date'),  
+                'disptach_date' => $request->input('disptach_date'), 
+                'tentative_date' => $request->input('tentative_date'),     
+                'quantity_in_soft' => $request->input('quantity_in_soft'), 
+                'quantity_in_pieces' => $request->input('quantity_in_pieces'), 
+                'ordertype' => $request->input('ordertype'), 
+                'transportname' => $request->input('transportname'), 
+                'trackingdetails' => $request->input('trackingdetails'), 
+
+                
                 'price' => $request->input('price'),
                 'Billing_address' => $request->input('Billing_address'),
                 'Delivery_address' => $request->input('Delivery_address'),
-                'price_type' => $request->input('price_type'),
+                // 'price_type' => $request->input('price_type'),
                 'status' => "New",
-                'notes' => $request->input('notes'),
+                'order_remark' => $request->input('order_remark'),
+                'dispatch_remark' => $request->input('dispatch_remark'),
+
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deleteOrder' => "",
@@ -347,66 +386,66 @@ class OrderController extends Controller
     }
 
 
-    public function searchColour(Request $request)
-    {
-    $companyId = 1;
-    $colour_nm = $request->input('colour_name');
+    // public function searchColour(Request $request)
+    // {
+    // $companyId = 1;
+    // $colour_nm = $request->input('colour_name');
 
-    $colours = Colour::raw()->aggregate([
-    ['$match' => ['companyID' => $companyId]],
-    ['$unwind' => '$colour'],
-    ['$match' => ['colour.ColourName' => new \MongoDB\BSON\Regex("{$colour_nm}", 'i')]],
-    ['$group' => [
-    '_id' => null,
-    'colours' => ['$push' => [
-    'ColourName' => '$colour.ColourName',
+    // $colours = Colour::raw()->aggregate([
+    // ['$match' => ['companyID' => $companyId]],
+    // ['$unwind' => '$colour'],
+    // ['$match' => ['colour.ColourName' => new \MongoDB\BSON\Regex("{$colour_nm}", 'i')]],
+    // ['$group' => [
+    // '_id' => null,
+    // 'colours' => ['$push' => [
+    // 'ColourName' => '$colour.ColourName',
 
-    // Add other colour fields you want to include here
-    ]],
-    ]],
-    ['$project' => ['colours' => 1, '_id' => 0]],
-    ])->toArray();
+    // // Add other colour fields you want to include here
+    // ]],
+    // ]],
+    // ['$project' => ['colours' => 1, '_id' => 0]],
+    // ])->toArray();
 
-    if (empty($colours)) {
-    return response()->json(['status' => false, 'message' => 'No colour found'], 404);
-    }
+    // if (empty($colours)) {
+    // return response()->json(['status' => false, 'message' => 'No colour found'], 404);
+    // }
 
-    return response()->json([
-    'status' => true,
-    'data' => $colours[0]['colours'],
-    'message' => 'Colours found successfully'
-    ], 200);
-    }
-    public function getColour(Request $request)
-    {
-    $companyId = 1;
-    $colour_id = (int)$request->input('colour_id');
+    // return response()->json([
+    // 'status' => true,
+    // 'data' => $colours[0]['colours'],
+    // 'message' => 'Colours found successfully'
+    // ], 200);
+    // }
+    // public function getColour(Request $request)
+    // {
+    // $companyId = 1;
+    // $colour_id = (int)$request->input('colour_id');
 
-    $colours = Colour::raw()->aggregate([
-    ['$match' => ['companyID' => $companyId]],
-    ['$unwind' => '$colour'],
-    ['$match' => ['colour._id' => $colour_id]],
-    ['$group' => [
-    '_id' => null,
-    'colours' => ['$push' => [
-    'ColourName' => '$colour.ColourName',
+    // $colours = Colour::raw()->aggregate([
+    // ['$match' => ['companyID' => $companyId]],
+    // ['$unwind' => '$colour'],
+    // ['$match' => ['colour._id' => $colour_id]],
+    // ['$group' => [
+    // '_id' => null,
+    // 'colours' => ['$push' => [
+    // 'ColourName' => '$colour.ColourName',
 
-    // Add other colour fields you want to include here
-    ]],
-    ]],
-    ['$project' => ['colours' => 1, '_id' => 0]],
-    ])->toArray();
+    // // Add other colour fields you want to include here
+    // ]],
+    // ]],
+    // ['$project' => ['colours' => 1, '_id' => 0]],
+    // ])->toArray();
 
-    if (empty($colours)) {
-    return response()->json(['status' => false, 'message' => 'No colour found'], 404);
-    }
+    // if (empty($colours)) {
+    // return response()->json(['status' => false, 'message' => 'No colour found'], 404);
+    // }
 
-    return response()->json([
-    'status' => true,
-    'data' => $colours[0]['colours'],
-    'message' => 'Colours found successfully'
-    ], 200);
-    }
+    // return response()->json([
+    // 'status' => true,
+    // 'data' => $colours[0]['colours'],
+    // 'message' => 'Colours found successfully'
+    // ], 200);
+    // }
 
        public function view_order(Request $request)
     {
@@ -496,17 +535,25 @@ class OrderController extends Controller
     'order.$.custName' => $request->customers_name,
     'order.$.prodName' => $request->products_name,
     'order.$.product_type' => $request->product_type,
-    'order.$.Thickness' => $request->Thickness,
-    'order.$.Width' => $request->Width,
     'order.$.colour_id' => $request->colour_id,
     'order.$.ColourName' => $request->colours_name,
-    'order.$.Roll_weight' => $request->Roll_weight,
+    'order.$.design_name' => $request->design_name,
+    'order.$.quantity_in_soft' => $request->quantity_in_soft,   
+    'order.$.quantity_in_pieces' => $request->quantity_in_pieces,  
     'order.$.Total_qty' => $request->Total_qty,
     'order.$.Detail_inst' => $request->Detail_inst,
     'order.$.Billing_address' => $request->Billing_address,
     'order.$.Delivery_address' => $request->Delivery_address,
-    'order.$.price_type' => $request->price_type,
-    'order.$.notes' => $request->notes,
+    'order.$.total_quantity' => $request->total_quantity,
+    'order.$.price' => $request->price,
+    'order.$.order_remark' => $request->order_remark,
+    'order.$.dispatch_remark' => $request->dispatch_remark,
+    'order.$.order_date' => $request->order_date,
+    'order.$.disptach_date' => $request->disptach_date,
+    'order.$.tentative_date' => $request->tentative_date,
+    'order.$.trackingdetails' => $request->trackingdetails,
+    'order.$.transportname' => $request->transportname,
+    // 'order.$.box_packed' => $request->box_packed,
     'order.$.insertedTime' => time(),
     'order.$.delete_status' => "NO",
     'order.$.deleteOrder' => "",
@@ -515,11 +562,11 @@ class OrderController extends Controller
     ]
     );
 
-   
+    // dd($request->box_packed);
 
     if ($orderCurr==true) {
         // dd($orderCurr);
-        return response()->json(['status' => true,'message' => 'Orrder updated successfully'], 200);
+        return response()->json(['status' => true,'message' => 'Order updated successfully'], 200);
         } else {
         return response()->json(['status' => false,'message' => 'Failed to update Product'], 500);
         }
@@ -739,6 +786,38 @@ class OrderController extends Controller
             // Return success response
             return response()->json(['status' => true, 'message' => 'Notes added successfully'], 200);
         }
+
+
+
+            public function get_designlist(Request $request){
+                // $colors = Color::all()->toArray();
+                $searchTerm = $request->input('searchTerm');
+        
+                $designs = Design::raw()->aggregate([
+                    ['$unwind' => '$design'],
+                    ['$match' => ['design.delete_status'=>'NO']],
+                    ])->toArray();
+            
+        
+                return response()->json($designs);
+            }
+
+
+            public function fetchColorsNames(Request $request){
+                // $colors = Color::all()->toArray();
+                $searchTerm = $request->input('searchTerm');
+        
+                $colour = Color::raw()->aggregate([
+                    ['$unwind' => '$color'],
+                    ['$match' => ['color.delete_status'=>'NO']],
+                    ])->toArray();
+                // Fetch color names from the database based on the search term
+                // $colors =  $colors = Color::where('_id')->get();
+                // dd($colour);
+        
+                return response()->json($colour);
+            }
+
 
     }
 

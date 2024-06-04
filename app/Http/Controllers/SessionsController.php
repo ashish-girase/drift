@@ -28,6 +28,7 @@ class SessionsController extends Controller
         $email = strtolower($request->email);
         $password = $request->password;
         $collection=\App\Models\User::raw();
+        // dd($collection);
 
         $user = $collection->aggregate([
             [
