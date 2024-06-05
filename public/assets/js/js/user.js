@@ -2,7 +2,7 @@ var base_path = $("#url").val();
 // var base_path = window.location.origin;
 
 $(document).ready(function() {
-    $('#userTable').DataTable();
+    // $('#userTable').DataTable();
 $(".createUserModalStore").click(function(){
         $('#addUserModal').modal("show");
     });

@@ -110,7 +110,6 @@ class OrderController extends Controller
                 'prodName' => $request->input('prodName'),
                 'product_type' => $request->input('product_type'),
                 'prod_code' => $request->input('prod_code'),
-                // 'prod_qty' => $request->input('prod_qty'),
                 'color_id'=>$colour_id,
                 'ColourName' => $colours_name,
                 'design_id'=>$design_id,
@@ -127,12 +126,9 @@ class OrderController extends Controller
                 'ordertype' => $request->input('ordertype'), 
                 'transportname' => $request->input('transportname'), 
                 'trackingdetails' => $request->input('trackingdetails'), 
-
-                
                 'price' => $request->input('price'),
                 'Billing_address' => $request->input('Billing_address'),
                 'Delivery_address' => $request->input('Delivery_address'),
-                // 'price_type' => $request->input('price_type'),
                 'status' => "New",
                 'order_remark' => $request->input('order_remark'),
                 'dispatch_remark' => $request->input('dispatch_remark'),
@@ -369,10 +365,7 @@ class OrderController extends Controller
 
     'prodName' => '$product.prodName',
     'product_type' => '$product.product_type',
-    'Thickness' => '$product.Thickness',
-    'Width' => '$product.Width',
-    'ColourName' => '$product.ColourName',
-    'Roll_weight' => '$product.Roll_weight',
+
     ]],
     ]],
     ['$project' => ['products' => 1, '_id' => 0]],
@@ -451,6 +444,7 @@ class OrderController extends Controller
     {
         $companyID=1;
         $collection=NewOrder::raw();
+        $processing =Processing::raw();
         // $customers = Customer::select('_id', 'custName')->get();
         $cust_id=$request->input('cust_id');
         $customers = Customer::raw()->aggregate([
@@ -468,14 +462,20 @@ class OrderController extends Controller
             ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
             ['$sort' => ['order._id' => -1]]
         ]);
-        
+        $processCurr = $processing->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],  // Unwind the order array first
+            ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
+            ['$sort' => ['order._id' => -1]]
+        ]);
+        $process_data = $processCurr->toArray();
         $order_data = $orderCurr->toArray();
         
         // dd($order_data);
         
-        return view('order.view_order', compact('order_data','customers'));
+        return view('order.view_order', compact('order_data','customers','process_data'));
         
-        //dd('order_data');
+
     }
     public function edit_order(Request $request)
     {
@@ -553,7 +553,7 @@ class OrderController extends Controller
     'order.$.tentative_date' => $request->tentative_date,
     'order.$.trackingdetails' => $request->trackingdetails,
     'order.$.transportname' => $request->transportname,
-    // 'order.$.box_packed' => $request->box_packed,
+    'order.$.box_packed' => $request->box_packed,
     'order.$.insertedTime' => time(),
     'order.$.delete_status' => "NO",
     'order.$.deleteOrder' => "",
@@ -612,7 +612,7 @@ class OrderController extends Controller
             'completed' => Completed::raw(),
             'cancelled' => Cancelled::raw()
         ];
-        dd($id);
+        // dd($id);
         // Determine old collection
         if (!isset($collectionMap[$oldStatus])) {
             return response()->json(['success' => false, 'message' => 'Invalid old status.']);
@@ -757,34 +757,7 @@ class OrderController extends Controller
         }
 
         public function addnewStatus(Request $request) {
-            // $latestNote = New_notes::latest()->first();
-        
-            // if ($latestNote) {
-            //     $new_id = $latestNote->_id + 1;
-            // } else {
-            //     // If the collection is empty, start from 1
-            //     $new_id = 1;
-            // }
-       
-            // // Prepare data for insertion
-            // $data = array(
-            //     '_id' => $new_id,
-            //     'counter' => 0,
             
-            //     'status' => $request->input('status'),
-            //     'delivery_date' => $request->input('delivery_date'),
-            //     'time' => $request->input('time'),
-            //     'note' => $request->input('note'),
-            //     'orderid' => $request->input('id'),
-            //     'insertedTime' => time(),
-            //     'delete_status' => "NO",
-            //     'deleteCustomer' => "",
-            //     'deleteTime' => "",
-            // );
-            // dd($data);
-            // new_notes::raw()->updateOne(['companyID' => 1,'_id' => (int)$new_id], ['$push' => ['order' => $data]]);
-            // // Return success response
-            // return response()->json(['status' => true, 'message' => 'Notes added successfully'], 200);
 
             $maxLength = 2000;
             $new_id = New_notes::max('_id') + 1;
@@ -794,40 +767,41 @@ class OrderController extends Controller
             $cons = [
             '_id' => $new_id,
             'counter' => 1,
+            'orderid'=>  $request->input('orderid'),
             'status' => $request->input('status'),
             'delivery_date' => $request->input('delivery_date'),
             'time' => $request->input('time'),
             'note' => $request->input('note'),
-            'orderid' => $request->input('id'),
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deletestatus' => "",
             'deleteTime' => "",
             ];
-            dd($cons);
-            if ($docAvailable != "No")
+            // dd($cons);
+            if ($docAvailable != null)
             {
                 $info = (explode("^",$docAvailable));
                 $docId = $info[1];
                 // dd($docId);
                 $counter = $info[0];
-                $companyid = AppHelper::instance()->getAdminDocumentSequence(1, New_notes::raw(),'new_notes',(int)$docId);
+                $companyid = AppHelper::instance()->getAdminDocumentSequence(1, New_notes::raw(),'order',(int)$docId);
                 // dd($companyid);
                 $data = array(
                 '_id' => $companyid,
                 'counter' => 0,
+                'oldstatus' => $request->input('addoldStatus'),
                 'status' => $request->input('status'),
                 'delivery_date' => $request->input('delivery_date'),
                 'time' => $request->input('time'),
                 'note' => $request->input('note'),
-                'orderid' => $request->input('id'),
+                'orderid' => $request->input('orderid'),
                 'insertedTime' => time(),
                 'delete_status' => "NO",
                 'deleteCompany' => "",
                 'deleteTime' => "",
                 );
                 // dd($data);
-                New_notes::raw()->updateOne(['companyID' => $companyId,'_id' => (int)$docId], ['$push' => ['new_notes' => $data]]);
+                New_notes::raw()->updateOne(['companyID' => $companyId,'_id' => (int)$docId], ['$push' => ['order' => $data]]);
                 //dd($cons_data);
                 echo json_encode($data);
             }
@@ -859,6 +833,8 @@ class OrderController extends Controller
             }
             $completedata[] = $data;
             echo json_encode($completedata);
+
+            return response()->json(['status' => true, 'message' => 'Satatus added successfully'], 200);
 
         }
 

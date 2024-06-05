@@ -46,87 +46,96 @@
 
                         </thead>
                         <tbody>
+                            
+@php
+    $mergedData = array_merge($order_data, $process_data);
+@endphp
                        
- @if($order_data)
- @foreach($order_data as $key => $order)
-<tr>
-<td class="ps-4">
-    <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
-</td>
-<td class="text-center">
-    @if(!empty($order->order->customer->custName))
-            <p class="text-xs font-weight-bold mb-0">{{ $order->order->customer->custName }}</p>
-    @endif     
-</td>
-    <td class="text-center">
-        <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->order->status }}</p>-->
-        <form method="POST"  >
-    @csrf
-    <!-- Hidden input fields for each data attribute -->
-    <input type="hidden" name="id" id="orderid" value="{{ $order->order->_id }}">
-    <input type="hidden" name="oldstatus" id="oldstatus" value="{{ $order->order->status }}">
-    <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
-    <!-- Add more hidden input fields for other data attributes -->
-
-    <select class="form-control custom-width" name="newstatus"  onchange="openModal(this)">
-        <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
-        <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-        <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-        <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-        <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-    </select>
-</form>
-
-
-
-<script>
-    function submitForm(selectElement) {
-        // Get the form element containing the select dropdown
-        var form = selectElement.form;
-        console.log(form);
-        // Submit the form
-        form.submit();
-    }
-</script>
-
+ @if($mergedData )
+ @foreach($mergedData as $key => $order)
+    <tr>
+    <td class="ps-4">
+        <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
     </td>
+    <td class="text-center">
+        @if(!empty($order->order->customer->custName))
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->customer->custName }}</p>
+        @endif     
+    </td>
+        <td class="text-center">
+            <!-- <p class="text-xs font-weight-bold mb-0">{{ $order->order->status }}</p>-->
+            <form method="POST"  >
+        @csrf
+        <!-- Hidden input fields for each data attribute -->
+        <input type="hidden" class="order-id" name="id" id="orderid" value="{{ $order->order->_id }}">
+        <input type="hidden" name="oldstatus" id="oldstatus" value="{{ $order->order->status }}">
+        <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
+        <!-- Add more hidden input fields for other data attributes -->
 
-<td class="text-center">
-@if(!empty($order->order->product->prodName))
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prodName }}</p>
-@endif
-</td>
-<td class="text-center">
-        @if(!empty($order->order->order_date  ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_date }}</p>
-        @endif
-</td>
-<td class="text-center">
-        @if(!empty( $order->order->dispatch_remark))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
-        @endif
-</td>
-<td class="text-center">
-        @if(!empty($order->order->order_remark ))    
-        <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_remark }}</p>
-        @endif
-</td>
-<td class="text-center">
-        <!--EDIT BUTTON-->
-        <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
-            <i class="fas fa-user-edit text-secondary"></i>
-        </a>
-        <!--DELETE BUTTON-->
-        <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
-            <span>
-                <i class="cursor-pointer fas fa-trash text-secondary"></i>
-            </span>
-        </a>
-   
-</td>
+        <select class="form-control custom-width" name="newstatus"  onchange="openModal(this, '{{ $order->order->_id }}')">
+            <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
+            <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+            <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
+            <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+            <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+        </select>
+
+        
+    </form>
+
+
+
+    <script>
+        function submitForm(selectElement) {
+            // Get the form element containing the select dropdown
+            var form = selectElement.form;
+            console.log(form);
+            // Submit the form
+            form.submit();
+        }
+    </script>
+
+        </td>
+
+    <td class="text-center">
+    @if(!empty($order->order->product->prodName))
+            <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prodName }}</p>
+    @endif
+    </td>
+        <td class="text-center">
+                @if(!empty($order->order->order_date  ))    
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_date }}</p>
+                @endif
+        </td>
+        <td class="text-center">
+                @if(!empty( $order->order->dispatch_remark))    
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
+                @endif
+        </td>
+        <td class="text-center">
+                @if(!empty($order->order->order_remark ))    
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_remark }}</p>
+                @endif
+        </td>
+        <td class="text-center">
+                <!--EDIT BUTTON-->
+                <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+                    <i class="fas fa-user-edit text-secondary"></i>
+                </a>
+                <!--DELETE BUTTON-->
+                <a href="#" class="mx-3 delete-order" data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+                    <span>
+                        <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                    </span>
+                </a>
+        
+        </td>
+    </tr>
+
 
 @endforeach
 @endif
+
 
 
 
@@ -580,14 +589,16 @@
                         @csrf
                         <input type="hidden" name="_token" id="_tokenOrder" value="{{ Session::token() }}">
                         <div class="form-row">
+                            <input type="hidden" class="form-control" name="order_id " id="order_id" data-order-ids="{{ $order->order->_id}}" placeholder="newstatus">
+                    
                             <div class="form-group col-md-12">
                                 <label for="user_firstname">Old Status<span class="required"></span></label>
-                        <input type="text" class="form-control" name="old_status" id="old_status" placeholder="newstatus">
+                        <input type="text" class="form-control" name="old_status" id="old_status" placeholder="newstatus" disabled>
                             </div>
                             <div class="form-group col-md-12">
-                                <label for="user_firstname">Status<span class="required"></span></label>
+                                <label for="user_firstname">Status<span class="required" ></span></label>
                                 <input type="text" class="form-control" name="status" id="status"
-                                    placeholder="Status">
+                                    placeholder="Status" disabled>
                             </div>
                         </div>
                 

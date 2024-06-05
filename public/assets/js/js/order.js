@@ -25,6 +25,7 @@ $(".createOrderModalStore").click(function(){
     $('.edit-order').click(function(e) {
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
+
     
         $.ajax({
             type: 'POST',
@@ -124,7 +125,6 @@ $(".createOrderModalStore").click(function(){
 
     //Update User
     $(document).on("click", '#updateOrder', function(event) {
-        console.log("Edit Customer");
         var c_id= $('#edit_prodid').val();
         // var companySubID= $('#up_comSubId').val();
         var edit_custName = $('#edit_custName').val();
@@ -156,9 +156,8 @@ $(".createOrderModalStore").click(function(){
         var edit_box_packed = $('#edit_box_packed').val();
         var edittransportname = $('#edittransportname').val();
         var edittrackingdetails = $('#edittrackingdetails').val();
-        // var edit_box_packed = $('#edit_box_packed').on('change', function() {
-        //     orderData.box_packed = $(this).prop('checked') ? 1 : 0;
-        // });
+        var edit_box_packed = $('#edit_box_packed').prop('checked') ? 1 : 0;
+   
       
         
 
@@ -195,6 +194,7 @@ $(".createOrderModalStore").click(function(){
         formData.append('box_packed', edit_box_packed);
         formData.append('transportname', edittransportname);
         formData.append('trackingdetails', edittrackingdetails);
+        formData.append('box_packed', edit_box_packed); 
         
         
     
@@ -435,35 +435,37 @@ $(".createOrderModalStore").click(function(){
 });
 
 
-function openModal(selectElement) {
-    var selectedStatus = selectElement.value;
+function openModal(selectElement,orderId) {
     var oldStatus = document.getElementById('oldstatus').value;
     var newStatus = selectElement.value;
-    var orderId = document.getElementById('orderid').value;
-    // console.log(oldStatus);
+    var selectedStatus = selectElement.value;
     
-    // console.log(orderId);
     if (selectedStatus === 'processing') {
         $('#statusChange').modal('show');
         $('#status').val(newStatus);
         $('#old_status').val(oldStatus);
+        $('#order_id').val(orderId);
+
     }
     $.ajax({
-        url: 'orders/updateStatus',
+        url: base_path+'/orders/updateStatus',
         type: 'POST',
         data: {
             oldstatus: oldStatus,
             newstatus: newStatus,
             id:orderId,
-            '_token': $('#_tokenOrder').val()
+            '_token': $('#_tokenOrde').val()
         },
         success: function(response) {
-            // Handle success response
+            // Handle success response  
             console.log(response);
+            console.log("sucess");
         },
         error: function(xhr, status, error) {
             // Handle error
-            console.error(xhr.responseText);
+            // console.error(xhr.responseText);
+            console.error("Errorsd:", error);
+            console.log("not sucess");
         }
     });
 }
@@ -471,35 +473,39 @@ function openModal(selectElement) {
 
     $('#savesatatus').click(function(e) {
         e.preventDefault();
+        var orderid = $('#order_id').val();
         var addoldStatus = $('#old_status').val();
         var status=$('#status').val();
         var delivary_date=$('#delivary_date').val();
-        var time= $('#time').text();
-        var note=$('#note').val();
-        // console.log(oldStatus);
-       
-        
+        var time = $('#time').val();
+        var note = $('#note').val();
+
+    
         var formData = {
             'status':status,
             'delivery_date': delivary_date,
             'time': time,
             'note': note,
             'addoldStatus':addoldStatus,
+            'orderid':orderid,
             '_token': $('#_tokenOrder').val()
         };
-        console.log(formData);
         $.ajax({
-            type: 'POST',
-            url: 'orders/addnewStatus',
-            datatype:"JSON", 
+            type: 'post',
+            url: base_path+ "/orders/addnewStatus",
+            dataType:"JSON", 
             data: formData,
             cache: false,
-            success: function(result){
-                console.log("Data being sent:", formData);
+            success: function(result){  
+                console.log("Data being sent:", result);
+                console.log("sucess");
+                $('#statusChange').modal('hide');
+                window.location.href = base_path + "/order";
             },
             error: function(xhr, status, error) {
-                console.error("Error:", error);
-
+                console.error("AJAX Error:", status, error); 
+                $('#statusChange').modal('hide');
+                window.location.href = base_path + "/order";
             }
         });
     });
@@ -518,10 +524,6 @@ $("#saveOrder").click(function() {
 
     var colour_id = $(this).val();
     var design_id = $(this).val();
-
-    
-    
-    
 
     // Prepare order data
     var companylistcust = $('#companylistcust').val();
