@@ -581,16 +581,16 @@
                         <input type="hidden" name="_token" id="_tokenOrder" value="{{ Session::token() }}">
                         <div class="form-row">
                             <div class="form-group col-md-12">
+                                <label for="user_firstname">Old Status<span class="required"></span></label>
+                        <input type="text" class="form-control" name="old_status" id="old_status" placeholder="newstatus">
+                            </div>
+                            <div class="form-group col-md-12">
                                 <label for="user_firstname">Status<span class="required"></span></label>
                                 <input type="text" class="form-control" name="status" id="status"
                                     placeholder="Status">
                             </div>
                         </div>
-                        <div class="form-group col-md-12">
-                            <label for="user_firstname">Receipy Code<span class="required"></span></label>
-                            <input type="text" class="form-control" name="receipy_code" id="receipy_code"
-                                placeholder="Receipy Code">
-                        </div>
+                
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="user_firstname">Delivary Date<span class="required"></span></label>

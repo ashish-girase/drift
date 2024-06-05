@@ -24,7 +24,7 @@ use App\Models\Processing;
 use App\Models\Dispatch;
 use App\Models\Cancelled;
 use App\Models\Completed;
-use App\Models\new_notes;
+use App\Models\New_notes;
 use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
@@ -757,34 +757,109 @@ class OrderController extends Controller
         }
 
         public function addnewStatus(Request $request) {
-            $latestNote = new_notes::latest()->first();
+            // $latestNote = New_notes::latest()->first();
         
-            if ($latestNote) {
-                $new_id = $latestNote->_id + 1;
-            } else {
-                // If the collection is empty, start from 1
-                $new_id = 1;
-            }
+            // if ($latestNote) {
+            //     $new_id = $latestNote->_id + 1;
+            // } else {
+            //     // If the collection is empty, start from 1
+            //     $new_id = 1;
+            // }
        
-            // Prepare data for insertion
-            $data = array(
-                '_id' => $new_id,
+            // // Prepare data for insertion
+            // $data = array(
+            //     '_id' => $new_id,
+            //     'counter' => 0,
+            
+            //     'status' => $request->input('status'),
+            //     'delivery_date' => $request->input('delivery_date'),
+            //     'time' => $request->input('time'),
+            //     'note' => $request->input('note'),
+            //     'orderid' => $request->input('id'),
+            //     'insertedTime' => time(),
+            //     'delete_status' => "NO",
+            //     'deleteCustomer' => "",
+            //     'deleteTime' => "",
+            // );
+            // dd($data);
+            // new_notes::raw()->updateOne(['companyID' => 1,'_id' => (int)$new_id], ['$push' => ['order' => $data]]);
+            // // Return success response
+            // return response()->json(['status' => true, 'message' => 'Notes added successfully'], 200);
+
+            $maxLength = 2000;
+            $new_id = New_notes::max('_id') + 1;
+            $companyId =1;
+            $docAvailable = AppHelper::instance()->checkDoc(New_notes::raw(),$companyId,$maxLength);
+            // dd($docAvailable);
+            $cons = [
+            '_id' => $new_id,
+            'counter' => 1,
+            'status' => $request->input('status'),
+            'delivery_date' => $request->input('delivery_date'),
+            'time' => $request->input('time'),
+            'note' => $request->input('note'),
+            'orderid' => $request->input('id'),
+            'insertedTime' => time(),
+            'delete_status' => "NO",
+            'deletestatus' => "",
+            'deleteTime' => "",
+            ];
+            dd($cons);
+            if ($docAvailable != "No")
+            {
+                $info = (explode("^",$docAvailable));
+                $docId = $info[1];
+                // dd($docId);
+                $counter = $info[0];
+                $companyid = AppHelper::instance()->getAdminDocumentSequence(1, New_notes::raw(),'new_notes',(int)$docId);
+                // dd($companyid);
+                $data = array(
+                '_id' => $companyid,
                 'counter' => 0,
                 'status' => $request->input('status'),
-                'receipy_code' => $request->input('receipy_code'), 
                 'delivery_date' => $request->input('delivery_date'),
                 'time' => $request->input('time'),
                 'note' => $request->input('note'),
                 'orderid' => $request->input('id'),
                 'insertedTime' => time(),
                 'delete_status' => "NO",
-                'deleteCustomer' => "",
+                'deleteCompany' => "",
                 'deleteTime' => "",
-            );
-            dd($data);
-            new_notes::raw()->updateOne(['companyID' => 1,'_id' => (int)$new_id], ['$push' => ['order' => $data]]);
-            // Return success response
-            return response()->json(['status' => true, 'message' => 'Notes added successfully'], 200);
+                );
+                // dd($data);
+                New_notes::raw()->updateOne(['companyID' => $companyId,'_id' => (int)$docId], ['$push' => ['new_notes' => $data]]);
+                //dd($cons_data);
+                echo json_encode($data);
+            }
+            else
+            {
+
+                $count_data=New_notes::all();;
+                $count=count($count_data);
+                $ids=array();
+                if($count !=0)
+                {
+                foreach($count_data as $row)
+                {
+                $ids[]=$row->_id;
+                }
+                $id=max($ids);
+                }
+                else
+                {
+                $id=0;
+                }
+                $data=array(
+                '_id'=>$id+1,
+                'counter'=>0,
+                "companyID"=>$companyId,
+                'new_notes'=>array($cons),
+                );
+                New_notes::raw()->insertOne($data);
+            }
+            $completedata[] = $data;
+            echo json_encode($completedata);
+
         }
 
 

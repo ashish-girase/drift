@@ -433,16 +433,20 @@ $(".createOrderModalStore").click(function(){
 
 
 });
+
+
 function openModal(selectElement) {
     var selectedStatus = selectElement.value;
     var oldStatus = document.getElementById('oldstatus').value;
     var newStatus = selectElement.value;
     var orderId = document.getElementById('orderid').value;
+    // console.log(oldStatus);
     
     // console.log(orderId);
     if (selectedStatus === 'processing') {
         $('#statusChange').modal('show');
-        $('#status  ').val(newStatus);
+        $('#status').val(newStatus);
+        $('#old_status').val(oldStatus);
     }
     $.ajax({
         url: 'orders/updateStatus',
@@ -464,64 +468,42 @@ function openModal(selectElement) {
     });
 }
 
-$(document).ready(function() {
-    $('#savesatatus').on('click', function() {
-        // Get the form data
-        // var oldStatus = document.getElementById('oldstatus').value;
-        var newStatus = selectElement.value;
-        var orderId = document.getElementById('orderid').value;
+
+    $('#savesatatus').click(function(e) {
+        e.preventDefault();
+        var addoldStatus = $('#old_status').val();
         var status=$('#status').val();
-        var receipy_code=$('#receipy_code').val();
         var delivary_date=$('#delivary_date').val();
         var time= $('#time').text();
         var note=$('#note').val();
-        console.log(newStatus);
+        // console.log(oldStatus);
+       
         
         var formData = {
-            'status': $('#status').val(),
-            'receipy_code': $('#receipy_code').val(),
-            'delivery_date': $('#delivary_date').val(),
-            'time': $('#time').val(),
-            'note': $('#note').val(),
-            'id': orderId,
+            'status':status,
+            'delivery_date': delivary_date,
+            'time': time,
+            'note': note,
+            'addoldStatus':addoldStatus,
             '_token': $('#_tokenOrder').val()
         };
-        
-        // console.log(formData);
-        // Send the AJAX request
+        console.log(formData);
         $.ajax({
             type: 'POST',
             url: 'orders/addnewStatus',
             datatype:"JSON", 
-            data: {
-                _token: $("#_tokenOrder").val(),
-                status: status,
-                receipy_code: receipy_code,
-                delivary_date: delivary_date,
-                time: time,
-                note: note,
-            },
+            data: formData,
             cache: false,
-            // data: formData,
-            success: function(Result){
-                console.log("Data being sent:", {
-                    _token: $("#_tokenOrder").val(),
-                    status: status,
-                    receipy_code: receipy_code,
-                    delivary_date: delivary_date,
-                    time: time,
-                    note: note,
-                 
-                });
-                console.log("hello");
+            success: function(result){
+                console.log("Data being sent:", formData);
             },
-            error: function(Result) {
-                // Handle the error response
-                // You can display an error message or handle it as needed
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+
             }
         });
     });
-});
+
 
 
 $("#saveOrder").click(function() {
