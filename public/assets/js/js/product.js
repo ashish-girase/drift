@@ -103,7 +103,7 @@ $(document).ready(function() {
         var master_id = $(this).data('user-master_id');
 
         // var userId = $(this).data('user-id');
-        var confirmDelete = confirm("Are you sure you want to delete this user?");
+        var confirmDelete = confirm("Are you sure you want to delete this?");
         if (confirmDelete) {
         $.ajax({
         // url: "{{ route('delete_user') }}",
@@ -113,7 +113,7 @@ $(document).ready(function() {
         data: {
             id: userId,
             master_id: master_id,
-            _token: "{{ csrf_token() }}"
+            _token: "{{ csrf_token  () }}"
         },
         success: function(response) {
             window.location.href = base_path+"/product";

@@ -120,7 +120,7 @@ $("#savedesign").click(function(){
         cache: false,
         success: function(Result){
             // console.log(Result);
-            $("#addDesignModal").modal("hide");
+            $("#addproducttypeModal").modal("hide");
             // Store the success message in session storage
             sessionStorage.setItem('successMessage_des', 'Design added successfully');
             window.location.href = base_path + "/design";

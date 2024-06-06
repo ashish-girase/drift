@@ -150,24 +150,13 @@
                                     placeholder="Product Name">
                             </div>
                         </div>
+                        <div class="form-row">           
+                        </div>
                         <div class="form-row">
-                            {{-- <div class="form-group col-md-12">
-                                                        <label for="user_firstname">Color Name<span
-                                                                class="required"></span></label>
-                                                        <!-- <input type="text" class="form-control" name="company_name"
-                                                            id="company_name" placeholder="Company Name"> -->
-                                                            <input list="colorlistcust" placeholder="search here..." class="form-control" id="color_name" name="color_name" onkeyup="doSearch_sett(this.value,'colorlistcust')" autocomplete="off">
-                                                            <datalist id="colorlistcust1">
-                                                                <!-- Options will be populated here -->
-                                                            </datalist>
-                                                        </div> --}}
-
                             <div class="form-group col-md-12">
-                                <label for="colorSelect">Color Name</label>
-
-                                <select class="form-control" id="colorlistcust1">
-                                    <option value="" selected>Select a color</option>
-                                </select>
+                                <label for="user_firstname">Design Name<span class="required"></span></label>
+                                <input type="text" class="form-control" name="design_type" id="design_type"
+                                    placeholder="Design Name">
                             </div>
                         </div>
                         <div class="form-row">
@@ -191,27 +180,7 @@
                                     placeholder="Product Quantity">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Thickness<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Thickness" id="Thickness"
-                                    placeholder="Product Thickness">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Width<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Width" id="Width"
-                                    placeholder="Product Width">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Roll weight<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Roll_weight" id="Roll_weight"
-                                    placeholder="Roll weight">
-                            </div>
-                        </div>
+                      
                     </form>
                 </div>
                 <div class="modal-footer">

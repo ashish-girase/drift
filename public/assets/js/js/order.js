@@ -429,14 +429,14 @@ $(".createOrderModalStore").click(function(){
             
                
             });
+          
 
 
 
 });
 
 
-function openModal(selectElement,orderId) {
-    var oldStatus = document.getElementById('oldstatus').value;
+function openModal(selectElement,orderId,oldStatus) {
     var newStatus = selectElement.value;
     var selectedStatus = selectElement.value;
     
@@ -447,6 +447,14 @@ function openModal(selectElement,orderId) {
         $('#order_id').val(orderId);
 
     }
+    else if(selectedStatus === 'dispatch'){
+        var dis_newStatus = selectElement.value;
+        $('#dispatchstatusChange').modal('show');
+        $('#dis_status').val(dis_newStatus);
+        $('#dis_old_status').val(oldStatus);
+        $('#dis_order_id').val(orderId);
+    }
+   
     $.ajax({
         url: base_path+'/orders/updateStatus',
         type: 'POST',

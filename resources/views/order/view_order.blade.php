@@ -72,7 +72,7 @@
         <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
         <!-- Add more hidden input fields for other data attributes -->
 
-        <select class="form-control custom-width" name="newstatus"  onchange="openModal(this, '{{ $order->order->_id }}')">
+        <select class="form-control custom-width" name="newstatus"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
             <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
@@ -108,8 +108,8 @@
                 @endif
         </td>
         <td class="text-center">
-                @if(!empty( $order->order->dispatch_remark))    
-                <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
+                @if(!empty( $order->order->tentative_date))    
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->tentative_date }}</p>
                 @endif
         </td>
         <td class="text-center">
@@ -118,6 +118,10 @@
                 @endif
         </td>
         <td class="text-center">
+                <!--VIEW BUTTON-->
+            <a href="#" type="button" class="mx-3 view-order" id="view-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
+                <button class=" btn btn-sm btn-outline-success ">view</button>
+            </a>
                 <!--EDIT BUTTON-->
                 <a href="#" type="button" class="mx-3 edit-order" id="edit-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
                     <i class="fas fa-user-edit text-secondary"></i>
@@ -242,6 +246,7 @@
                             <h6 class="mb-0">Product Details</h6>
                         </div>
                         <div class="card-body">
+                            <button type="button" class="btn btn-primary">Add +</button>
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label  for="prodName">Product Name<span class="required"></span></label>
@@ -256,13 +261,9 @@
                                     <input type="text" class="form-control custom-width" name="product_type" id="product_type" placeholder="Product Type">
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="prod_code">Product Code<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="prod_code" id="prod_code" placeholder="Product Code">
-                                </div>
-                                <div class="form-group col-md-3">
                                     <label for="email">DESIGN NAME<span class="required"></span></label>
                                     <select class="form-control" id="designlist">
-                                        <option value="" selected>Select a color</option>
+                                        <option value="" selected>Select a Design</option>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-3">
@@ -295,29 +296,13 @@
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span class="required"></span></label>
-                            <input type="date" class="form-control custom-width" name="disptach_date" id="disptach_date" placeholder="Company Name">
+                            <input type="text" class="form-control custom-width" name="disptach_date" id="disptach_date" placeholder="Enter NUmber of Date">
                         </div>
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
                             <input type="date" class="form-control custom-width" name="tentative_date" id="tentative_date" placeholder="Company Name">
                         </div>
-                                <div class="form-group col-md-3">
-                                    <label for="total_price">Total quantity<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="total_quantity" id="total_quantity" placeholder="Enter Total Quantity">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="price">Price<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="price" id="price" placeholder="Enter Price">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="billing_address">Billing Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="Billing_address" id="Billing_address" placeholder="Billing Address">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="delivery_address">Delivery Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="Delivery_address" id="Delivery_address" placeholder="Delivery Address">
-                                </div>
                                 <div class="form-group col-md-3">
                                     <label for="notes">BOXES PACKED<span class="required"></span></label><br>   
                                     <input type="checkbox"  name="box_packed" id="box_packed" placeholder="ADD ORDER REMARKS">
@@ -471,9 +456,6 @@
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="email">DESIGN NAME<span class="required"></span></label>
-                                    {{-- <select class="form-control" id="edit_designlist">
-                                        <option value="" selected>Select a color</option>
-                                    </select> --}}
                                     <input type="text" class="form-control custom-width" name="edit_designName" id="edit_designName" placeholder="Color Name">
                                 </div>
         
@@ -509,30 +491,14 @@
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span class="required"></span></label>
-                            <input type="date" class="form-control custom-width" name="edit_disptach_date" id="edit_disptach_date" placeholder="Company Name">
+                            <input type="text" class="form-control custom-width" name="edit_disptach_date" id="edit_disptach_date" placeholder="Company Name">
                         </div>
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
                             <input type="date" class="form-control custom-width" name="edit_tentative_date" id="edit_tentative_date" placeholder="Company Name">
                         </div>
-                        <div class="form-group col-md-3">
-                            <label for="total_price">Total quantity<span class="required"></span></label>
-                            <input type="text" class="form-control custom-width" name="edit_total_quantity" id="edit_total_quantity" placeholder="Enter Total Quantity">
-                        </div>
                                
-                                <div class="form-group col-md-3">
-                                    <label for="price">Price<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_price" id="edit_price" placeholder="Enter Price">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="billing_address">Billing Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_Billing_address" id="edit_Billing_address" placeholder="Billing Address">
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label for="delivery_address">Delivery Address<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_Delivery_address" id="edit_Delivery_address" placeholder="Delivery Address">
-                                </div>
                                 <div class="form-group col-md-3">
                                     <label for="notes">BOXES PACKED<span class="required"></span></label><br>   
                                     <input type="checkbox"  name="edit_box_packed" id="edit_box_packed" placeholder="ADD ORDER REMARKS">
@@ -571,7 +537,7 @@
     </div>
 </div>
 
-{{-- ------------------------status change----------------------- --}}
+{{-- ------------------------Processing status change----------------------- --}}
 
 <div class="modal fade" id="statusChange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
@@ -592,8 +558,8 @@
                             <input type="hidden" class="form-control" name="order_id " id="order_id" data-order-ids="{{ $order->order->_id}}" placeholder="newstatus">
                     
                             <div class="form-group col-md-12">
-                                <label for="user_firstname">Old Status<span class="required"></span></label>
-                        <input type="text" class="form-control" name="old_status" id="old_status" placeholder="newstatus" disabled>
+                             
+                        <input type="hidden" class="form-control" name="old_status" id="old_status" placeholder="newstatus" disabled>
                             </div>
                             <div class="form-group col-md-12">
                                 <label for="user_firstname">Status<span class="required" ></span></label>
@@ -633,6 +599,70 @@
             </div>
         </div>
     </div>
+
+    {{-- ------------------------Dispatch status change----------------------- --}}
+
+<div class="modal fade" id="dispatchstatusChange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          
+            <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Add Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form method="post">
+                @csrf
+                <input type="hidden" name="_token" id="_tokenOrder" value="{{ Session::token() }}">
+                <div class="form-row">
+                    <input type="hidden" class="form-control" name="dis_order_id " id="dis_order_id" data-order-ids="{{ $order->order->_id}}" placeholder="order id">
+            
+                    <div class="form-group col-md-12">
+                        
+                <input type="hidden" class="form-control" name="dis_old_status" id="dis_old_status" placeholder="newstatus" disabled>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="user_firstname">Status<span class="required" ></span></label>
+                        <input type="text" class="form-control" name="dis_status" id="dis_status"
+                            placeholder="Status" disabled>
+                    </div>
+                </div>
+        
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="user_firstname">Delivary Date<span class="required"></span></label>
+                        <input type="date" class="form-control" name="dis_delivary_date" id="dis_delivary_date"
+                            placeholder="Delivary Date">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="user_firstname">Time<span class="required"></span></label>
+                        <input type="time" class="form-control" name="dis_time" id="dis_time"
+                            placeholder="Time">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="user_firstname">Note<span class="required"></span></label>
+                        <input type="text" class="form-control" name="dis_note" id="dis_note"
+                            placeholder="Note">
+                    </div>
+                </div>
+               
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn bg-gradient-primary " id="dis_savesatatus">Save Status</button>
+        </div>
+    </div>
+</div>
+</div>
+
 
 
 

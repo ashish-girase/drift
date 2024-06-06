@@ -29,6 +29,8 @@ class VerifyCsrfToken extends Middleware
         '/admin/searchCustomer',
         '/admin/add_company',
         '/admin/delete_customer',
-        '/admin/customerdataget_single'
+        '/admin/customerdataget_single',
+        '/admin/delete_producttype',
+        '/admin/edit_producttype'
     ];
 }

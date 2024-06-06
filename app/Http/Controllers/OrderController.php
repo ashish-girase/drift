@@ -218,7 +218,7 @@ class OrderController extends Controller
 
     
         $show_data = $show->toArray();
-       dd($show_data);
+    //    dd($show_data);
        return response()->json($show_data);
         // return response()->json($show[0]['customer']);
         // return response()->json($customerList);
@@ -578,18 +578,30 @@ class OrderController extends Controller
         $mainId=(int)$request->master_id;
         // dd($mainId);
         $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
+       
         ['$set' => [
             'order.$.insertedTime' => time(),
             'order.$.delete_status' => "YES",
             'order.$.deleteOrder' => intval($id),
             'order.$.deleteTime0' => time(),
             ]]);
-            // dd($mainId);
+        // dd($id);
+        $processData=Processing::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
+        ['$set' => [
+            'order.$.insertedTime' => time(),
+            'order.$.delete_status' => "YES",
+            'order.$.deleteOrder' => intval($id),
+            'order.$.deleteTime0' => time(),
+            ]]);
 
         if($orderData==true)
         {
         $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
         return json_encode($arr);
+        } elseif($processData==true)
+        {
+        $parr = array('status' => 'success', 'message' => 'Order Deleted successfully From processing.','statusCode' => 200);
+        return json_encode($parr);
         }
         
 
@@ -603,6 +615,7 @@ class OrderController extends Controller
         $id = intval($request->id);
         $oldStatus = strtolower($request->oldstatus);
         $newStatus = strtolower($request->newstatus);
+        // dd($oldStatus);
     
         // Define collection map
         $collectionMap = [
@@ -625,16 +638,45 @@ class OrderController extends Controller
             ['$unwind' => '$order'],
             ['$match' => ['order._id' => $id]]
         ])->toArray();
-        
-    //    dd($orderResult);
-        
+
+        $processResult = Processing::raw()->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],
+            ['$match' => ['order._id' => $id]]
+        ])->toArray();
     
-        if (empty($orderResult)) {
+        
+        
+        if (empty($orderResult) && empty($processResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
         }
-    
-        $order = $orderResult[0]['order'];
-        $parentid = $orderResult[0]['_id'];
+        
+        // dd($processResult);
+        
+        // $order = $orderResult[0]['order'];
+        // $parentid = $orderResult[0]['_id'];
+        // $proorder = $processResult[0]['order'];
+        // $proParentId  = $processResult[0]['_id'];
+
+        dd($processResult);
+
+
+        // If $orderResult is not empty, extract values
+        if (!empty($orderResult)) {
+            $order = $orderResult[0]['order'];
+            $parentid = $orderResult[0]['_id'];
+            
+        }
+
+        // If $processResult is not empty, extract values
+        if (!empty($processResult)) {
+            $proorder = $processResult[0]['order'];
+            $proParentId = $processResult[0]['_id'];
+
+            // You can now safely use $proorder and $proParentId here
+           
+        }
+        
     
         // Update the order status and time
         $statusTimes = [
@@ -646,6 +688,7 @@ class OrderController extends Controller
         ];
     
         $order['status'] = $newStatus;
+        
         if (isset($statusTimes[$newStatus])) {
             $order[$statusTimes[$newStatus]] = time();
         }
@@ -703,6 +746,7 @@ class OrderController extends Controller
             echo "</script>";
             //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
         }
+
     }
     public function showCustomers()
     {

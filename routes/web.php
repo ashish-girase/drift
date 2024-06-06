@@ -5,6 +5,7 @@ use App\Http\Controllers\DesignController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\NewstatudController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
@@ -69,11 +70,18 @@ Route::group(['middleware' => 'auth'], function () {
      Route::post('/admin/delete_color', [ColorController::class, 'delete_color'])->name('delete_color');
 
      //Design master module
-     Route::get('/design', [DesignController::class, 'view_design'])->name('color');
+     Route::get('/design', [DesignController::class, 'view_design'])->name('design');
      Route::POST('/admin/add_design', [DesignController::class, 'add_design']);
      Route::POST('/admin/edit_design', [DesignController::class, 'edit_design']);
      Route::POST('/admin/update_design', [DesignController::class, 'update_design']);
      Route::post('/admin/delete_design', [DesignController::class, 'delete_design'])->name('delete_design');
+
+    //ProductType master module
+    Route::get('/producttype', [ProductTypeController::class, 'view_producttype'])->name('producttype');
+    Route::POST('/admin/add_producttype', [ProductTypeController::class, 'add_producttype']);
+    Route::POST('/admin/edit_producttype', [ProductTypeController::class, 'edit_producttype']);
+    Route::POST('/admin/update_producttype', [ProductTypeController::class, 'update_producttype']);
+    Route::post('/admin/delete_producttype', [ProductTypeController::class, 'delete_producttype'])->name('delete_producttype');
 
      //Product master module
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
