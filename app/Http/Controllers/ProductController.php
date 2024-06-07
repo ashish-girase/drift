@@ -181,6 +181,29 @@ class ProductController extends Controller
                 }
         }
 
+
+        public function view_productdetails(Request $request){
+            $parent=$request->master_id;
+                $companyID=1;
+                $id=$request->id;
+                // dd($parent);
+                $collection=Product::raw();
+                $show1 = $collection->aggregate([
+                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                ['$unwind' => ['path' => '$product']],
+                ['$match' => ['product._id' => (int)$id]]
+                ])->toArray();
+                foreach ($show1 as $row) {
+                    $activeProduct12 = array();
+                    $k = 0;
+                    $activeProduct12[$k] = $row['product'];
+                    $k++;
+                }
+                // dd($show1);
+                // return view('product.view_productdetails', compact('show1'));
+                return response()->json(['success' => $show1]);
+        }
+
         public function update_product(Request $request)
         {
             //dd($request);

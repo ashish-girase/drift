@@ -126,9 +126,9 @@ class OrderController extends Controller
                 'ordertype' => $request->input('ordertype'), 
                 'transportname' => $request->input('transportname'), 
                 'trackingdetails' => $request->input('trackingdetails'), 
-                'price' => $request->input('price'),
-                'Billing_address' => $request->input('Billing_address'),
-                'Delivery_address' => $request->input('Delivery_address'),
+                // 'price' => $request->input('price'),
+                // 'Billing_address' => $request->input('Billing_address'),
+                // 'Delivery_address' => $request->input('Delivery_address'),
                 'status' => "New",
                 'order_remark' => $request->input('order_remark'),
                 'dispatch_remark' => $request->input('dispatch_remark'),
@@ -139,7 +139,7 @@ class OrderController extends Controller
             'deleteTime' => "",
         ];
 
-        // dd($orderData);
+        dd($orderData);
         
        
     
@@ -542,10 +542,10 @@ class OrderController extends Controller
     'order.$.quantity_in_pieces' => $request->quantity_in_pieces,  
     'order.$.Total_qty' => $request->Total_qty,
     'order.$.Detail_inst' => $request->Detail_inst,
-    'order.$.Billing_address' => $request->Billing_address,
-    'order.$.Delivery_address' => $request->Delivery_address,
+    // 'order.$.Billing_address' => $request->Billing_address,
+    // 'order.$.Delivery_address' => $request->Delivery_address,
     'order.$.total_quantity' => $request->total_quantity,
-    'order.$.price' => $request->price,
+    // 'order.$.price' => $request->price,
     'order.$.order_remark' => $request->order_remark,
     'order.$.dispatch_remark' => $request->dispatch_remark,
     'order.$.order_date' => $request->order_date,

@@ -99,32 +99,35 @@ $(document).ready(function() {
 });
 
 $("#saveproducttype").click(function(){
-    var producttype_name=$('#producttype_name').val();
-    if(producttype_name=='')
-    {
+    var producttype_name = $('#producttype_name').val();
+    if(producttype_name===''){
     Swal.fire( "Enter Name");
     $('#producttype_name').focus();
     return false;
     }
+    // var producttype_name=$('#producttype_name').val();
+    var tocken = $("#_tokenproducttype").val();
+    // console.log(tocken);
     $.ajax({
         url: base_path + "/admin/add_producttype",
         type: "POST",
-        datatype:"JSON",
+        dataType:"JSON",
         data: {
-            _token: $("#_tokenproducttype").val(),
+            _token: tocken,
             producttype_name: producttype_name
         },
         cache: false,
         success: function(Result){
-            console.log("uds");
             $("#addproducttypeModal").modal("hide");
-            console.log("sucess");
+            console.log(Result);
             // Store the success message in session storage
             sessionStorage.setItem('successMessage_pt', 'Product Type added successfully');
             window.location.href = base_path + "/producttype";
         },
         error: function(xhr, status, error) {
             console.error("Error:", error);
+            // Optionally, alert the user about the error
+            Swal.fire("Error", "Failed to add product type. Please try again later.", "error");
         }
     });
 });

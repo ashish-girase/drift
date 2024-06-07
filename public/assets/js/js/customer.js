@@ -154,11 +154,6 @@ $("#savecustomer").click(function(){
     var state=$('#state').val();
     var country=$('#country').val();
     var custref=$('#custref').val();
-    /*var custCountry=$('#custCountry').val();
-    var custZip=$('#custZip').val();
-    var custTelephone=$('#custTelephone').val();
-    var briefInformation=$('#briefInformation').val();
-    var SalesRep=$('#SalesRep').val();*/
     $.ajax({
         url: base_path+"/admin/add_customer",
         type: "POST",

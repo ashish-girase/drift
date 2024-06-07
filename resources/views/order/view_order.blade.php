@@ -238,15 +238,15 @@
 
                         </div>
                     </div>
-
+                    <button type="button" id="addProductBtn" class="btn btn-primary">Add Products +</button>
                    
                     <!--PRODUCT DETAILS-->
-                    <div class="card mb-3">
+                    <div class="card mb-3 border border-dark multiple" >
                         <div class="card-header">
                             <h6 class="mb-0">Product Details</h6>
                         </div>
                         <div class="card-body">
-                            <button type="button" class="btn btn-primary">Add +</button>
+                            
                             <div class="row">
                                 <div class="form-group col-md-3">
                                     <label  for="prodName">Product Name<span class="required"></span></label>
@@ -268,10 +268,14 @@
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="colorSelect">Color Name</label>
-    
-                                    <select class="form-control" id="colorlist">
+                                    <select class="form-control" id="colorlist" onchange="showCustomColorInput()">
                                         <option value="" selected>Select a color</option>
+                                        <option value="custom">Custom Color</option>
                                     </select>
+                                    <div id="customColorInput" style="display: none;">
+                                        <input class="form-control custom-width " type="text" id="customColorValue" placeholder="Enter custom color">
+                                        <button onclick="addCustomColor()">Add</button>
+                                    </div>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
@@ -286,22 +290,24 @@
                         </div>
                     </div>
 
+                    <div id="productDetailsPlaceholder"></div>
+
                    
                     <!-- Status Dropdown -->
                     <div class="row">
                         <div class="form-group col-md-3">
                             <label for="companylistcust">ORDER DATE<span class="required"></span></label>
-                            <input type="date" class="form-control custom-width" name="order_date" id="order_date" placeholder="Company Name">
+                            <input type="date" class="form-control custom-width" name="order_date" id="order_date" onchange="updateDatefild()">
                         </div>
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span class="required"></span></label>
-                            <input type="text" class="form-control custom-width" name="disptach_date" id="disptach_date" placeholder="Enter NUmber of Date">
+                            <input type="number" class="form-control custom-width" name="disptach_date" id="disptach_date" onchange="updateDatefild()" placeholder="Enter Number of Date">
                         </div>
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
-                            <input type="date" class="form-control custom-width" name="tentative_date" id="tentative_date" placeholder="Company Name">
+                            <input type="date" class="form-control custom-width" name="tentative_date" id="tentative_date" disabled >
                         </div>
                                 <div class="form-group col-md-3">
                                     <label for="notes">BOXES PACKED<span class="required"></span></label><br>   
@@ -691,6 +697,7 @@ aria-hidden="true">
             }
         });
     });
+          
 </script>
 
 

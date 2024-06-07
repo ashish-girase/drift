@@ -64,7 +64,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     //Color master module
      Route::get('/color', [ColorController::class, 'view_color'])->name('color');
-     Route::POST('/admin/add_color', [ColorController::class, 'add_color']);
+     Route::get('/admin/add_color', [ColorController::class, 'add_color']);
      Route::POST('/admin/edit_color', [ColorController::class, 'edit_color']);
      Route::POST('/admin/update_color', [ColorController::class, 'update_color']);
      Route::post('/admin/delete_color', [ColorController::class, 'delete_color'])->name('delete_color');
@@ -82,9 +82,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::POST('/admin/edit_producttype', [ProductTypeController::class, 'edit_producttype']);
     Route::POST('/admin/update_producttype', [ProductTypeController::class, 'update_producttype']);
     Route::post('/admin/delete_producttype', [ProductTypeController::class, 'delete_producttype'])->name('delete_producttype');
-
+    
      //Product master module
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
+     Route::POST('/admin/productdetils', [ProductController::class, 'view_productdetails']);
     
      Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);

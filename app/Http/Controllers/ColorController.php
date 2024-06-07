@@ -96,6 +96,7 @@ class ColorController extends Controller
 
 
     }
+
         public function view_color()
         {
             $companyID=1;

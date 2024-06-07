@@ -89,6 +89,13 @@
                                                 </td>
 
                                                 <td class="text-center">
+                                                       <!--VIEW BUTTON-->
+                                                    <a href="#" type="button" class="mx-3 view-order" id="view-order" 
+                                                        data-user-ids="{{ $cusData_val->product->_id}}" 
+                                                        data-user-master_id="{{ $cusData_val['_id'] }}" 
+                                                        data-bs-toggle="tooltip">
+                                                    <button class=" btn btn-sm btn-outline-success ">view</button>
+                                                    </a>
                                                     <a href="#" class="mx-3 edit-product"
                                                         data-user-ids="{{ $cusData_val->product->_id }}"
                                                         data-user-master_id="{{ $cusData_val['_id'] }}"
@@ -278,6 +285,92 @@
         </div>
     </div>
 
+
+{{-----------------------Product Deatails-----------------}}
+<div class="modal fade" id="ProductdetailsModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> View Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        @csrf
+                        <input type="hidden" name="_token" id="_tokeupdatenproduct" value="{{ Session::token() }}">
+                        <input type="hidden" name="destil_prodid" id="destil_prodid">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Product Name<span class="required"></span></label>
+                                <input type="text" class="form-control" name="destil_prodName" id="destil_prodName"
+                                    placeholder="Product Name" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Prodcut Type<span class="required"></span></label>
+                                <input type="text" class="form-control" name="destil_product_type"
+                                    id="destil_product_type" placeholder="Prodcut Type" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Product code<span class="required"></span></label>
+                                <input type="text" class="form-control" name="destil_prod_code" id="destil_prod_code"
+                                    placeholder="Product code" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="user_firstname">Product Quantity<span class="required"></span></label>
+                                <input type="text" class="form-control" name="destil_prod_qty" id="destil_prod_qty"
+                                    placeholder="Product Quantity" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row border designBlocks">
+                            <div class="form-group col-md-12 designname">
+                                <label for="user_firstname">Design Name<span class="required"></span></label>
+                                <input type="text" class="form-control" name="" id=""
+                                    placeholder="Design Name">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn bg-gradient-primary " id="adddesignproduct">Add Design +</button>
+                    <button type="button" class="btn bg-gradient-primary " id="">Submit Design</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.getElementById('adddesignproduct').addEventListener('click', function() {
+        addDesignBlock();
+    });
+
+    function addDesignBlock() {
+        var designBlocks = document.querySelector('.designBlocks');
+        var designBlock = document.createElement('div');
+        designBlock.className = 'form-row border  designBlock';
+        designBlock.innerHTML = `
+            <div class="form-group col-md-12 designname">
+                <label for="user_firstname">Design Name<span class="required"></span></label>
+                <input type="text" class="form-control" name="design_name" placeholder="Design Name">
+            </div>`;
+        designBlocks.appendChild(designBlock);
+    }
+    function removeDesignBlock(btn) {
+        var designBlock = btn.parentElement.parentElement;
+        designBlock.remove();
+    }
+    
+</script>
 
 
 @endsection

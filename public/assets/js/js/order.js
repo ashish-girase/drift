@@ -429,11 +429,116 @@ $(".createOrderModalStore").click(function(){
             
                
             });
-          
-
 
 
 });
+
+function showCustomColorInput() {
+    var select = document.getElementById("colorlist");
+    console.log("select");
+    var customColorInput = document.getElementById("customColorInput");
+    if (select.value === "custom") {
+        customColorInput.style.display = "block";
+        
+    } else {
+        customColorInput.style.display = "none";
+    }
+}
+
+function addCustomColor() {
+    var customColorValue = document.getElementById("customColorValue").value;
+    $.ajax({
+        url: '/admin/add_color', // Replace with your route URL for adding color
+        method: 'get',
+        data: { color_name: customColorValue }, // Pass the custom color name
+        success: function(data) {
+            window.location.href = base_path+"/order";
+            // If the color was successfully added, update the dropdown
+            var colorSelect = $('#colorlist');
+            console.log(colorSelect);
+            // colorSelect.append('<option value="' + data.color._id + '">' + data.color.color_name + '</option>');
+            data.forEach(function(color) {
+                colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+                });
+
+            // Optionally, you can select the newly added color in the dropdown
+            colorSelect.val(color.color._id);
+
+            // Hide the custom color input
+            $('#customColorInput').hide();
+        },
+        error: function(xhr, status, error) {
+            console.error('Error adding custom color:', error);
+            // Handle error if necessary
+        }
+    });
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Function to reattach event listeners for custom color input
+    function attachCustomColorInputListener(select, customColorInput) {
+        select.addEventListener("change", function() {
+            if (select.value === "custom") {
+                customColorInput.style.display = "block";
+            } else {
+                customColorInput.style.display = "none";
+            }
+        });
+    }
+
+    // Get the Add Product button
+    var addProductBtn = document.getElementById("addProductBtn");
+
+    // Add click event listener to the Add Product button
+    addProductBtn.addEventListener("click", function() {
+        // Clone the product details block
+        var productDetailsBlock = document.querySelector(".multiple").cloneNode(true);
+
+        // Clear input values in the cloned block (optional)
+        var inputs = productDetailsBlock.querySelectorAll("input");
+        inputs.forEach(function(input) {
+            input.value = "";
+        });
+
+        // Generate unique IDs for cloned elements (if needed)
+        // Update IDs in cloned block
+
+        // Reattach event listener for custom color input
+        var select = productDetailsBlock.querySelector("#colorlist");
+        var customColorInput = productDetailsBlock.querySelector("#customColorInput");
+        attachCustomColorInputListener(select, customColorInput);
+
+        // Create and append the cancel button
+        var cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.classList.add("btn", "btn-danger", "mt-2");
+        cancelButton.onclick = function() {
+            // Remove the product details block when cancel button is clicked
+            productDetailsBlock.remove();
+        };
+        productDetailsBlock.querySelector(".card-body").appendChild(cancelButton);
+
+        // Append the cloned block to the parent container
+        var placeholderDiv = document.getElementById("productDetailsPlaceholder");
+        placeholderDiv.parentNode.insertBefore(productDetailsBlock, placeholderDiv);
+    });
+
+    // Initial call to attach event listener for custom color input
+    var initialSelect = document.getElementById("colorlist");
+    var initialCustomColorInput = document.getElementById("customColorInput");
+    attachCustomColorInputListener(initialSelect, initialCustomColorInput);
+});
+
+function updateDatefild(){
+    var startDate = new Date(document.getElementById("order_date").value);
+    var increment = parseInt(document.getElementById("disptach_date").value);
+    var endDate = new Date(startDate.getTime()+increment * 24 * 60 * 60 * 1000);
+    document.getElementById("tentative_date").value = endDate.toISOString().slice(0,10);
+    
+
+}
 
 
 function openModal(selectElement,orderId,oldStatus) {
