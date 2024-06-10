@@ -100,8 +100,12 @@ $(document).ready(function() {
 
 });
 
+
 $("#savedesign").click(function(){
     var design_name=$('#design_name').val();
+    var prod_id=$("#prod_id").val();
+    var master_id=$("#master_id").val();
+
     if(design_name=='')
     {
     Swal.fire( "Enter Company Name");
@@ -110,12 +114,14 @@ $("#savedesign").click(function(){
     }
     var design_name=$('#design_name').val();
     $.ajax({
-        url: base_path+"/admin/add_design",
+        url: base_path+"/admin/adddesign",
         type: "POST",
         datatype:"JSON",
         data: {
             _token: $("#_tokendesign").val(),
             design_name: design_name,
+            id:prod_id,
+            maste_id:master_id
         },
         cache: false,
         success: function(Result){
@@ -123,7 +129,8 @@ $("#savedesign").click(function(){
             $("#addproducttypeModal").modal("hide");
             // Store the success message in session storage
             sessionStorage.setItem('successMessage_des', 'Design added successfully');
-            window.location.href = base_path + "/design";
+            // window.location.href = base_path + "/productdetils";
+            location.reload();
         }
     });
 });

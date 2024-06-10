@@ -69,12 +69,12 @@ Route::group(['middleware' => 'auth'], function () {
      Route::POST('/admin/update_color', [ColorController::class, 'update_color']);
      Route::post('/admin/delete_color', [ColorController::class, 'delete_color'])->name('delete_color');
 
-     //Design master module
-     Route::get('/design', [DesignController::class, 'view_design'])->name('design');
-     Route::POST('/admin/add_design', [DesignController::class, 'add_design']);
-     Route::POST('/admin/edit_design', [DesignController::class, 'edit_design']);
-     Route::POST('/admin/update_design', [DesignController::class, 'update_design']);
-     Route::post('/admin/delete_design', [DesignController::class, 'delete_design'])->name('delete_design');
+    //  //Design master module
+    //  Route::get('/design', [DesignController::class, 'view_design'])->name('design');
+    //  Route::POST('/admin/add_design', [DesignController::class, 'add_design']);
+    //  Route::POST('/admin/edit_design', [DesignController::class, 'edit_design']);
+    //  Route::POST('/admin/update_design', [DesignController::class, 'update_design']);
+    //  Route::post('/admin/delete_design', [DesignController::class, 'delete_design'])->name('delete_design');
 
     //ProductType master module
     Route::get('/producttype', [ProductTypeController::class, 'view_producttype'])->name('producttype');
@@ -85,7 +85,8 @@ Route::group(['middleware' => 'auth'], function () {
     
      //Product master module
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
-     Route::POST('/admin/productdetils', [ProductController::class, 'view_productdetails']);
+     Route::get('/productdetils', [ProductController::class, 'view_productdetails'])->name('productdetils');
+     Route::POST('/admin/adddesign', [ProductController::class, 'addDesign']);
     
      Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
@@ -102,7 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
      //  Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
      //  Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
-      Route::post('admin/get_designlist', [OrderController::class, 'get_designlist']);
+      Route::get('admin/get_designlist/{product}', [OrderController::class, 'get_designlist']);
      Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
      Route::POST('/admin/edit_order', [OrderController::class, 'edit_order']);
      Route::POST('/admin/find_color', [OrderController::class, 'fetchColorsNames']);

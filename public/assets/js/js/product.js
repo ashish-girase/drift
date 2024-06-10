@@ -125,32 +125,25 @@ $(document).ready(function() {
         }
     });
 
-    $('.view-order').click(function(e) {
+    $('.view-productdetial').click(function(e) {
+        e.preventDefault();
         var userId = $(this).data('user-ids');
         var master_id = $(this).data('user-master_id');
         
         $.ajax({
-            type:'POST',
-            url:base_path+"/admin/productdetils",
+            type:'GET',
+            url:base_path+"/productdetils",
             data: {
                 id: userId,
                 master_id: master_id
             },
             success:function(response){
-                // var res = JSON.parse(response);
-                var productData = response.success[0];
-                console.log("_id", response.success[0]); // Logging _id for debugging
-                console.log(productData.product.prodName);
-                $('#destil_prodid').val(productData.product._id); // Setting _id value
-                $('#destil_prodName').val(productData.product.prodName); // Setting _id value
-                $('#destil_product_type').val(productData.product.product_type);
-                $('#destil_prod_code').val(productData.product.prod_code);
-                $('#destil_prod_qty').val(productData.product.prod_qty);
-                
-            }   
+                window.location.href = base_path + "/productdetils?id=" + userId + "&master_id=" + master_id;
+            }, error: function(xhr) {
+                console.log(xhr.responseText);
+            }
             
         });
-        $('#ProductdetailsModel').modal("show");
 
     });
     

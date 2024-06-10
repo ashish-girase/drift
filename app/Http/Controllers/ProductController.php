@@ -186,12 +186,14 @@ class ProductController extends Controller
             $parent=$request->master_id;
                 $companyID=1;
                 $id=$request->id;
+                // dd($id);
                 // dd($parent);
                 $collection=Product::raw();
                 $show1 = $collection->aggregate([
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
-                ['$unwind' => ['path' => '$product']],
-                ['$match' => ['product._id' => (int)$id]]
+                ['$unwind' => '$product'],
+                ['$match' => ['product._id' => (int)$id]],
+                // ['$match' => ['designname.delete_status' => "NO"]],
                 ])->toArray();
                 foreach ($show1 as $row) {
                     $activeProduct12 = array();
@@ -200,8 +202,8 @@ class ProductController extends Controller
                     $k++;
                 }
                 // dd($show1);
-                // return view('product.view_productdetails', compact('show1'));
-                return response()->json(['success' => $show1]);
+                return view('product.view_productdetails', compact('show1'));
+                // return response()->json(['success' => $show1]);
         }
 
         public function update_product(Request $request)
@@ -335,5 +337,62 @@ class ProductController extends Controller
         // dd($colour);
 
         return response()->json($colour);
+    }
+
+
+    public function addDesign(Request $request){
+        
+        $id = (int) $request->id;
+        $companyId = 1;
+
+        // Get the design name from the request
+        $designName = $request->input('design_name');
+
+        // Generate a new ID for the design name
+        $maxIdPipeline = [
+            ['$match' => ['companyID' => $companyId, 'product._id' => $id]],
+            ['$unwind' => '$product'],
+            ['$unwind' => '$product.designname'],
+            ['$group' => ['_id' => null, 'maxId' => ['$max' => '$product.designname._id']]]
+        ];
+    
+        $maxIdResult = Product::raw()->aggregate($maxIdPipeline)->toArray();
+        $maxId = isset($maxIdResult[0]['maxId']) ? $maxIdResult[0]['maxId'] : 0;
+    
+        // Increment the maximum ID to generate a new ID
+        $newId = $maxId + 1;
+
+        // Create an array with the design name details
+        $designData = [
+            '_id' => $newId,
+            'design_name' => $designName,
+            'insertedTime' => time(),
+            'delete_status' => "NO",
+            'deleteOrder' => "",
+            'deleteTime' => "",
+        ];
+
+        // Use the aggregation framework to update the product document
+        $updateResult = Product::raw()->updateOne(
+            ['companyID' => $companyId, 'product._id' => $id],
+            ['$push' => [
+                'product.$.designname' => $designData,
+            ]]
+        );
+
+        // dd($updateResult );
+        // Fetch the updated product for verification
+        $product = Product::where('_id', $id)->first();
+        if ($updateResult) {
+            // Redirect back to the same page after successful submission
+            return response()->json(['status' => true, 'message' => 'Product added successfully'], 200);
+        } else {
+            // Redirect back with error message if update failed
+            return redirect()->back()->with('error', 'Failed to add design name!');
+        }
+
+        // Output the updated product
+        
+
     }
 }

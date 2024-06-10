@@ -12,7 +12,7 @@
                                     <h5 class="mb-0">All Design</h5>
                                 </div>
 
-                                <a href="#" class="btn bg-gradient-primary btn-sm mb-0 createDesignModalStore" type="button">+&nbsp; New Design</a>
+                                <a href="#" class="btn bg-gradient-primary btn-sm mb-0 " type="button">+&nbsp; New Design</a>
                                 <!-- <a href="#" class="button-29 createUserModalStore" data-toggle="modal"  data-target="#"><span>Add</span></a> -->
 
 
@@ -80,7 +80,7 @@
 
 
                             <!-- Modal -->
-                            <div class="modal fade" id="addDesignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">
                                 <div class="modal-header">

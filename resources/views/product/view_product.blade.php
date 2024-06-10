@@ -90,7 +90,7 @@
 
                                                 <td class="text-center">
                                                        <!--VIEW BUTTON-->
-                                                    <a href="#" type="button" class="mx-3 view-order" id="view-order" 
+                                                    <a href="#" type="button" class="mx-3 view-productdetial" id="view-productdetial" 
                                                         data-user-ids="{{ $cusData_val->product->_id}}" 
                                                         data-user-master_id="{{ $cusData_val['_id'] }}" 
                                                         data-bs-toggle="tooltip">
@@ -159,13 +159,13 @@
                         </div>
                         <div class="form-row">           
                         </div>
-                        <div class="form-row">
+                        {{-- <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="user_firstname">Design Name<span class="required"></span></label>
                                 <input type="text" class="form-control" name="design_type" id="design_type"
                                     placeholder="Design Name">
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <label for="user_firstname">Prodcut Type<span class="required"></span></label>
@@ -286,7 +286,7 @@
     </div>
 
 
-{{-----------------------Product Deatails-----------------}}
+{{-- ---------------------Product Deatails---------------
 <div class="modal fade" id="ProductdetailsModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -346,31 +346,22 @@
                 </div>
             </div>
         </div>
+    </div> --}}
+
+
+    <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailsModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="productDetailsModalBody">
+                    <!-- Product details will be loaded here -->
+                </div>
+            </div>
+        </div>
     </div>
-
-
-<script>
-document.getElementById('adddesignproduct').addEventListener('click', function() {
-        addDesignBlock();
-    });
-
-    function addDesignBlock() {
-        var designBlocks = document.querySelector('.designBlocks');
-        var designBlock = document.createElement('div');
-        designBlock.className = 'form-row border  designBlock';
-        designBlock.innerHTML = `
-            <div class="form-group col-md-12 designname">
-                <label for="user_firstname">Design Name<span class="required"></span></label>
-                <input type="text" class="form-control" name="design_name" placeholder="Design Name">
-            </div>`;
-        designBlocks.appendChild(designBlock);
-    }
-    function removeDesignBlock(btn) {
-        var designBlock = btn.parentElement.parentElement;
-        designBlock.remove();
-    }
-    
-</script>
 
 
 @endsection

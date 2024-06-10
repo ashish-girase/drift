@@ -33,5 +33,6 @@ class VerifyCsrfToken extends Middleware
         '/admin/delete_producttype',
         '/admin/edit_producttype',
         '/admin/productdetils',
+        
     ];
 }

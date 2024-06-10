@@ -85,7 +85,9 @@ class OrderController extends Controller
                 ])->toArray();
     
                 $design_name = $design ? $design[0]['design']['design_name'] : '';
-            
+
+
+              // Extract product details
 
 
         // Construct the order data
@@ -378,67 +380,6 @@ class OrderController extends Controller
     return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
     }
 
-
-    // public function searchColour(Request $request)
-    // {
-    // $companyId = 1;
-    // $colour_nm = $request->input('colour_name');
-
-    // $colours = Colour::raw()->aggregate([
-    // ['$match' => ['companyID' => $companyId]],
-    // ['$unwind' => '$colour'],
-    // ['$match' => ['colour.ColourName' => new \MongoDB\BSON\Regex("{$colour_nm}", 'i')]],
-    // ['$group' => [
-    // '_id' => null,
-    // 'colours' => ['$push' => [
-    // 'ColourName' => '$colour.ColourName',
-
-    // // Add other colour fields you want to include here
-    // ]],
-    // ]],
-    // ['$project' => ['colours' => 1, '_id' => 0]],
-    // ])->toArray();
-
-    // if (empty($colours)) {
-    // return response()->json(['status' => false, 'message' => 'No colour found'], 404);
-    // }
-
-    // return response()->json([
-    // 'status' => true,
-    // 'data' => $colours[0]['colours'],
-    // 'message' => 'Colours found successfully'
-    // ], 200);
-    // }
-    // public function getColour(Request $request)
-    // {
-    // $companyId = 1;
-    // $colour_id = (int)$request->input('colour_id');
-
-    // $colours = Colour::raw()->aggregate([
-    // ['$match' => ['companyID' => $companyId]],
-    // ['$unwind' => '$colour'],
-    // ['$match' => ['colour._id' => $colour_id]],
-    // ['$group' => [
-    // '_id' => null,
-    // 'colours' => ['$push' => [
-    // 'ColourName' => '$colour.ColourName',
-
-    // // Add other colour fields you want to include here
-    // ]],
-    // ]],
-    // ['$project' => ['colours' => 1, '_id' => 0]],
-    // ])->toArray();
-
-    // if (empty($colours)) {
-    // return response()->json(['status' => false, 'message' => 'No colour found'], 404);
-    // }
-
-    // return response()->json([
-    // 'status' => true,
-    // 'data' => $colours[0]['colours'],
-    // 'message' => 'Colours found successfully'
-    // ], 200);
-    // }
 
        public function view_order(Request $request)
     {
@@ -886,14 +827,27 @@ class OrderController extends Controller
 
             public function get_designlist(Request $request){
                 // $colors = Color::all()->toArray();
+                $productName = $request->product;
                 $searchTerm = $request->input('searchTerm');
         
-                $designs = Design::raw()->aggregate([
-                    ['$unwind' => '$design'],
-                    ['$match' => ['design.delete_status'=>'NO']],
-                    ])->toArray();
+                // $designs = Product::raw()->aggregate([
+                //     ['$unwind' => '$product'],
+                //     ['$match' => ['product.designname.delete_status'=>'NO']],
+                //     ])->toArray();
+                $designs = Product::raw(function($collection) use ($productName) {
+                    return $collection->aggregate([
+                        ['$unwind' => '$product'],
+                        ['$match' => ['product.prodName' => $productName]],
+                        ['$match' => ['product.designname' => ['$exists' => true]]], // Filter out documents without designname
+                        ['$match' => ['product.designname.delete_status' => 'NO']],
+                        ['$project' => [
+                            'designname' => '$product.designname'
+                        ]]
+                    ]);
+                });
+
             
-        
+                // dd($designs);
                 return response()->json($designs);
             }
 
