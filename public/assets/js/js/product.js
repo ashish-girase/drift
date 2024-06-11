@@ -173,6 +173,20 @@ $(document).ready(function() {
         var color_name = $('#colorlistcust1 option[value="' + colour_id + '"]').text(); // Get selected color name
     
     });
+
+    $(document).ready(function(){
+        $.ajax({
+            url: "/admin/getProductTypes",
+            type: "GET",
+            success:function(response){
+                var options = '<option value="" selected>Select a Product Type</option>';
+                $.each(response, function(index, productType){
+                    options += '<option value="'+productType.producttype._id+'">'+productType.producttype.producttype_name+'</option>';
+                });
+                $('#products_type').html(options);
+            }
+        });
+    });
     
 });
 
@@ -192,12 +206,13 @@ $("#saveproduct").click(function(){
     var product_type=$('#product_type').val();
     var colour_id=$('#colorlistcust1').val();
     var colour_name= $('#colorlistcust1 option:selected').text();
-    var product_type=$('#product_type').val();
+    var product_type=$('#products_type option:selected').text();
     var prod_code=$('#prod_code').val();
     var prod_qty=$('#prod_qty').val();
     var Thickness=$('#Thickness').val();
     var Width=$('#Width').val();
     var Roll_weight=$('#Roll_weight').val();
+    console.log(product_type);
    
     $.ajax({
         url: base_path+"/admin/add_product",

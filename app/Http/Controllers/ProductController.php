@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProductType;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Color;
@@ -394,5 +395,16 @@ class ProductController extends Controller
         // Output the updated product
         
 
+    }
+
+
+    public function getProductTypes()
+    {
+        $productTypes = ProductType::raw()->aggregate([
+            ['$unwind' => '$producttype'],
+            ['$match' => ['producttype.delete_status'=>'NO']],
+            ])->toArray();
+        // dd($productTypes);
+        return response()->json($productTypes);
     }
 }

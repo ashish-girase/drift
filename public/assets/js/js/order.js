@@ -13,6 +13,7 @@ $("#chan").click(function(){
 $(".createOrderModalStore").click(function(){
         // populateBrowserList();
         $('#addOrderModal').modal("show");
+
     });
 
     $.ajaxSetup({
@@ -38,10 +39,55 @@ $(".createOrderModalStore").click(function(){
                 if (response.success && response.success.length > 0) {
                     var orderData = response.success[0]; // Assuming first item in success array
                     var productData = orderData.product && orderData.product.length > 0 ? orderData.product[0] : null;
-                    console.log(orderData);
+                    // console.log(orderData);
                     if (orderData) {
+                        $('#editProductContainer').empty();
+                        orderData.product.forEach(function(product, index) {
+                            var productDetailBlock =
+                             `
+                                <div class="card mb-3 border border-dark  edit_multiple">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Product Details: ${index + 1}</h6>
+                                    </div>
+                                 <div class="card-body">
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <input type="text" name="editprodid" id="editprodid" value="${product.product_id}" hidden>
+                                    <label  for="prodName">Product Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" list="product_list" id="edit_prodName" name="edit_prodName[${index}]" value="${product.prodName}">
+                                    <datalist id="product_list"></datalist>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="product_type">Product Type<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_product_type[${index}]" id="edit_product_type" placeholder="Product Type" value="${product.product_type}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="email">DESIGN NAME<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_designName[${index}]" id="edit_designName" placeholder="Color Name" value="${product.design_name}">
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="color_name">Color Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_ColourName[${index}]" id="edit_ColourName" placeholder="Color Name" value="${product.color_name}">
+                                </div>
+                            </div>
+                            <div class="row">
+                             
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_soft[${index}]" id="edit_quantity_in_soft" placeholder="Product Quantity" value="${product.quantity_in_soft}" >
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">QUANTITY IN PIECES<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_pieces[${index}]" id="edit_quantity_in_pieces" placeholder="Product Quantity" value="${product.quantity_in_pieces}">
+                                </div>
+                            </div>
+                        </div>
+                            `;
+                            // console.log(product.prodName);
+                            $('#editProductContainer').append(productDetailBlock);
+                        });
                         // console.log("_id", orderData); // Logging _id for debugging
-                        $('#edit_prodid').val(orderData._id);
+                        // $('#edit_prodid').val(orderData._id);
                         $('#edit_custName').val(orderData.customer.custName); // Added customer name
                         $('#edit_companylistcust').val(orderData.customer.companylistcust);
                         $('#edit_email').val(orderData.customer.email);
@@ -52,18 +98,18 @@ $(".createOrderModalStore").click(function(){
                         $('#edit_state').val(orderData.customer.state);
                         $('#edit_country').val(orderData.customer.country);
                         $('#edit_custref').val(orderData.customer.custref);
-                        $('#edit_prodName').val(orderData.product.prodName);
-                        $('#edit_product_type').val(orderData.product.product_type);
-                        $('#edit_prod_code').val(orderData.product.prod_code);
-                        $('#edit_designName').val(orderData.product.design_name);
-                        $('#edit_ColourName').val(orderData.product.ColourName);
-                        $('#edit_total_quantity').val(orderData.total_quantity);
-                        $('#edit_price').val(orderData.price);
-                        $('#edit_Billing_address').val(orderData.Billing_address);
-                        $('#edit_Delivery_address').val(orderData.Delivery_address);
-                        $('#edit_status').val(orderData.status);
-                        $('#edit_quantity_in_soft').val(orderData.quantity_in_soft);
-                        $('#edit_quantity_in_pieces').val(orderData.quantity_in_pieces);
+                        // $('#edit_prodName').val(orderData.product.prodName);
+                        // $('#edit_product_type').val(orderData.product.product_type);
+                        // $('#edit_prod_code').val(orderData.product.prod_code);
+                        // $('#edit_designName').val(orderData.product.design_name);
+                        // $('#edit_ColourName').val(orderData.product.ColourName);
+                        // $('#edit_total_quantity').val(orderData.total_quantity);
+                        // $('#edit_price').val(orderData.price);
+                        // $('#edit_Billing_address').val(orderData.Billing_address);
+                        // $('#edit_Delivery_address').val(orderData.Delivery_address);
+                        // $('#edit_status').val(orderData.status);
+                        // $('#edit_quantity_in_soft').val(orderData.quantity_in_soft);
+                        // $('#edit_quantity_in_pieces').val(orderData.quantity_in_pieces);
                         $('#edit_order_remark').val(orderData.order_remark);
                         $('#edit_dispatch_remark').val(orderData.dispatch_remark);
                         $('#edit_order_date').val(orderData.order_date);
@@ -125,6 +171,12 @@ $(".createOrderModalStore").click(function(){
 
     //Update User
     $(document).on("click", '#updateOrder', function(event) {
+        
+        // var formData = new FormData();
+        // Gather product details
+        // var editproductsData = [];
+      
+
         var c_id= $('#edit_prodid').val();
         // var companySubID= $('#up_comSubId').val();
         var edit_custName = $('#edit_custName').val();
@@ -137,16 +189,16 @@ $(".createOrderModalStore").click(function(){
         var edit_state = $('#edit_state').val();
         var edit_country = $('#edit_country').val();
         var edit_custref = $('#edit_custref').val();
-        var edit_prodName = $('#edit_prodName').val();
-        var edit_product_type = $('#edit_product_type').val();
-        var edit_prod_code = $('#edit_prod_code').val();
-        var edit_ColourName = $('#edit_ColourName').val();
-        var edit_total_quantity = $('#edit_total_quantity').val();
-        var edit_price = $('#edit_price').val();
-        var edit_Billing_address = $('#edit_Billing_address').val();
-        var edit_Delivery_address = $('#edit_Delivery_address').val();
-        var edit_quantity_in_soft = $('#edit_quantity_in_soft').val();
-        var edit_quantity_in_pieces = $('#edit_quantity_in_pieces').val();
+        // var edit_prodName = $('#edit_prodName').val();
+        // var edit_product_type = $('#edit_product_type').val();
+        // var edit_prod_code = $('#edit_prod_code').val();
+        // var edit_ColourName = $('#edit_ColourName').val();
+        // var edit_total_quantity = $('#edit_total_quantity').val();
+        // var edit_price = $('#edit_price').val();
+        // var edit_Billing_address = $('#edit_Billing_address').val();
+        // var edit_Delivery_address = $('#edit_Delivery_address').val();
+        // var edit_quantity_in_soft = $('#edit_quantity_in_soft').val();
+        // var edit_quantity_in_pieces = $('#edit_quantity_in_pieces').val();
         var edit_order_remark = $('#edit_order_remark').val();
         var edit_dispatch_remark = $('#edit_dispatch_remark').val();
         var edit_order_date = $('#edit_order_date').val();
@@ -164,37 +216,53 @@ $(".createOrderModalStore").click(function(){
           
         // var form = document.forms.namedItem("editCompanyForm");
         var formData = new FormData();
-        formData.append('_id', c_id);
-        formData.append('custName', edit_custName);
-        formData.append('companylistcust', edit_companylistcust);
-        formData.append('email', edit_email);
-        formData.append('phoneno', edit_phoneno);
-        formData.append('address', edit_address);
-        formData.append('city', edit_city);
-        formData.append('zipcode', edit_zipcode);
-        formData.append('state', edit_state);
-        formData.append('country', edit_country);
-        formData.append('custref', edit_custref);
-        formData.append('prodName', edit_prodName);
-        formData.append('product_type', edit_product_type);
-        formData.append('prod_code', edit_prod_code);
-        formData.append('ColourName', edit_ColourName);
-        formData.append('total_quantity', edit_total_quantity);
-        formData.append('price', edit_price);
-        formData.append('Billing_address', edit_Billing_address);
-        formData.append('Delivery_address', edit_Delivery_address);
-        formData.append('quantity_in_soft', edit_quantity_in_soft);
-        formData.append('quantity_in_pieces', edit_quantity_in_pieces);
-        formData.append('order_remark', edit_order_remark);
-        formData.append('dispatch_remark', edit_dispatch_remark);
-        formData.append('order_date', edit_order_date);
-        formData.append('disptach_date', edit_disptach_date);
-        formData.append('tentative_date', edit_tentative_date);
-        formData.append('design_name', edit_designName);
-        formData.append('box_packed', edit_box_packed);
-        formData.append('transportname', edittransportname);
-        formData.append('trackingdetails', edittrackingdetails);
-        formData.append('box_packed', edit_box_packed); 
+
+        $('.editProductContainer').each(function(index) {
+            var editproduct = {
+                product_id: $(this).find('#editprodid').val(),
+                prodName: $(this).find('#edit_prodName').val(),
+                product_type: $(this).find('#edit_product_type').val(),
+                design_name: $(this).find('#edit_designName').val(),
+                color_name: $(this).find('#edit_ColourName').val(),
+                quantity_in_soft: $(this).find('#edit_quantity_in_soft').val(),
+                quantity_in_pieces: $(this).find('#edit_quantity_in_pieces').val(),
+                // Add other product details here
+            };
+            formData.append('products[' + index + ']', JSON.stringify(editproduct));
+            console.log(editproduct);
+        });
+        
+        // formData.append('_id', c_id);
+        // formData.append('custName', edit_custName);
+        // formData.append('companylistcust', edit_companylistcust);
+        // formData.append('email', edit_email);
+        // formData.append('phoneno', edit_phoneno);
+        // formData.append('address', edit_address);
+        // formData.append('city', edit_city);
+        // formData.append('zipcode', edit_zipcode);
+        // formData.append('state', edit_state);
+        // formData.append('country', edit_country);
+        // formData.append('custref', edit_custref);
+        // // formData.append('prodName', edit_prodName);
+        // // formData.append('product_type', edit_product_type);
+        // // formData.append('prod_code', edit_prod_code);
+        // // formData.append('ColourName', edit_ColourName);
+        // // formData.append('total_quantity', edit_total_quantity);
+        // // formData.append('price', edit_price);
+        // // formData.append('Billing_address', edit_Billing_address);
+        // // formData.append('Delivery_address', edit_Delivery_address);
+        // // formData.append('quantity_in_soft', edit_quantity_in_soft);
+        // // formData.append('quantity_in_pieces', edit_quantity_in_pieces);
+        // formData.append('order_remark', edit_order_remark);
+        // formData.append('dispatch_remark', edit_dispatch_remark);
+        // formData.append('order_date', edit_order_date);
+        // formData.append('disptach_date', edit_disptach_date);
+        // formData.append('tentative_date', edit_tentative_date);
+        // // formData.append('design_name', edit_designName);
+        // formData.append('box_packed', edit_box_packed);
+        // formData.append('transportname', edittransportname);
+        // formData.append('trackingdetails', edittrackingdetails);
+        // formData.append('box_packed', edit_box_packed); 
         
         
     
@@ -205,8 +273,8 @@ $(".createOrderModalStore").click(function(){
             url: base_path + "/admin/update_order",
             type: 'post',
             datatype: "JSON",
-            contentType: false,
             data: formData,
+            contentType: false,
             processData: false,
             cache: false,
             success: function (response) {
@@ -338,10 +406,7 @@ $(".createOrderModalStore").click(function(){
                         var selectedproduct_type = selectedOption.data('product_type');
                         var selectedprod_code = selectedOption.data('prod_code');
                         var selectedprod_qty = selectedOption.data('prod_qty');
-                        var selectedThickness = selectedOption.data('thickness');
-                        var selectedWidth = selectedOption.data('width');
                         var selectedColorName = selectedOption.data('colorname');
-                        var selectedRoll_weight = selectedOption.data('roll_weight');
                         var selectedRoll_weight = selectedOption.data('prodid');
                     
                         
@@ -349,10 +414,7 @@ $(".createOrderModalStore").click(function(){
                         $('#product_type').val(selectedproduct_type);
                         $('#prod_code').val(selectedprod_code);
                         $('#prod_qty').val(selectedprod_qty);
-                        $('#Thickness').val(selectedThickness);
-                        $('#Width').val(selectedWidth);
                         $('#ColourName').val(selectedColorName);
-                        $('#Roll_weight').val(selectedRoll_weight);
                         $('#prodid').val(selectedRoll_weight);
                         
                     });
@@ -431,6 +493,30 @@ $(".createOrderModalStore").click(function(){
                
             });
 
+            
+    $('.view-order').click(function(e) {
+        e.preventDefault();
+        var userId = $(this).data('user-ids');
+        var master_id = $(this).data('user-master_id');
+        
+        $.ajax({
+            type:'GET',
+            url:base_path+"/orderdetails",
+            data: {
+                id: userId,
+                master_id: master_id
+            },
+            success:function(response){
+                console.log("jr");
+                window.location.href = base_path + "/orderdetails?id=" + userId + "&master_id=" + master_id;
+            }, error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+            
+        });
+
+    });
+
 
 });
 
@@ -443,8 +529,14 @@ document.getElementById('productsInput').addEventListener('change', function() {
       url: 'admin/get_designlist/' + product,
       type: 'GET',
       success: function(data) {
-        // Populate design dropdown with the received designs
-        populateDesignDropdown(data);
+        var options = '<option value="" selected>Select a Design</option>';
+        $.each(data, function(index, designs){
+            $.each(designs.designname, function(index, design) {
+                // console.log(design._id); // Make sure this is returning the array of designs
+                options += '<option value="'+design._id+'">'+design.design_name+'</option>';
+            });
+        });
+        $('#designlist').html(options); // Populate the dropdown
       },
       error: function(xhr, status, error) {
         console.error(error);
@@ -452,38 +544,13 @@ document.getElementById('productsInput').addEventListener('change', function() {
     });
   });
 
-//   function populateDesignDropdown(data) {
-//     var designDropdownContainer = $('#designlist');
-//     designDropdownContainer.empty(); // Clear existing options
-    
-//     // Create a single dropdown menu
-//     var designDropdown = $('<select class="form-control"></select>');
-//     designDropdown.append('<option value="" selected>Select a Design</option>');
-    
-//     // Iterate through the received data and add options to the dropdown
-//     data.forEach(function(design) {
-//         design.designname.forEach(function(designName) {
-//             console.log(designName.design_name);
-//             designDropdown.append('<option value="' + designName._id + '">' + designName.design_name + '</option>');
-//         });
-//     });
-    
-//     // Append the dropdown menu to the container
-//     designDropdownContainer.append(designDropdown);
-// }
 
-function populateDesignDropdown(data) {
-    var select = $('#designlist');
-    select.empty();
-    data.forEach(function(item) {
-        var design = item.designname; // Assuming 'designname' is the property containing the design name
-        select.append('<option value="' + design + '">' + design + '</option>');
-    });
-}
 
+
+  
 function showCustomColorInput() {
     var select = document.getElementById("colorlist");
-    console.log("select");
+    // console.log("select");
     var customColorInput = document.getElementById("customColorInput");
     if (select.value === "custom") {
         customColorInput.style.display = "block";
@@ -503,7 +570,6 @@ function addCustomColor() {
             window.location.href = base_path+"/order";
             // If the color was successfully added, update the dropdown
             var colorSelect = $('#colorlist');
-            console.log(colorSelect);
             // colorSelect.append('<option value="' + data.color._id + '">' + data.color.color_name + '</option>');
             data.forEach(function(color) {
                 colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
@@ -522,8 +588,7 @@ function addCustomColor() {
     });
 }
 
-
-
+// For Multiplay Product blck
 
 document.addEventListener("DOMContentLoaded", function() {
     // Function to reattach event listeners for custom color input
@@ -534,6 +599,69 @@ document.addEventListener("DOMContentLoaded", function() {
             } else {
                 customColorInput.style.display = "none";
             }
+        });
+    }
+
+    // Function to populate product list and set product details
+    function populateProductListAndSetDetails(productDetailsBlock) {
+        // Function to set product details based on selected product name
+        function setProductDetails(selectedOption) {
+            var selectedproduct_type = selectedOption.data('product_type');
+            var selectedprod_code = selectedOption.data('prod_code');
+            var selectedprod_qty = selectedOption.data('prod_qty');
+            var selectedColorName = selectedOption.data('colorname');
+            var selectedRoll_weight = selectedOption.data('prodid');
+
+            $('#product_type', productDetailsBlock).val(selectedproduct_type);
+            $('#prod_code', productDetailsBlock).val(selectedprod_code);
+            $('#prod_qty', productDetailsBlock).val(selectedprod_qty);
+            $('#ColourName', productDetailsBlock).val(selectedColorName);
+            $('#prodid', productDetailsBlock).val(selectedRoll_weight);
+        }
+
+        $.ajax({
+            url: base_path + '/admin/searchproductdata',
+            method: 'GET',
+            success: function(data) {
+                var datalist = $('#product_list', productDetailsBlock);
+                datalist.empty();
+                data.forEach(function(product) {
+                    datalist.append('<option value="' + product.product.prodName + '" data-product_type="' + product.product.product_type + '" data-prod_code="' + product.product.prod_code + '" data-prod_qty="' + product.product.prod_qty + '" data-thickness="' + product.product.Thickness + '" data-width="' + product.product.Width + '" data-colorname="' + product.product.ColorName + '" data-roll_weight="' + product.product.Roll_weight + '" data-prodid="' + product.product._id + '">');
+                });
+
+                // Event listener for selecting an option
+                $('#productsInput', productDetailsBlock).on('input', function() {
+                    var selectedName = $(this).val();
+                    var selectedOption = $('option[value="' + selectedName + '"]', productDetailsBlock);
+                    setProductDetails(selectedOption);
+                });
+            },
+            error: function(error) {
+                console.error("data not fetched", error);
+            }
+        });
+    }
+
+    // Function to fetch and populate design list based on selected product name
+    function populateDesignList(productDetailsBlock) {
+        $('#productsInput', productDetailsBlock).on('change', function() {
+            var product = this.value;
+            $.ajax({
+                url: 'admin/get_designlist/' + product,
+                type: 'GET',
+                success: function(data) {
+                    var options = '<option value="" selected>Select a Design</option>';
+                    $.each(data, function(index, designs) {
+                        $.each(designs.designname, function(index, design) {
+                            options += '<option value="' + design._id + '">' + design.design_name + '</option>';
+                        });
+                    });
+                    $('#designlist', productDetailsBlock).html(options);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
     }
 
@@ -551,13 +679,16 @@ document.addEventListener("DOMContentLoaded", function() {
             input.value = "";
         });
 
-        // Generate unique IDs for cloned elements (if needed)
-        // Update IDs in cloned block
-
         // Reattach event listener for custom color input
         var select = productDetailsBlock.querySelector("#colorlist");
         var customColorInput = productDetailsBlock.querySelector("#customColorInput");
         attachCustomColorInputListener(select, customColorInput);
+
+        // Populate product list and set product details
+        populateProductListAndSetDetails(productDetailsBlock);
+
+        // Fetch and populate design list based on selected product name
+        populateDesignList(productDetailsBlock);
 
         // Create and append the cancel button
         var cancelButton = document.createElement("button");
@@ -588,6 +719,7 @@ function updateDatefild(){
     
 
 }
+
 
 
 function openModal(selectElement,orderId,oldStatus) {
@@ -688,16 +820,21 @@ $("#saveOrder").click(function() {
 
     // Gather product details
     var productsData = [];
-    $('.card.mb-3').each(function(index) {
+    $('.multiple').each(function(index) {
         var product = {
+            product_id: $(this).find('#prodid').val(),
             prodName: $(this).find('#productsInput').val(),
             product_type: $(this).find('#product_type').val(),
+            design_name: $(this).find('#designlist option:selected').text(),
+            color_name: $(this).find('#colorlist option:selected').text(),
+            quantity_in_soft: $(this).find('#quantity_in_soft').val(),
+            quantity_in_pieces: $(this).find('#quantity_in_pieces').val(),
             // Add other product details here
         };
         productsData.push(product);
     });
     orderData.products = productsData;
-    // console.log(orderData.products);
+    console.log(orderData.products);
 
     // Prepare order data
     var companylistcust = $('#companylistcust').val();
@@ -731,11 +868,10 @@ $("#saveOrder").click(function() {
     var tentative_date = $('#tentative_date').val();
     var customer_id = $('#custid').val();
     var product_id = $('#prodid').val();
-    var design_name = $('#designlist option:selected').val();
+    var design_name = $('#designlist option:selected').text();
     var design_id = $('#designlist').val();
     var quantity_in_soft = $('#quantity_in_soft').val();
     var quantity_in_pieces = $('#quantity_in_pieces').val();
-    console.log(orderData);
   
 
     
@@ -760,8 +896,8 @@ $("#saveOrder").click(function() {
             address: address,
             city: city,
             zipcode: zipcode,
-            ColorName: colour_name,
-            colour_id: colour_id,
+            // ColorName: colour_name,
+            // colour_id: colour_id,
             design_id:design_id,
             state: state,
             country: country,
@@ -786,6 +922,7 @@ $("#saveOrder").click(function() {
             design_name:design_name,
             quantity_in_soft:quantity_in_soft,
             quantity_in_pieces:quantity_in_pieces,
+            products: JSON.stringify(productsData)
             
         },
         cache: false,

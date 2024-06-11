@@ -37,9 +37,8 @@
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Product Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
-                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Remarks</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Tentaitve Dispatch Date</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Dispatch Remarks</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
                            </tr>
@@ -97,11 +96,7 @@
 
         </td>
 
-    <td class="text-center">
-    @if(!empty($order->order->product->prodName))
-            <p class="text-xs font-weight-bold mb-0">{{ $order->order->product->prodName }}</p>
-    @endif
-    </td>
+
         <td class="text-center">
                 @if(!empty($order->order->order_date  ))    
                 <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_date }}</p>
@@ -349,7 +344,7 @@
 
 
 
-{{-- --------------------Edit Module----------------------- --}}
+{{----------------------Edit Module----------------------- --}}
 
 <div class="modal fade" id="editordermodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
@@ -438,39 +433,33 @@
 
                    
                     <!--PRODUCT DETAILS-->
-                    <div class="card mb-3">
+                    {{-- <div class="card mb-3  border border-dark edit_multiple">
                         <div class="card-header">
                             <h6 class="mb-0">Product Details</h6>
                         </div>
                         <div class="card-body">
                             <div class="row">
                                 <div class="form-group col-md-3">
+                                    <input type="text" name="editprodid" id="editprodid" hidden>
                                     <label  for="prodName">Product Name<span class="required"></span></label>
-                                    <input type="text" name="prodid" id="prodid" hidden>
                                     <input type="text" class="form-control custom-width" list="product_list" id="edit_prodName" name="edit_prodName " placeholder="Select a Product">
                                     <datalist id="product_list"></datalist>
-
-                                    
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="product_type">Product Type<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_product_type" id="edit_product_type" placeholder="Product Type">
                                 </div>
                                 <div class="form-group col-md-3">
-                                    <label for="prod_code">Product Code<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_prod_code" id="edit_prod_code" placeholder="Product Code">
-                                </div>
-                                <div class="form-group col-md-3">
                                     <label for="email">DESIGN NAME<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_designName" id="edit_designName" placeholder="Color Name">
+                                    <input type="text" class="form-control custom-width" name="edit_designName" id="edit_designName" placeholder="Design Name">
                                 </div>
-        
-                            </div>
-                            <div class="row">
                                 <div class="form-group col-md-3">
                                     <label for="color_name">Color Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_ColourName" id="edit_ColourName" placeholder="Color Name">
                                 </div>
+                            </div>
+                            <div class="row">
+                             
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_quantity_in_soft" id="edit_quantity_in_soft" placeholder="Product Quantity">
@@ -481,6 +470,11 @@
                                 </div>
                             </div>
                         </div>
+                    </div> --}}
+
+                    
+                    <div id="editProductContainer">
+                        <!-- Product detail blocks will be appended here -->
                     </div>
 
                    
@@ -502,7 +496,7 @@
                        
                         <div class="form-group col-md-3">
                             <label for="companylistcust">  TENTAITVE DISPATCH DATE<span class="required"></span></label>
-                            <input type="date" class="form-control custom-width" name="edit_tentative_date" id="edit_tentative_date" placeholder="Company Name">
+                            <input type="date" class="form-control custom-width" name="edit_tentative_date" id="edit_tentative_date" placeholder="Company Name" disabled>
                         </div>
                                
                                 <div class="form-group col-md-3">

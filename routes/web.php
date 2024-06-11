@@ -87,7 +87,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
      Route::get('/productdetils', [ProductController::class, 'view_productdetails'])->name('productdetils');
      Route::POST('/admin/adddesign', [ProductController::class, 'addDesign']);
-    
+     Route::get('/admin/getProductTypes', [ProductController::class, 'getProductTypes']);
      Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
@@ -99,6 +99,8 @@ Route::group(['middleware' => 'auth'], function () {
      
      //Order master module
      Route::get('/order', [OrderController::class, 'view_order'])->name('order');
+     Route::get('/orderdetails', [OrderController::class, 'order_details'])->name('orderdetails');
+
      //  Route::POST('/admin/add_product', [OrderController::class, 'add_product']);
      //  Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);

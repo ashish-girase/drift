@@ -41,6 +41,9 @@ class OrderController extends Controller
         $companyId = 1;
         $docAvailable = AppHelper::instance()->checkDoc(NewOrder::raw(), $companyId, $maxLength);
 
+        $products = json_decode($request->input('products'), true);
+        // dd($products);
+
         $cust_id = (int)$request->input('cust_id');
         // dd($cust_id);
         $prod_id = (int)$request->input('prod_id');
@@ -77,6 +80,8 @@ class OrderController extends Controller
             // dd($colours_name);
 
             $design_id = (int)$request->input('design_id');
+            $designnames = $request->input('design_name');
+            // dd($designnames);
             $design = Design::raw()->aggregate([
                 ['$match' => ['companyID' => $companyId]],
                 ['$unwind' => '$design'],
@@ -84,7 +89,7 @@ class OrderController extends Controller
                 ['$limit' => 1]
                 ])->toArray();
     
-                $design_name = $design ? $design[0]['design']['design_name'] : '';
+                // $design_name = $design ? $design[0]['design']['design_name'] : '';
 
 
               // Extract product details
@@ -107,41 +112,30 @@ class OrderController extends Controller
                 'country' => $request->input('country'),
                 'custref' => $request->input('custref'),
             ],
-            'product' => [
-                'prod_id' => $request->input('prodID'),
-                'prodName' => $request->input('prodName'),
-                'product_type' => $request->input('product_type'),
-                'prod_code' => $request->input('prod_code'),
-                'color_id'=>$colour_id,
-                'ColourName' => $colours_name,
-                'design_id'=>$design_id,
-                'design_name' => $design_name, 
-                
-            ],
-                'box_packed' =>  $request->input('isChecked'),
-                'total_quantity' => $request->input('total_quantity'),
-                'order_date' => $request->input('order_date'),  
-                'disptach_date' => $request->input('disptach_date'), 
-                'tentative_date' => $request->input('tentative_date'),     
-                'quantity_in_soft' => $request->input('quantity_in_soft'), 
-                'quantity_in_pieces' => $request->input('quantity_in_pieces'), 
-                'ordertype' => $request->input('ordertype'), 
-                'transportname' => $request->input('transportname'), 
-                'trackingdetails' => $request->input('trackingdetails'), 
-                // 'price' => $request->input('price'),
-                // 'Billing_address' => $request->input('Billing_address'),
-                // 'Delivery_address' => $request->input('Delivery_address'),
-                'status' => "New",
-                'order_remark' => $request->input('order_remark'),
-                'dispatch_remark' => $request->input('dispatch_remark'),
-
+            'product' =>  $products ,
+            'box_packed' =>  $request->input('isChecked'),
+            // 'total_quantity' => $request->input('total_quantity'),
+            'order_date' => $request->input('order_date'),  
+            'disptach_date' => $request->input('disptach_date'), 
+            'tentative_date' => $request->input('tentative_date'),     
+            // 'quantity_in_soft' => $request->input('quantity_in_soft'),  
+            // 'quantity_in_pieces' => $request->input('quantity_in_pieces'), 
+            'ordertype' => $request->input('ordertype'), 
+            'transportname' => $request->input('transportname'), 
+            'trackingdetails' => $request->input('trackingdetails'), 
+            // 'price' => $request->input('price'),
+            // 'Billing_address' => $request->input('Billing_address'),
+            // 'Delivery_address' => $request->input('Delivery_address'),
+            'status' => "New",
+            'order_remark' => $request->input('order_remark'),
+            'dispatch_remark' => $request->input('dispatch_remark'),
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deleteOrder' => "",
             'deleteTime' => "",
         ];
 
-        dd($orderData);
+        // dd($orderData);
         
        
     
@@ -381,8 +375,7 @@ class OrderController extends Controller
     }
 
 
-       public function view_order(Request $request)
-    {
+       public function view_order(Request $request){
         $companyID=1;
         $collection=NewOrder::raw();
         $processing =Processing::raw();
@@ -418,6 +411,34 @@ class OrderController extends Controller
         
 
     }
+
+
+    public function order_details(Request $request){
+        $parent=$request->master_id;
+            $companyID=1;
+            $id=$request->id;
+            // dd($id);
+            // dd($parent);
+            $collection=NewOrder::raw();
+            $orderData = $collection->aggregate([
+            ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+            ['$unwind' => '$order'],
+            ['$match' => ['order._id' => (int)$id]],
+            // ['$match' => ['designname.delete_status' => "NO"]],
+            ])->toArray();
+            foreach ($orderData as $row) {
+                $activeProduct12 = array();
+                $k = 0;
+                $activeProduct12[$k] = $row['order'];
+                $k++;
+            }
+            // dd($orderData);
+            return view('order.view_orderdetails', compact('orderData'));
+            // return response()->json(['success' => $show1]);
+    }
+
+
+
     public function edit_order(Request $request)
     {
         $parent = $request->input('master_id');
@@ -446,7 +467,8 @@ class OrderController extends Controller
         // 'success' => 'No record'
         // ]);
         // }
-
+        
+        // dd($show1);
         
         $activeOrder = [];
         foreach ($show1 as $row) {
@@ -503,7 +525,7 @@ class OrderController extends Controller
     ]
     );
 
-    // dd($request->box_packed);
+    dd($orderCurr);
 
     if ($orderCurr==true) {
         // dd($orderCurr);
@@ -599,7 +621,7 @@ class OrderController extends Controller
         // $proorder = $processResult[0]['order'];
         // $proParentId  = $processResult[0]['_id'];
 
-        dd($processResult);
+        dd($orderResult);
 
 
         // If $orderResult is not empty, extract values

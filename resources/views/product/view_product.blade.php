@@ -47,11 +47,7 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                                             Product Code</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                            Thickness</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                            Width</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                            Colour Name</th>
+                                            Product Type</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                             Action </th>
                                     </tr>
@@ -77,15 +73,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $cusData_val->product->Thickness }}</p>
-                                                </td>
-                                                <td class="text-center">
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $cusData_val->product->Width }}</p>
-                                                </td>
-                                                <td class="text-center">
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $cusData_val->product->ColorName }}</p>
+                                                        {{ $cusData_val->product->product_type }}</p>
                                                 </td>
 
                                                 <td class="text-center">
@@ -159,19 +147,11 @@
                         </div>
                         <div class="form-row">           
                         </div>
-                        {{-- <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Design Name<span class="required"></span></label>
-                                <input type="text" class="form-control" name="design_type" id="design_type"
-                                    placeholder="Design Name">
-                            </div>
-                        </div> --}}
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Prodcut Type<span class="required"></span></label>
-                                <input type="text" class="form-control" name="product_type" id="product_type"
-                                    placeholder="Prodcut Type">
-                            </div>
+                        <div class="form-group col-md-12">
+                            <label for="producttypeSelect">Product Type</label>
+                            <select class="form-control" id="products_type">
+                                <option value="" selected>Select a Product type</option>
+                            </select>
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
@@ -225,16 +205,6 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label for="colorSelect">Color Name</label>
-                                <input type="text" class="form-control" name="edit_colour_name" id="edit_colour_name"
-                                placeholder="color name">
-                                {{-- <select class="form-control" id="edit_colour_name">
-                                    <option value="" selected>Select a color</option>
-                                </select> --}}
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
                                 <label for="user_firstname">Prodcut Type<span class="required"></span></label>
                                 <input type="text" class="form-control" name="edit_product_type"
                                     id="edit_product_type" placeholder="Prodcut Type">
@@ -254,27 +224,7 @@
                                     placeholder="Product Quantity">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Thickness<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Thickness" id="edit_Thickness"
-                                    placeholder="Product Thickness">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Width<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Width" id="edit_Width"
-                                    placeholder="Product Width">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Roll weight<span class="required"></span></label>
-                                <input type="text" class="form-control" name="Roll_weight" id="edit_Roll_weight"
-                                    placeholder="Roll weight">
-                            </div>
-                        </div>
+ 
                     </form>
                 </div>
                 <div class="modal-footer">

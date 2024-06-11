@@ -10,6 +10,9 @@
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
+                            <a href="{{route('product')}}" type="button" class="mx-3 " id="" data-bs-toggle="tooltip">
+                                <button class=" btn btn-sm btn-outline btn-danger  ">Back</button>
+                                </a>
                             <h5 class="mb-0">All Product</h5>
                         </div>
                         <!-- <a href="#" class="button-29 createUserModalStore" data-toggle="modal"  data-target="#"><span>Add</span></a> -->
@@ -54,7 +57,7 @@
                                                     {{ $cusData_val->product->prod_code }}</p>
                                             </td>
                         
-
+                                           
                                             <td class="text-center">
                                                    <!--VIEW BUTTON-->
                                                 <a href="#" type="button" class="mx-3 createDesignModalStore" id="createDesignModalStore"
