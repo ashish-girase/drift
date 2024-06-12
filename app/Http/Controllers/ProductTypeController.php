@@ -44,10 +44,10 @@ class ProductTypeController extends Controller
             'deleteproducttype' => "",
             'deleteTime' => "",
             );
-            // dd($cons_data);
+            // dd($data);
             ProductType::raw()->updateOne(['companyID' => $companyId,'_id' => (int)$docId], ['$push' => ['producttype' => $data]]);
             //dd($cons_data);
-            echo json_encode($data);
+            return response()->json(['status' => true, 'message' => 'Product Type added successfully'], 200);
         }
         else
         {
@@ -75,8 +75,8 @@ class ProductTypeController extends Controller
             );
             ProductType::raw()->insertOne($data);
         }
-        $completedata[] = $data;
-        echo json_encode($completedata);
+        // $completedata[] = $data;
+        // echo json_encode($completedata);
 
         // dd($data);
         if (!empty($data)) {

@@ -93,7 +93,7 @@
                                         <div class="modal-body">
                                             <form method="post" enctype="multipart/form-data">
                                                     @csrf
-                                                    <input type="hidden" name="_token" id="_tokenproducttype" value="{{ csrf_token() }}">
+                                                    <input type="hidden" name="_token" id="_tokenproducttype" value="{{Session::token()}}">
 
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">

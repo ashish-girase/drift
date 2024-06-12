@@ -94,6 +94,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/admin/get_product', [ProductController::class, 'getProduct'])->name('getProduct');
      Route::get('/products/{id}', [ProductController::class, 'show']);
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
+     Route::post('/admin/delete_product_design', [ProductController::class, 'delete_product_design'])->name('delete_product_design');
      Route::post('/admin/get_colorlist', [ProductController::class, 'fetchColorNames']);
     // Route::get('/fetch-color-name', 'ProductController@fetchColorName');
      
@@ -116,6 +117,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('admin/customerdataget_single', [OrderController::class, 'customerdataget_single']);
    // Route::post('order/view_order', [OrderController::class, ' showCustomers'])->name('showCustomers');
     Route::post('/orders/updateStatus', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::get('/orders/fetchProcessData', [OrderController::class, 'fetchProcessData']);
     Route::post('/orders/addnewStatus', [OrderController::class, 'addnewStatus'])->name('orders.addnewStatus');
     Route::get('/admin/searchcustomerdata', [OrderController::class, 'searchcustomerdata']);
     Route::get('/admin/searchproductdata', [OrderController::class, 'searchproductdata']);

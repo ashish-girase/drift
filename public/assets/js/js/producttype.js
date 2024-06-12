@@ -105,15 +105,15 @@ $("#saveproducttype").click(function(){
     $('#producttype_name').focus();
     return false;
     }
-    // var producttype_name=$('#producttype_name').val();
+    var producttype_name = $('#producttype_name').val();
     var tocken = $("#_tokenproducttype").val();
-    // console.log(tocken);
+    console.log(tocken);
     $.ajax({
         url: base_path + "/admin/add_producttype",
         type: "POST",
         dataType:"JSON",
         data: {
-            _token: tocken,
+            _token: $("#_tokenproducttype").val(),
             producttype_name: producttype_name
         },
         cache: false,

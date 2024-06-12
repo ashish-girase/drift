@@ -31,11 +31,26 @@
                                         Customer Mobile NO.</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
                                         Customer City</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        company Name</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        Email</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        address</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        state</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        country</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($orderData)                        
-                                    @foreach ($orderData as $key => $Data_val)
+
+                                @php
+                                    $mergedData = array_merge($orderData, $proorderData);
+                                @endphp
+
+                                @if ($mergedData)                        
+                                    @foreach ($mergedData as $key => $Data_val)
                                         <tr>
                                             <td class="ps-4">
                                                 <p class="text-s font-weight-bold mb-0">{{ $key + 1 }}</p>
@@ -52,7 +67,33 @@
                                                 <p class="text-s font-weight-bold mb-0">
                                                     {{ $Data_val->order->customer->city }}
                                                 </p>
-                                            </td>                   
+                                            </td>  
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->customer->companylistcust }}
+                                                </p>
+                                            </td> 
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->customer->email }}
+                                                </p>
+                                            </td> 
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->customer->address }}
+                                                </p>
+                                            </td> 
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->customer->state }}
+                                                </p>
+                                            </td> 
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->customer->country }}
+                                                </p>
+                                            </td> 
+
                                         </tr>
                                     @endforeach
                                 @else
@@ -105,8 +146,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if ($orderData)                        
-                                    @foreach ($orderData as $key => $Data_val)
+                                @php
+                                    $mergedData = array_merge($orderData, $proorderData);
+                                @endphp
+                                @if ($mergedData)                        
+                                    @foreach ($mergedData as $key => $Data_val)
                                         @foreach ($Data_val->order->product as $key => $product)
                                     <tr>
                                         <td class="ps-4">

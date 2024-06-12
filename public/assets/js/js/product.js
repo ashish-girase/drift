@@ -125,6 +125,39 @@ $(document).ready(function() {
         }
     });
 
+    $('.delete_product_design').click(function(e) {
+        e.preventDefault();
+        // var userId = $(this).data('user-ids').split(',');
+        var userId = $(this).data('user-ids');
+        var master_id = $(this).data('user-master_id');
+
+        console.log(userId);
+        console.log(master_id);
+
+
+        // var userId = $(this).data('user-id');
+        var confirmDelete = confirm("Are you sure you want to delete this?");
+        if (confirmDelete) {
+        $.ajax({
+        // url: "{{ route('delete_user') }}",
+        url: base_path+"/admin/delete_product_design",
+        type: "POST",
+        dataType: "json",
+        data: {
+            id: userId,
+            master_id: master_id,
+            _token: "{{ csrf_token  () }}"
+        },
+        success: function(response) {
+            window.location.href = base_path+"/product";
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+        });
+        }
+    });
+
     $('.view-productdetial').click(function(e) {
         e.preventDefault();
         var userId = $(this).data('user-ids');
@@ -207,11 +240,6 @@ $("#saveproduct").click(function(){
     var colour_id=$('#colorlistcust1').val();
     var colour_name= $('#colorlistcust1 option:selected').text();
     var product_type=$('#products_type option:selected').text();
-    var prod_code=$('#prod_code').val();
-    var prod_qty=$('#prod_qty').val();
-    var Thickness=$('#Thickness').val();
-    var Width=$('#Width').val();
-    var Roll_weight=$('#Roll_weight').val();
     console.log(product_type);
    
     $.ajax({
@@ -224,11 +252,6 @@ $("#saveproduct").click(function(){
             product_type: product_type,
             colour_id: colour_id,
             ColorName: colour_name,
-            prod_code: prod_code,
-            prod_qty: prod_qty,
-            Thickness: Thickness,
-            Width: Width,
-            Roll_weight: Roll_weight
         },
         cache: false,
         success: function(Result) {

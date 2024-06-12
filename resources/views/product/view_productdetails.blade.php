@@ -30,8 +30,6 @@
                                         Product Name</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                                         Product Type</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                        Product Code</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                         Action </th>
                                 </tr>
@@ -51,20 +49,14 @@
                                             <td class="text-center">
                                                 <p class="text-xs font-weight-bold mb-0">
                                                     {{ $cusData_val->product->product_type }}</p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-xs font-weight-bold mb-0">
-                                                    {{ $cusData_val->product->prod_code }}</p>
-                                            </td>
-                        
+                                            </td>          
                                            
                                             <td class="text-center">
                                                    <!--VIEW BUTTON-->
-                                                <a href="#" type="button" class="mx-3 createDesignModalStore" id="createDesignModalStore"
+                                                <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 createDesignModalStore" id="createDesignModalStore"
                                                         data-user-ids="{{ $cusData_val->product->_id}}" 
                                                         data-user-master_id="{{ $cusData_val['_id'] }}"  
-                                                    data-bs-toggle="tooltip">
-                                                <button class=" btn btn-sm btn-outline createDesignModalStore ">Add Design +</button>
+                                                        type="button">+&nbsp; Add Design
                                                 </a>
                                             </td>
                                         </tr>
@@ -83,59 +75,6 @@
                         <div>
                             <h5 class="mb-0">All Design</h5>
                         </div>
-{{-- 
-<table class="table align-items-center mb-0">
-    <thead>
-        <tr>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
-            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                Design Name</th>
-            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
-                Action </th>
-        </tr>
-    </thead>
-    <tbody>
-        @if ($show1)
-            @foreach ($show1 as $key => $cusData_val)
-                @foreach($cusData_val->product->designname as $key =>$design_name_1)
-        
-            {{-- @php
-                dd($show1->product->designname);
-            @endphp --}}
-                {{-- <tr>
-                    <td class="ps-4">
-                        <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
-                    </td>
-                    <td class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">
-                      
-                            @php 
-                            echo $design_name_1->design_name;    
-                            @endphp 
-                        
-                        </p>
-                    </td>
-                    <td class="text-center">
-                           <!--VIEW BUTTON-->
-                        <a href="#" type="button" class="mx-3 " id="#" 
-                            data-bs-toggle="tooltip">
-                        <button class=" btn btn-sm btn-outline ">Edit</button>
-                        </a>
-                    </td>
-                </tr>
-                @endforeach
-            @endforeach
-        @else 
-            <tr>
-                <td colspan="3">
-                    <center>Record Not Found</center>
-                </td>
-            </tr>
-        @endif
-    </tbody>
-
-</table> --}} 
-
 
 <table class="table align-items-center mb-0">
 
@@ -168,9 +107,21 @@
                             </p>
                         </td>
                         <td class="text-center">
-                            <!-- VIEW BUTTON -->
-                            <a href="#" type="button" class="mx-3 " id="#" data-bs-toggle="tooltip">
-                                <button class=" btn btn-sm btn-outline ">Edit</button>
+                            <!-- EDIT BUTTON -->
+                        
+                            <a href="#" type="button" class="mx-3 " id="#" 
+                                data-user-ids="{{ $cusData_val->product->designname[$key]->_id }}"
+                                data-user-master_id="{{ $cusData_val['_id'] }}"
+                                data-bs-toggle="tooltip">
+                                <i class="fas fa-user-edit text-secondary"></i>
+                            </a>
+                            
+                            <!-- DELETE BUTTON -->
+                            <a href="#" type="button" class="mx-3 delete_product_design" data-user-ids="{{ $cusData_val->product->designname[$key]->_id }}"
+                                data-user-master_id="{{ $cusData_val->product['_id'] }}"  id="delete_product_design" data-bs-toggle="tooltip">
+                                <span>
+                                    <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                                </span>
                             </a>
                         </td>
                     </tr>

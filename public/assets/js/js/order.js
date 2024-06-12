@@ -232,37 +232,37 @@ $(".createOrderModalStore").click(function(){
             console.log(editproduct);
         });
         
-        // formData.append('_id', c_id);
-        // formData.append('custName', edit_custName);
-        // formData.append('companylistcust', edit_companylistcust);
-        // formData.append('email', edit_email);
-        // formData.append('phoneno', edit_phoneno);
-        // formData.append('address', edit_address);
-        // formData.append('city', edit_city);
-        // formData.append('zipcode', edit_zipcode);
-        // formData.append('state', edit_state);
-        // formData.append('country', edit_country);
-        // formData.append('custref', edit_custref);
-        // // formData.append('prodName', edit_prodName);
-        // // formData.append('product_type', edit_product_type);
-        // // formData.append('prod_code', edit_prod_code);
-        // // formData.append('ColourName', edit_ColourName);
-        // // formData.append('total_quantity', edit_total_quantity);
-        // // formData.append('price', edit_price);
-        // // formData.append('Billing_address', edit_Billing_address);
-        // // formData.append('Delivery_address', edit_Delivery_address);
-        // // formData.append('quantity_in_soft', edit_quantity_in_soft);
-        // // formData.append('quantity_in_pieces', edit_quantity_in_pieces);
-        // formData.append('order_remark', edit_order_remark);
-        // formData.append('dispatch_remark', edit_dispatch_remark);
-        // formData.append('order_date', edit_order_date);
-        // formData.append('disptach_date', edit_disptach_date);
-        // formData.append('tentative_date', edit_tentative_date);
-        // // formData.append('design_name', edit_designName);
-        // formData.append('box_packed', edit_box_packed);
-        // formData.append('transportname', edittransportname);
-        // formData.append('trackingdetails', edittrackingdetails);
-        // formData.append('box_packed', edit_box_packed); 
+        formData.append('_id', c_id);
+        formData.append('custName', edit_custName);
+        formData.append('companylistcust', edit_companylistcust);
+        formData.append('email', edit_email);
+        formData.append('phoneno', edit_phoneno);
+        formData.append('address', edit_address);
+        formData.append('city', edit_city);
+        formData.append('zipcode', edit_zipcode);
+        formData.append('state', edit_state);
+        formData.append('country', edit_country);
+        formData.append('custref', edit_custref);
+        // formData.append('prodName', edit_prodName);
+        // formData.append('product_type', edit_product_type);
+        // formData.append('prod_code', edit_prod_code);
+        // formData.append('ColourName', edit_ColourName);
+        // formData.append('total_quantity', edit_total_quantity);
+        // formData.append('price', edit_price);
+        // formData.append('Billing_address', edit_Billing_address);
+        // formData.append('Delivery_address', edit_Delivery_address);
+        // formData.append('quantity_in_soft', edit_quantity_in_soft);
+        // formData.append('quantity_in_pieces', edit_quantity_in_pieces);
+        formData.append('order_remark', edit_order_remark);
+        formData.append('dispatch_remark', edit_dispatch_remark);
+        formData.append('order_date', edit_order_date);
+        formData.append('disptach_date', edit_disptach_date);
+        formData.append('tentative_date', edit_tentative_date);
+        // formData.append('design_name', edit_designName);
+        formData.append('box_packed', edit_box_packed);
+        formData.append('transportname', edittransportname);
+        formData.append('trackingdetails', edittrackingdetails);
+        formData.append('box_packed', edit_box_packed); 
         
         
     
@@ -732,7 +732,42 @@ function openModal(selectElement,orderId,oldStatus) {
         $('#dis_status').val(dis_newStatus);
         $('#dis_old_status').val(oldStatus);
         $('#dis_order_id').val(orderId);
+
+        $.ajax({
+            url: base_path + '/orders/fetchProcessData', // Replace with your controller route
+            type: 'GET', // or 'POST' based on your route configuration
+            data: {
+                id: orderId // Send any additional parameters needed
+            },
+            success: function (response) {
+                console.log(response.proorderData[0].order);
+                $('#orderTable tbody').empty();
+                var key = 0 ;
+                // Iterate through the response data and populate the table
+                response.proorderData.forEach(function (item) {
+                    console.log(item.order.product[0].color_name);
+                    var newRow = '<tr>' +
+                        '<td class="ps-4">' + key + '</td>' +
+                        '<td class="text-center">' + item.productName + '</td>' +
+                        '<td class="text-center">' + item.productType + '</td>' +
+                        '<td class="text-center">' + item.designName + '</td>' +
+                        '<td class="text-center">' + item.order.product[0].color_name + '</td>' +
+                        '<td class="text-center">' + item.quantitySQFT + '</td>' +
+                        '<td class="text-center">' + item.quantityPieces + '</td>' +
+                        '<td class="text-center">' + item.partialQuantity + '</td>' +
+                        '</tr>';
+                        key++;
+                    $('#orderTable tbody').append(newRow);
+                });
+            },
+            error: function (xhr, status, error) {
+                // Handle error
+                console.error("Errors:", error);
+            }
+        });
     }
+
+  
    
     $.ajax({
         url: base_path+'/orders/updateStatus',
@@ -747,6 +782,8 @@ function openModal(selectElement,orderId,oldStatus) {
             // Handle success response  
             console.log(response);
             console.log("sucess");
+            window.location.href = base_path+"/order";
+            Swal.fire("sucess", "Order Sucessfully Processed");
         },
         error: function(xhr, status, error) {
             // Handle error

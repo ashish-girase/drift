@@ -319,63 +319,65 @@ class OrderController extends Controller
 
 
     }
-    public function searchProduct(Request $request)
-    {
-    $companyId = 1;
-    $product_nm = $request->input('prod_name');
-    // dd($product_nm);
-    $products = Product::raw()->aggregate([
-    ['$match' => ['companyID' => $companyId]],
-    ['$unwind' => '$product'],
-    ['$match' => ['product.prodName' => new Regex("{$product_nm}", 'i')]],
-    ['$group' => [
-    '_id' => null,
-    'products' => ['$push' => [
-    'prodName' => '$product.prodName',
+    public function searchProduct(Request $request){
+        $companyId = 1;
+        $product_nm = $request->input('prod_name');
+        // dd($product_nm);
+        $products = Product::raw()->aggregate([
+        ['$match' => ['companyID' => $companyId]],
+        ['$unwind' => '$product'],
+        ['$match' => ['product.prodName' => new Regex("{$product_nm}", 'i')]],
+        ['$group' => [
+        '_id' => null,
+        'products' => ['$push' => [
+        'prodName' => '$product.prodName',
 
-    ]],
-    ]],
-    ['$project' => ['products' => 1, '_id' => 0]],
-    ])->toArray();
+        ]],
+        ]],
+        ['$project' => ['products' => 1, '_id' => 0]],
+        ])->toArray();
 
-    if (empty($products)) {
-    return response()->json(['status' => false, 'message' => 'No products found'], 404);
-    }
-   
-    return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
+        if (empty($products)) {
+        return response()->json(['status' => false, 'message' => 'No products found'], 404);
+        }
+    
+        return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
 
 
     }
     public function getProduct(Request $request)
-    {
-    $companyId = 1;
-    $prod_id = (int)$request->input('prod_id');
-    // dd($prod_id);
-    $products = Product::raw()->aggregate([
-    ['$match' => ['companyID' => $companyId]],
-    ['$unwind' => '$product'],
-    ['$match' => ['product._id' => $prod_id]],
-    ['$group' => [
-    '_id' => null,
-    'products' => ['$push' => [
+        {
+        $companyId = 1;
+        $prod_id = (int)$request->input('prod_id');
+        // dd($prod_id);
+        $products = Product::raw()->aggregate([
+        ['$match' => ['companyID' => $companyId]],
+        ['$unwind' => '$product'],
+        ['$match' => ['product._id' => $prod_id]],
+        ['$group' => [
+        '_id' => null,
+        'products' => ['$push' => [
 
-    'prodName' => '$product.prodName',
-    'product_type' => '$product.product_type',
+        'prodName' => '$product.prodName',
+        'product_type' => '$product.product_type',
 
-    ]],
-    ]],
-    ['$project' => ['products' => 1, '_id' => 0]],
-    ])->toArray();
+        ]],
+        ]],
+        ['$project' => ['products' => 1, '_id' => 0]],
+        ])->toArray();
 
-    if (empty($products)) {
-    return response()->json(['status' => false, 'message' => 'No products found'], 404);
-    }
+        if (empty($products)) {
+        return response()->json(['status' => false, 'message' => 'No products found'], 404);
+        }
 
-    return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
-    }
+        return response()->json(['status' => true, 'data' => $products[0]['products'], 'message' => 'Products found successfully'], 200);
+        }
 
 
-       public function view_order(Request $request){
+    public function view_order(Request $request){
+
+        // $companyID=1;
+        $id=$request->id;
         $companyID=1;
         $collection=NewOrder::raw();
         $processing =Processing::raw();
@@ -402,12 +404,25 @@ class OrderController extends Controller
             ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
             ['$sort' => ['order._id' => -1]]
         ]);
+
         $process_data = $processCurr->toArray();
         $order_data = $orderCurr->toArray();
-        
-        // dd($order_data);
+
+        // $proorderData = $processing->aggregate([
+        //     ['$match' => ['companyID' => $companyID]],
+        //     ['$unwind' => '$order'],
+        //     ['$match' => ['order._id' => (int)$id]],
+        //     // ['$match' => ['designname.delete_status' => "NO"]],
+        //     ])->toArray();
+        // foreach ($proorderData as $row) {
+        //     $proProduct12 = array();
+        //     $k = 0;
+        //     $proProduct12[$k] = $row['order'];
+        //     $k++;
+        // }
         
         return view('order.view_order', compact('order_data','customers','process_data'));
+                
         
 
     }
@@ -420,6 +435,7 @@ class OrderController extends Controller
             // dd($id);
             // dd($parent);
             $collection=NewOrder::raw();
+            
             $orderData = $collection->aggregate([
             ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
             ['$unwind' => '$order'],
@@ -432,8 +448,24 @@ class OrderController extends Controller
                 $activeProduct12[$k] = $row['order'];
                 $k++;
             }
-            // dd($orderData);
-            return view('order.view_orderdetails', compact('orderData'));
+
+            $procollection=Processing::raw();
+            
+            $proorderData = $procollection->aggregate([
+                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                ['$unwind' => '$order'],
+                ['$match' => ['order._id' => (int)$id]],
+                // ['$match' => ['designname.delete_status' => "NO"]],
+                ])->toArray();
+                foreach ($proorderData as $row) {
+                    $proProduct12 = array();
+                    $k = 0;
+                    $proProduct12[$k] = $row['order'];
+                    $k++;
+                }
+            // dd($proorderData);
+            return view('order.view_orderdetails', compact('orderData','proorderData'));
+            
             // return response()->json(['success' => $show1]);
     }
 
@@ -616,12 +648,12 @@ class OrderController extends Controller
         
         // dd($processResult);
         
-        // $order = $orderResult[0]['order'];
-        // $parentid = $orderResult[0]['_id'];
+        $order = $orderResult[0]['order'];
+        $parentid = $orderResult[0]['_id'];
         // $proorder = $processResult[0]['order'];
         // $proParentId  = $processResult[0]['_id'];
 
-        dd($orderResult);
+        // dd($orderResult);
 
 
         // If $orderResult is not empty, extract values
@@ -695,6 +727,7 @@ class OrderController extends Controller
                echo "alert('Status changed successfully.');";
                echo 'window.location.href = "' . url("order") . '";';
                echo "</script>";
+            //    return response()->json(['success' => false, 'message' => 'Order moved To Processing.']);
             } else {
                 echo "<script>";
                 echo "alert('Order moved but not removed from the old collection.');";
@@ -887,6 +920,35 @@ class OrderController extends Controller
                 // dd($colour);
         
                 return response()->json($colour);
+            }
+
+
+            public function fetchProcessData(Request $request){
+
+                // $parent=$request->master_id;
+                $companyID=1;
+                $id=$request->id;
+                // dd($id);
+                // dd($parent);
+            
+    
+                $procollection=Processing::raw();
+                
+                $proorderData = $procollection->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order._id' => (int)$id]],
+                    // ['$match' => ['designname.delete_status' => "NO"]],
+                    ])->toArray();
+                    foreach ($proorderData as $row) {
+                        $proProduct12 = array();
+                        $k = 0;
+                        $proProduct12[$k] = $row['order'];
+                        $k++;
+                    }
+                // dd($proorderData);
+                return response()->json(['proorderData' => $proorderData]);
+
             }
 
 

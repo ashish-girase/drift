@@ -44,10 +44,6 @@
                                             Product Name</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                                             Product Type</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                            Product Code</th>
-                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
-                                            Product Type</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                             Action </th>
                                     </tr>
@@ -67,22 +63,15 @@
                                                     <p class="text-xs font-weight-bold mb-0">
                                                         {{ $cusData_val->product->product_type }}</p>
                                                 </td>
-                                                <td class="text-center">
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $cusData_val->product->prod_code }}</p>
-                                                </td>
-                                                <td class="text-center">
-                                                    <p class="text-xs font-weight-bold mb-0">
-                                                        {{ $cusData_val->product->product_type }}</p>
-                                                </td>
+
 
                                                 <td class="text-center">
                                                        <!--VIEW BUTTON-->
-                                                    <a href="#" type="button" class="mx-3 view-productdetial" id="view-productdetial" 
+                                                    <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-productdetial" id="view-productdetial" 
                                                         data-user-ids="{{ $cusData_val->product->_id}}" 
                                                         data-user-master_id="{{ $cusData_val['_id'] }}" 
-                                                        data-bs-toggle="tooltip">
-                                                    <button class=" btn btn-sm btn-outline-success ">view</button>
+                                                        data-bs-toggle="tooltip" type="button" >view
+                                                
                                                     </a>
                                                     <a href="#" class="mx-3 edit-product"
                                                         data-user-ids="{{ $cusData_val->product->_id }}"
@@ -153,20 +142,7 @@
                                 <option value="" selected>Select a Product type</option>
                             </select>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product code<span class="required"></span></label>
-                                <input type="text" class="form-control" name="prod_code" id="prod_code"
-                                    placeholder="Product code">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Quantity<span class="required"></span></label>
-                                <input type="text" class="form-control" name="prod_qty" id="prod_qty"
-                                    placeholder="Product Quantity">
-                            </div>
-                        </div>
+
                       
                     </form>
                 </div>
@@ -208,20 +184,6 @@
                                 <label for="user_firstname">Prodcut Type<span class="required"></span></label>
                                 <input type="text" class="form-control" name="edit_product_type"
                                     id="edit_product_type" placeholder="Prodcut Type">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product code<span class="required"></span></label>
-                                <input type="text" class="form-control" name="prod_code" id="edit_prod_code"
-                                    placeholder="Product code">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Product Quantity<span class="required"></span></label>
-                                <input type="text" class="form-control" name="prod_qty" id="edit_prod_qty"
-                                    placeholder="Product Quantity">
                             </div>
                         </div>
  

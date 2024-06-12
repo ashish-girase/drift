@@ -75,13 +75,6 @@ class ProductController extends Controller
             'counter' => 0,
             'prodName' => $request->input('prodName'),
             'product_type' => $request->input('product_type'),
-            'prod_code' => $request->input('prod_code'),
-            'prod_qty' => $request->input('prod_qty'),
-            'Thickness' => $request->input('Thickness'),
-            'Width' => $request->input('Width'),
-            'colour_id' => $colour_id,
-            'ColorName' => $colours_name, // Storing colour name
-            'Roll_weight' => $request->input('Roll_weight'),
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deleteProduct' => "",
@@ -271,6 +264,29 @@ class ProductController extends Controller
             }
 
         }
+
+        public function delete_product_design(Request $request){
+            $id = intval($request->id);
+            $companyID=1;
+            $mainId=(int)$request->master_id;
+
+            $prodData=Product::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'product.designname._id' => (int)$id],
+            ['$set' => [
+                'product.$.insertedTime' => time(),
+                'product.$.delete_status' => "YES",
+                'product.$.deleteProduct' => intval($id),
+                'product.$.deleteTime0' => time(),
+            ]]);
+            dd($prodData);
+            if($prodData==true)
+            {
+                $arr = array('status' => 'success', 'message' => 'Product Deleted successfully.','statusCode' => 200);
+                return json_encode($arr);
+            }
+        }
+
+
+
         public function get_colorlist(Request $request)
         {
             $val = $request->value;
