@@ -100,12 +100,12 @@
 
         <td class="text-center">
                 @if(!empty($order->order->order_date  ))    
-                <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_date }}</p>
+                <p class="text-xs font-weight-bold mb-0">{{ date('d/m/Y', strtotime($order->order->order_date)) }}</p>
                 @endif
         </td>
         <td class="text-center">
                 @if(!empty( $order->order->tentative_date))    
-                <p class="text-xs font-weight-bold mb-0">{{ $order->order->tentative_date }}</p>
+                <p class="text-xs font-weight-bold mb-0">{{ date('d/m/Y', strtotime($order->order->tentative_date)) }}</p>
                 @endif
         </td>
         <td class="text-center">
@@ -268,12 +268,20 @@
                                     <label for="colorSelect">Color Name</label>
                                     <select class="form-control" id="colorlist" onchange="showCustomColorInput()">
                                         <option value="" selected>Select a color</option>
-                                        <option value="custom">Custom Color</option>
+                                        {{-- <option value="custom">Custom Color</option> --}}
                                     </select>
                                     <div id="customColorInput" style="display: none;">
                                         <input class="form-control custom-width " type="text" id="customColorValue" placeholder="Enter custom color">
                                         <button onclick="addCustomColor()">Add</button>
                                     </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">PCS/SQFT<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="pcs_sqft" id="pcs_sqft" placeholder="PCS/SQFT" disabled>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">SQFT/PCS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="sqft_pcs" id="sqft_pcs" placeholder="SQFT/PCS" disabled>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
@@ -573,13 +581,13 @@
                         <div class="form-group col-md-3">
                             <label for="user_firstname">Order Type<span class="required"></span></label>
                             <select class="form-control custom-width" name="order_type" id="order_type">
-                                <option value="normal_order_type">Normal order</option>
-                                <option value="partial_order_type">Partial order</option>
+                                <option value="normal_order_type" id="normal_order_type">Normal order</option>
+                                <option value="partial_order_type" id="partial_order_type" selected>Partial order</option>
                             </select>
                         </div>
                     </div>
                 <div class="table-responsive p-0">
-                    <table class="table align-items-center mb-0 " >
+                    <table class="table align-items-center mb-0 " id="orderTable" >
                        <thead>
                         <tr>
                             <th class="text-uppercase text-secondary text-xs font-weight-bolder ">ID</th>
@@ -597,42 +605,12 @@
                                 QUANTITY IN PIECES</th>
                             <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
                                 Partial QUANTITY</th>
+                            <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                Remaining QUANTITY</th>
                         </tr>
                        </thead>
-                       <tbody id="orderTable ">
-                                    <tr>
-                                        <td class="ps-4">
-                                            <p class="text-s font-weight-bold mb-0"></p>
-                                        </td>
-                                        <td class="text-center">
-                                            <p class="text-s font-weight-bold mb-0"></p>
-                                        </td>
-                                            <td class="text-center">
-                                                <p class="text-s font-weight-bold mb-0">
-                                                  </p>
-                                            </td>
-                                            <td class="text-center">
-                                                <p class="text-s font-weight-bold mb-0">
-                                         
-                                                </p>
-                                            </td>         
-                                            <td class="text-center">
-                                                <p class="text-s font-weight-bold mb-0">
-                                                   
-                                                </p>
-                                            </td> 
-                                            <td class="text-center">
-                                                <p class="text-s font-weight-bold mb-0">
-                                               
-                                                </p>
-                                            </td> 
-                                            <td class="text-center">
-                                                <p class="text-s font-weight-bold mb-0">
-                                                    
-                                                </p>
-                                            </td>           
-                                        </tr>
-
+                       <tbody>
+                            {{-- data --}}
                        </tbody>
                     </table>
                 </div>
@@ -687,6 +665,47 @@
             }
         });
     });
-          
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Get the order type select element
+    var orderTypeSelect = document.getElementById('order_type');
+
+    // Get the "Partial Quantity" column header
+    var partialQuantityHeader = document.querySelector('#orderTable th:nth-child(8)'); // Assuming it's the 8th column
+
+    // Get all "Partial Quantity" input fields
+    var partialQuantityInputs = document.querySelectorAll('#orderTable tbody input[name^="partial_quantity"]');
+
+    // Function to show/hide "Partial Quantity" column
+    function togglePartialQuantityColumn(show) {
+        if (show) {
+            partialQuantityHeader.style.display = 'table-cell';
+            partialQuantityInputs.forEach(function(input) {
+                input.closest('td').style.display = 'table-cell';
+            });
+        } else {
+            partialQuantityHeader.style.display = 'none';
+            partialQuantityInputs.forEach(function(input) {
+                input.closest('td').style.display = 'none';
+            });
+        }
+    }
+
+    // Initial state based on the selected value
+    togglePartialQuantityColumn(orderTypeSelect.value === 'partial_order_type');
+
+    // Add change event listener to the order type select element
+    orderTypeSelect.addEventListener('change', function() {
+        // Check if the selected value is "partial_order_type"
+        if (this.value === 'partial_order_type') {
+            // Show the "Partial Quantity" column
+            togglePartialQuantityColumn(true);
+        } else {
+            // Hide the "Partial Quantity" column
+            togglePartialQuantityColumn(false);
+        }
+    });
+});
+  
 </script>
 @endsection

@@ -364,6 +364,12 @@ class ProductController extends Controller
 
         // Get the design name from the request
         $designName = $request->input('design_name');
+        $dimensions = $request->input('dimensions');
+        $thickness = $request->input('thickness');
+        $weight_pcs = $request->input('weight_pcs');
+        $weight_sqft = $request->input('weight_sqft');
+        $pcs_sqft = $request->input('pcs_sqft');
+        $sqft_pcs = $request->input('sqft_pcs');
 
         // Generate a new ID for the design name
         $maxIdPipeline = [
@@ -383,11 +389,18 @@ class ProductController extends Controller
         $designData = [
             '_id' => $newId,
             'design_name' => $designName,
+            'dimensions' => $dimensions,
+            'thickness' => $thickness,
+            'weight_pcs' => $weight_pcs,
+            'weight_sqft' => $weight_sqft,
+            'pcs_sqft' => $pcs_sqft,
+            'sqft_pcs' => $sqft_pcs,
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deleteOrder' => "",
             'deleteTime' => "",
         ];
+        // dd($designData);
 
         // Use the aggregation framework to update the product document
         $updateResult = Product::raw()->updateOne(
@@ -402,7 +415,7 @@ class ProductController extends Controller
         $product = Product::where('_id', $id)->first();
         if ($updateResult) {
             // Redirect back to the same page after successful submission
-            return response()->json(['status' => true, 'message' => 'Product added successfully'], 200);
+            return response()->json(['status' => true, 'message' => 'design added successfully'], 200);
         } else {
             // Redirect back with error message if update failed
             return redirect()->back()->with('error', 'Failed to add design name!');

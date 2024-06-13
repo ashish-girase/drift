@@ -113,6 +113,13 @@ $("#savedesign").click(function(){
     return false;
     }
     var design_name=$('#design_name').val();
+    var dimensions=$('#dimensions').val();
+    var thickness=$('#thickness').val();
+    var weight_pcs=$('#weight_pcs').val();
+    var weight_sqft=$('#weight_sqft').val();
+    var pcs_sqft=$('#pcs_sqft').val();
+    var sqft_pcs=$('#sqft_pcs').val();
+
     $.ajax({
         url: base_path+"/admin/adddesign",
         type: "POST",
@@ -120,6 +127,13 @@ $("#savedesign").click(function(){
         data: {
             _token: $("#_tokendesign").val(),
             design_name: design_name,
+            dimensions: dimensions,
+            thickness: thickness,
+            weight_pcs: weight_pcs,
+            weight_sqft: weight_sqft,
+            pcs_sqft: pcs_sqft,
+            sqft_pcs: sqft_pcs,
+
             id:prod_id,
             maste_id:master_id
         },

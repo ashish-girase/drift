@@ -114,7 +114,6 @@ class OrderController extends Controller
             ],
             'product' =>  $products ,
             'box_packed' =>  $request->input('isChecked'),
-            // 'total_quantity' => $request->input('total_quantity'),
             'order_date' => $request->input('order_date'),  
             'disptach_date' => $request->input('disptach_date'), 
             'tentative_date' => $request->input('tentative_date'),     
@@ -123,9 +122,6 @@ class OrderController extends Controller
             'ordertype' => $request->input('ordertype'), 
             'transportname' => $request->input('transportname'), 
             'trackingdetails' => $request->input('trackingdetails'), 
-            // 'price' => $request->input('price'),
-            // 'Billing_address' => $request->input('Billing_address'),
-            // 'Delivery_address' => $request->input('Delivery_address'),
             'status' => "New",
             'order_remark' => $request->input('order_remark'),
             'dispatch_remark' => $request->input('dispatch_remark'),
@@ -136,9 +132,7 @@ class OrderController extends Controller
         ];
 
         // dd($orderData);
-        
-       
-    
+
         // Check document availability
         if ($docAvailable != "No") {
             // Parse the document ID
@@ -454,6 +448,7 @@ class OrderController extends Controller
             $proorderData = $procollection->aggregate([
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
                 ['$unwind' => '$order'],
+                ['$match' => ['order.delete_status' => "NO"]],
                 ['$match' => ['order._id' => (int)$id]],
                 // ['$match' => ['designname.delete_status' => "NO"]],
                 ])->toArray();
@@ -641,107 +636,200 @@ class OrderController extends Controller
         ])->toArray();
     
         
-        
         if (empty($orderResult) && empty($processResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
-        }
-        
+            }
+            
         // dd($processResult);
         
-        $order = $orderResult[0]['order'];
-        $parentid = $orderResult[0]['_id'];
-        // $proorder = $processResult[0]['order'];
-        // $proParentId  = $processResult[0]['_id'];
-
-        // dd($orderResult);
+        
+        // $order = $orderResult[0]['order'];
+        // $parentid = $orderResult[0]['_id'];
+        // dd($proorder);
 
 
         // If $orderResult is not empty, extract values
         if (!empty($orderResult)) {
             $order = $orderResult[0]['order'];
             $parentid = $orderResult[0]['_id'];
+            $new_id = Processing::max('_id') + 1;
+
+            // $orderData = $orderResult[0]['order']; // Assuming there's only one order
+            // // dd($orderData);
+            // // Remove the order from the Processing collection
+            // NewOrder::raw()->updateOne(
+            //     ['companyID' => $companyID],
+            //     ['$pull' => ['order' => ['_id' => $id]]]
+            // );
+            // // Insert the order into the Dispatch collection
+            // Processing::raw()->updateOne(
+            //     ['companyID' => $companyID],
+            //     ['$addToSet' => ['order' => $orderData]]
+            // );
+
+            $statusTimes = [
+                'new' => 'status_New_time',
+                'processing' => 'status_Processing_time',
+                'dispatch' => 'status_dispatch_time',
+                'completed' => 'status_Completed_time',
+                'cancelled' => 'status_Cancelled_time'
+            ];
+        
+            $order['status'] = $newStatus;
+            
+            if (isset($statusTimes[$newStatus])) {
+                $order[$statusTimes[$newStatus]] = time();
+            }
+        
+            // Determine new collection
+            if (!isset($collectionMap[$newStatus])) {
+                return response()->json(['success' => false, 'message' => 'Invalid new status.']);
+            }
+            $newCollection = $collectionMap[$newStatus];
+        
+            // Check if document is available in the new collection
+            $docAvailable = AppHelper::instance()->checkDoc($newCollection, $companyID, 7000);
+        
+            if ($docAvailable != "No") {
+                $info = explode("^", $docAvailable);
+                $docId = (int)$info[1];
+                $pushResult = $newCollection->updateOne(
+                    ['companyID' => $companyID, '_id' => $docId],
+                    ['$push' => ['order' => $order]]
+                );
+            } else {
+                $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
+                //dd($parentId);
+                $newDoc = [
+                    "_id" => $parentId,
+                    "counter" => 1,
+                    "companyID" => $companyID,
+                    "order" => [$order]
+                ];
+                $pushResult = $newCollection->insertOne($newDoc);
+            }
+            
+            if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
+                $pullResult = $oldCollection->updateOne(
+                    ['companyID' => $companyID, '_id' => 1],
+                    ['$pull' => ['order' => ['_id' => $id]]]
+                );
+        
+                if ($pullResult->getMatchedCount() > 0) {
+                   echo "<script>";
+                   echo "alert('Status changed successfully.');";
+                   echo 'window.location.href = "' . url("order") . '";';
+                   echo "</script>";
+                   return response()->json(['success' => true, 'message' => 'Order moved To Processing.']);
+                } else {
+                    echo "<script>";
+                    echo "alert('Order moved but not removed from the old collection.');";
+                    echo 'window.location.href = "' . url("order") . '";';
+                    echo "</script>";
+                    //return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
+                }
+            } else {
+                echo "<script>";
+                echo "alert('Failed to move the order to the new collection.');";
+                echo 'window.location.href = "' . url("order") . '";';
+                echo "</script>";
+                //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
+            }
+            
+            // Your response after successful update
+            return response()->json(['success' => true, 'message' => 'Order status updated and moved to Process.']);
             
         }
 
-        // If $processResult is not empty, extract values
-        if (!empty($processResult)) {
-            $proorder = $processResult[0]['order'];
-            $proParentId = $processResult[0]['_id'];
-
-            // You can now safely use $proorder and $proParentId here
-           
+        elseif (!empty($processResult)) {
+            $orderData = $processResult[0]['order']; // Assuming there's only one order
+            dd($orderData);
+            // Remove the order from the Processing collection
+            Processing::raw()->updateOne(
+                ['companyID' => $companyID],
+                ['$pull' => ['order' => ['_id' => $id]]]
+            );
+            // Insert the order into the Dispatch collection
+            Dispatch::raw()->updateOne(
+                ['companyID' => $companyID],
+                ['$addToSet' => ['order' => $orderData]]
+            );
+    
+            // Your response after successful update
+            return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
         }
+
         
     
         // Update the order status and time
-        $statusTimes = [
-            'new' => 'status_New_time',
-            'processing' => 'status_Processing_time',
-            'dispatch' => 'status_dispatch_time',
-            'completed' => 'status_Completed_time',
-            'cancelled' => 'status_Cancelled_time'
-        ];
+        // $statusTimes = [
+        //     'new' => 'status_New_time',
+        //     'processing' => 'status_Processing_time',
+        //     'dispatch' => 'status_dispatch_time',
+        //     'completed' => 'status_Completed_time',
+        //     'cancelled' => 'status_Cancelled_time'
+        // ];
     
-        $order['status'] = $newStatus;
+        // $order['status'] = $newStatus;
         
-        if (isset($statusTimes[$newStatus])) {
-            $order[$statusTimes[$newStatus]] = time();
-        }
+        // if (isset($statusTimes[$newStatus])) {
+        //     $order[$statusTimes[$newStatus]] = time();
+        // }
     
-        // Determine new collection
-        if (!isset($collectionMap[$newStatus])) {
-            return response()->json(['success' => false, 'message' => 'Invalid new status.']);
-        }
-        $newCollection = $collectionMap[$newStatus];
+        // // Determine new collection
+        // if (!isset($collectionMap[$newStatus])) {
+        //     return response()->json(['success' => false, 'message' => 'Invalid new status.']);
+        // }
+        // $newCollection = $collectionMap[$newStatus];
     
-        // Check if document is available in the new collection
-        $docAvailable = AppHelper::instance()->checkDoc($newCollection, $companyID, 7000);
+        // // Check if document is available in the new collection
+        // $docAvailable = AppHelper::instance()->checkDoc($newCollection, $companyID, 7000);
     
-        if ($docAvailable != "No") {
-            $info = explode("^", $docAvailable);
-            $docId = (int)$info[1];
-            $pushResult = $newCollection->updateOne(
-                ['companyID' => $companyID, '_id' => $docId],
-                ['$push' => ['order' => $order]]
-            );
-        } else {
-            $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
-            //dd($parentId);
-            $newDoc = [
-                "_id" => $parentId,
-                "counter" => 1,
-                "companyID" => $companyID,
-                "order" => [$order]
-            ];
-            $pushResult = $newCollection->insertOne($newDoc);
-        }
+        // if ($docAvailable != "No") {
+        //     $info = explode("^", $docAvailable);
+        //     $docId = (int)$info[1];
+        //     $pushResult = $newCollection->updateOne(
+        //         ['companyID' => $companyID, '_id' => $docId],
+        //         ['$push' => ['order' => $order]]
+        //     );
+        // } else {
+        //     $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
+        //     //dd($parentId);
+        //     $newDoc = [
+        //         "_id" => $parentId,
+        //         "counter" => 1,
+        //         "companyID" => $companyID,
+        //         "order" => [$order]
+        //     ];
+        //     $pushResult = $newCollection->insertOne($newDoc);
+        // }
         
-        if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
-            $pullResult = $oldCollection->updateOne(
-                ['companyID' => $companyID, '_id' => $parentid],
-                ['$pull' => ['order' => ['_id' => $id]]]
-            );
+        // if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
+        //     $pullResult = $oldCollection->updateOne(
+        //         ['companyID' => $companyID, '_id' => 1],
+        //         ['$pull' => ['order' => ['_id' => $id]]]
+        //     );
     
-            if ($pullResult->getMatchedCount() > 0) {
-               echo "<script>";
-               echo "alert('Status changed successfully.');";
-               echo 'window.location.href = "' . url("order") . '";';
-               echo "</script>";
-            //    return response()->json(['success' => false, 'message' => 'Order moved To Processing.']);
-            } else {
-                echo "<script>";
-                echo "alert('Order moved but not removed from the old collection.');";
-                echo 'window.location.href = "' . url("order") . '";';
-                echo "</script>";
-                //return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
-            }
-        } else {
-            echo "<script>";
-            echo "alert('Failed to move the order to the new collection.');";
-            echo 'window.location.href = "' . url("order") . '";';
-            echo "</script>";
-            //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
-        }
+        //     if ($pullResult->getMatchedCount() > 0) {
+        //        echo "<script>";
+        //        echo "alert('Status changed successfully.');";
+        //        echo 'window.location.href = "' . url("order") . '";';
+        //        echo "</script>";
+        //     //    return response()->json(['success' => false, 'message' => 'Order moved To Processing.']);
+        //     } else {
+        //         echo "<script>";
+        //         echo "alert('Order moved but not removed from the old collection.');";
+        //         echo 'window.location.href = "' . url("order") . '";';
+        //         echo "</script>";
+        //         //return response()->json(['success' => false, 'message' => 'Order moved but not removed from the old collection.']);
+        //     }
+        // } else {
+        //     echo "<script>";
+        //     echo "alert('Failed to move the order to the new collection.');";
+        //     echo 'window.location.href = "' . url("order") . '";';
+        //     echo "</script>";
+        //     //return response()->json(['success' => false, 'message' => 'Failed to move the order to the new collection.']);
+        // }
 
     }
     public function showCustomers()
@@ -948,7 +1036,31 @@ class OrderController extends Controller
                     }
                 // dd($proorderData);
                 return response()->json(['proorderData' => $proorderData]);
+   
+            }
 
+            public function getDesignData(Request $request) {
+
+                // $productId = intval($request->input('productId'));
+                $designId = intval($request->designId);
+                // dd($productId);
+
+                $designData = Product::raw(function($collection) use ($designId) {
+                    return $collection->aggregate([
+                        ['$unwind' => '$product'],
+                        ['$unwind' => '$product.designname'],
+                        // ['$match' => ['product._id' => $productId]],
+                        ['$match' => ['product.designname._id' => $designId]],
+                        ['$project' => [
+                            'designname' => '$product.designname'
+                        ]]
+                    ]);
+                });
+
+            
+                // dd($designData);
+                // Return the data as JSON
+                return response()->json($designData);
             }
 
 

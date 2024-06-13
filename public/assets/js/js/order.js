@@ -433,33 +433,6 @@ $(".createOrderModalStore").click(function(){
                 populateProductList();
             });
 
-            // fetchDesignNames();
-
-            // function fetchDesignNames(searchTerm) {
-            //     $.ajax({
-            //         url: '/admin/get_designlist', // Replace with your route URL
-            //         method: 'POST',
-            //         data: { searchTerm: searchTerm }, // Pass search term if needed
-            //         success: function(data) {
-            //             // console.log(productName);
-            //             var colorSelect = $('#');
-            //             data.forEach(function(design) {
-            //             colorSelect.append('<option value="' + design.design._id + '">' + design.design.design_name + '</option>');
-            //             });
-            //             },
-            //         error: function(xhr, status, error) {
-            //             console.error('Error fetching color names:', error);
-            //         }
-            //     });
-            // }
-
-            // $('#designlist').change(function() {
-            //     var design_id = $(this).val();
-                
-            
-            //     var design_name = $('#designlist option[value="' + design_id + '"]').text(); // Get selected color name
-
-            // });
 
 
 
@@ -544,6 +517,26 @@ document.getElementById('productsInput').addEventListener('change', function() {
     });
   });
 
+  $('#designlist').on('change', function() {
+    var designId = $(this).val();
+    // var productID = $('#prodid').val(); + '?productId=' + productID
+    
+    // Make AJAX request to fetch data for the selected design
+    $.ajax({
+        url: 'admin/get_design_data/' + designId ,
+        type: 'GET',
+        success: function(data) {
+            // Handle the fetched data here, e.g., display it on the page
+            console.log(data);
+            $('#pcs_sqft').val(data[0].designname.pcs_sqft);
+            $('#sqft_pcs').val(data[0].designname.sqft_pcs);
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+});
+
 
 
 
@@ -591,6 +584,7 @@ function addCustomColor() {
 // For Multiplay Product blck
 
 document.addEventListener("DOMContentLoaded", function() {
+    
     // Function to reattach event listeners for custom color input
     function attachCustomColorInputListener(select, customColorInput) {
         select.addEventListener("change", function() {
@@ -642,8 +636,10 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+
     // Function to fetch and populate design list based on selected product name
     function populateDesignList(productDetailsBlock) {
+        
         $('#productsInput', productDetailsBlock).on('change', function() {
             var product = this.value;
             $.ajax({
@@ -664,6 +660,95 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+
+    function populateDesignData(productDetailsBlock) {
+        $('#designlist',productDetailsBlock).on('change', function() {
+            var designId = $(this).val();
+            // Make AJAX request to fetch data for the selected design
+            $.ajax({
+                url: 'admin/get_design_data/' + designId ,
+                type: 'GET',
+                success: function(data) {
+                    // Handle the fetched data here, e.g., display it on the page
+                    $('#pcs_sqft',productDetailsBlock).val(data[0].designname.pcs_sqft);
+                    $('#sqft_pcs',productDetailsBlock).val(data[0].designname.sqft_pcs);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    }
+
+    const sqrf_pcs = document.getElementById("sqft_pcs");
+    const pcs_sqft = document.getElementById("pcs_sqft");
+
+    const quantity_in_soft = document.getElementById("quantity_in_soft");
+    const quantity_in_pieces = document.getElementById("quantity_in_pieces");
+
+    sqrf_pcs.addEventListener("input", QuantityInSqft);
+    quantity_in_soft.addEventListener("input", QuantityInSqft);
+
+    pcs_sqft.addEventListener("input", updateQuantityInSoft);
+    quantity_in_pieces.addEventListener("input", updateQuantityInSoft);
+
+    function QuantityInSqft(productDetailsBlock) {
+        const sqrf_pcs = productDetailsBlock.querySelector("#sqft_pcs");
+        const quantity_in_soft = productDetailsBlock.querySelector("#quantity_in_soft");
+        const quantity_in_pieces = productDetailsBlock.querySelector("#quantity_in_pieces");
+    
+        sqrf_pcs.addEventListener("input", function() {
+            const sqft_pcs_val = parseFloat(sqrf_pcs.value);
+            const quantity_in_soft_val = parseFloat(quantity_in_soft.value);
+            if (!isNaN(sqft_pcs_val) && !isNaN(quantity_in_soft_val)) {
+                const quantity_in_pieces_val = sqft_pcs_val * quantity_in_soft_val;
+                quantity_in_pieces.value = quantity_in_pieces_val;
+            } else {
+                quantity_in_pieces.value = "";
+            }
+        });
+    
+        quantity_in_soft.addEventListener("input", function() {
+            const sqft_pcs_val = parseFloat(sqrf_pcs.value);
+            const quantity_in_soft_val = parseFloat(quantity_in_soft.value);
+            if (!isNaN(sqft_pcs_val) && !isNaN(quantity_in_soft_val)) {
+                const quantity_in_pieces_val = sqft_pcs_val * quantity_in_soft_val;
+                quantity_in_pieces.value = quantity_in_pieces_val;
+            } else {
+                quantity_in_pieces.value = "";
+            }
+        });
+    }
+    
+    function updateQuantityInSoft(productDetailsBlock) {
+        const pcs_sqft = productDetailsBlock.querySelector("#pcs_sqft");
+        const quantity_in_soft = productDetailsBlock.querySelector("#quantity_in_soft");
+        const quantity_in_pieces = productDetailsBlock.querySelector("#quantity_in_pieces");
+    
+        pcs_sqft.addEventListener("input", function() {
+            const pcs_sqft_val = parseFloat(pcs_sqft.value);
+            const quantity_in_pieces_val = parseFloat(quantity_in_pieces.value);
+            if (!isNaN(pcs_sqft_val) && !isNaN(quantity_in_pieces_val)) {
+                const quantity_in_soft_val = quantity_in_pieces_val * pcs_sqft_val;
+                quantity_in_soft.value = quantity_in_soft_val;
+            } else {
+                quantity_in_soft.value = "";
+            }
+        });
+    
+        quantity_in_pieces.addEventListener("input", function() {
+            const pcs_sqft_val = parseFloat(pcs_sqft.value);
+            const quantity_in_pieces_val = parseFloat(quantity_in_pieces.value);
+            if (!isNaN(pcs_sqft_val) && !isNaN(quantity_in_pieces_val)) {
+                const quantity_in_soft_val = quantity_in_pieces_val * pcs_sqft_val;
+                quantity_in_soft.value = quantity_in_soft_val;
+            } else {
+                quantity_in_soft.value = "";
+            }
+        });
+    }
+
+ 
 
     // Get the Add Product button
     var addProductBtn = document.getElementById("addProductBtn");
@@ -689,6 +774,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Fetch and populate design list based on selected product name
         populateDesignList(productDetailsBlock);
+
+        populateDesignData(productDetailsBlock);
+
+        QuantityInSqft(productDetailsBlock);
+
+        updateQuantityInSoft(productDetailsBlock);
 
         // Create and append the cancel button
         var cancelButton = document.createElement("button");
@@ -719,7 +810,47 @@ function updateDatefild(){
     
 
 }
+document.addEventListener("DOMContentLoaded", function() {
 
+const sqrf_pcs = document.getElementById("sqft_pcs");
+const pcs_sqft = document.getElementById("pcs_sqft");
+
+const quantity_in_soft = document.getElementById("quantity_in_soft");
+const quantity_in_pieces = document.getElementById("quantity_in_pieces");
+
+sqrf_pcs.addEventListener("input", QuantityInSqft);
+quantity_in_soft.addEventListener("input", QuantityInSqft);
+
+pcs_sqft.addEventListener("input", updateQuantityInSoft);
+quantity_in_pieces.addEventListener("input", updateQuantityInSoft);
+
+function QuantityInSqft(){
+    
+
+    const sqft_pcs_val = parseFloat(sqrf_pcs.value);
+    const quantity_in_soft_val = parseFloat(quantity_in_soft.value);
+    if (!isNaN(sqft_pcs_val) && !isNaN(quantity_in_soft_val)) {
+        // Perform multiplication operation to get quantity in pieces
+        const quantity_in_pieces_val = sqft_pcs_val * quantity_in_soft_val;
+        quantity_in_pieces.value = quantity_in_pieces_val;
+    } else {
+        quantity_in_pieces.value = "";
+    }
+    
+}
+
+function updateQuantityInSoft(){
+    const pcs_sqft_val = parseFloat(pcs_sqft.value);
+    const quantity_in_pieces_val = parseFloat(quantity_in_pieces.value);
+    if (!isNaN(pcs_sqft_val) && !isNaN(quantity_in_pieces_val)) {
+        const quantity_in_soft_val = quantity_in_pieces_val * pcs_sqft_val;
+        quantity_in_soft.value = quantity_in_soft_val;
+    } else {
+        quantity_in_soft.value = "";
+    }
+}
+
+});
 
 
 function openModal(selectElement,orderId,oldStatus) {
@@ -739,32 +870,94 @@ function openModal(selectElement,orderId,oldStatus) {
             data: {
                 id: orderId // Send any additional parameters needed
             },
-            success: function (response) {
-                console.log(response.proorderData[0].order);
-                $('#orderTable tbody').empty();
-                var key = 0 ;
-                // Iterate through the response data and populate the table
-                response.proorderData.forEach(function (item) {
-                    console.log(item.order.product[0].color_name);
-                    var newRow = '<tr>' +
-                        '<td class="ps-4">' + key + '</td>' +
-                        '<td class="text-center">' + item.productName + '</td>' +
-                        '<td class="text-center">' + item.productType + '</td>' +
-                        '<td class="text-center">' + item.designName + '</td>' +
-                        '<td class="text-center">' + item.order.product[0].color_name + '</td>' +
-                        '<td class="text-center">' + item.quantitySQFT + '</td>' +
-                        '<td class="text-center">' + item.quantityPieces + '</td>' +
-                        '<td class="text-center">' + item.partialQuantity + '</td>' +
-                        '</tr>';
-                        key++;
-                    $('#orderTable tbody').append(newRow);
-                });
+            success: function (data) {
+                // console.log(response.proorderData[0].order);
+                populateTable(data);
+                
             },
             error: function (xhr, status, error) {
                 // Handle error
                 console.error("Errors:", error);
             }
         });
+
+        function populateTable(data){
+            
+            var products = data.proorderData[0].order.product; 
+            var tableBody = document.querySelector('#orderTable tbody');
+            var orderTypeSelect = document.getElementById('order_type');
+            
+
+            function toggleTextBoxVisibility() {
+                var selectedOption = orderTypeSelect.options[orderTypeSelect.selectedIndex].value;
+                var textBoxes = document.querySelectorAll('input[name^="partial_quantity"]');
+                 var remainingTextBoxes = document.querySelectorAll('input[name^="remaining_quantity"]');
+        
+                if (selectedOption === 'partial_order_type') {
+                    textBoxes.forEach(function(textBox) {
+                        textBox.style.display = 'block';
+                    });
+                    remainingTextBoxes.forEach(function(textBox) {
+                        textBox.style.display = 'block';
+                    });
+                } else {
+                    textBoxes.forEach(function(textBox) {
+                        textBox.style.display = 'none';
+                    });
+                    remainingTextBoxes.forEach(function(textBox) {
+                        textBox.style.display = 'none';
+                    });
+                }
+            }
+
+            function updateRemainingQuantity(index) {
+                var partialQuantityInput = document.querySelector(`input[name="partial_quantity[${index}]`);
+                var remainingQuantityInput = document.querySelector(`input[name="remaining_quantity[${index}]`);
+                var product = products[index];
+                
+                if (partialQuantityInput && remainingQuantityInput && product) {
+                    var partialQuantity = parseFloat(partialQuantityInput.value);
+                    var pcsSqft = parseFloat(product.pcs_sqft);
+                    
+                    if (!isNaN(partialQuantity) && !isNaN(pcsSqft)) {
+                        var remainingQuantity = partialQuantity * pcsSqft;
+                        remainingQuantityInput.value = remainingQuantity;
+                    }
+                }
+            }
+            
+
+            orderTypeSelect.addEventListener('change', toggleTextBoxVisibility);
+
+            tableBody.innerHTML = '';
+        
+            // Assuming data is an array of objects with properties to populate the table
+            products.forEach(function(product, index) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="text-center">${product.prodName}</td>
+                    <td class="text-center">${product.product_type}</td>
+                    <td class="text-center">${product.design_name}</td>
+                    <td class="text-center">${product.color_name}</td>
+                    <td class="text-center">${product.quantity_in_soft}</td>
+                    <td class="text-center">${product.quantity_in_pieces}</td>
+                    <td class="text-center"><input type="text" class="form-control" name="partial_quantity[${index}]" value="" id="partial_quantity" placeholder="Partial Quantity"></td>
+                    <td class="text-center"><input type="text" class="form-control" name="remaining_quantity[${index}]" value="" placeholder="Remaining Quantity"></td>
+                    
+                `;
+                tableBody.appendChild(row);
+                var partialQuantityInput = row.querySelector(`input[name="partial_quantity[${index}]`);
+                if (partialQuantityInput) {
+                    partialQuantityInput.addEventListener('input', function() {
+                        updateRemainingQuantity(index);
+                    });
+                }
+            });
+            toggleTextBoxVisibility();
+
+            
+        }
     }
 
   
@@ -795,44 +988,46 @@ function openModal(selectElement,orderId,oldStatus) {
 }
 
 
-    // $('#savesatatus').click(function(e) {
-    //     e.preventDefault();
-    //     var orderid = $('#order_id').val();
-    //     var addoldStatus = $('#old_status').val();
-    //     var status=$('#status').val();
-    //     var delivary_date=$('#delivary_date').val();
-    //     var time = $('#time').val();
-    //     var note = $('#note').val();
+    $('#dis_savesatatus').click(function(e) {
+        e.preventDefault();
+        var valu = $('#partial_quantity').val();
+            console.log(valu);
+        var orderid = $('#dis_order_id').val();
+        var addoldStatus = $('#dis_old_status').val();
+        var status=$('#dis_status').val();
+        var order_type=$('#order_type option:selected').text();
+        var note = $('#dis_note').val();
+
+
 
     
-    //     var formData = {
-    //         'status':status,
-    //         'delivery_date': delivary_date,
-    //         'time': time,
-    //         'note': note,
-    //         'addoldStatus':addoldStatus,
-    //         'orderid':orderid,
-    //         '_token': $('#_tokenOrder').val()
-    //     };
-    //     $.ajax({
-    //         type: 'post',
-    //         url: base_path+ "/orders/addnewStatus",
-    //         dataType:"JSON", 
-    //         data: formData,
-    //         cache: false,
-    //         success: function(result){  
-    //             console.log("Data being sent:", result);
-    //             console.log("sucess");
-    //             $('#statusChange').modal('hide');
-    //             window.location.href = base_path + "/order";
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.error("AJAX Error:", status, error); 
-    //             $('#statusChange').modal('hide');
-    //             window.location.href = base_path + "/order";
-    //         }
-    //     });
-    // });
+        var formData = {
+            'status':status,
+            'order_type': order_type,
+            'note': note,
+            'addoldStatus':addoldStatus,
+            'orderid':orderid,
+            '_token': $('#_tokenOrder').val()
+        };
+        $.ajax({
+            type: 'post',
+            url: base_path+ "",
+            dataType:"JSON", 
+            data: formData,
+            cache: false,
+            success: function(result){  
+                console.log("Data being sent:", result);
+                console.log("sucess");
+                // $('#statusChange').modal('hide');
+                // window.location.href = base_path + "/order";
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error); 
+                // $('#statusChange').modal('hide');
+                // window.location.href = base_path + "/order";
+            }
+        });
+    });
 
 
 
@@ -866,6 +1061,8 @@ $("#saveOrder").click(function() {
             color_name: $(this).find('#colorlist option:selected').text(),
             quantity_in_soft: $(this).find('#quantity_in_soft').val(),
             quantity_in_pieces: $(this).find('#quantity_in_pieces').val(),
+            pcs_sqft: $(this).find('#pcs_sqft').val(),
+            sqft_pcs: $(this).find('#sqft_pcs').val(),
             // Add other product details here
         };
         productsData.push(product);

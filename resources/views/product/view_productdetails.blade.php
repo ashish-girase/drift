@@ -83,6 +83,20 @@
             <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                 Design Name</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                Dimensions</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                Thickness</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                Weight/Pcs</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                Weight/Sqft</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                PCS/SQFT</th>
+            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
+                SQFT/PCS</th>
+            
+
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                 Action </th>
         </tr>
@@ -95,6 +109,7 @@
         @foreach ($show1 as $key => $cusData_val)
             @if (isset($cusData_val->product->designname) && !empty($cusData_val->product->designname))
                 @foreach($cusData_val->product->designname as $key =>$design_name_1)
+
                     <tr>
                         <td class="ps-4">
                             <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
@@ -103,6 +118,48 @@
                             <p class="text-xs font-weight-bold mb-0">
                                 @php 
                                     echo $design_name_1->design_name;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->dimensions;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->thickness;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->weight_pcs;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->weight_sqft;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->pcs_sqft;    
+                                @endphp 
+                            </p>
+                        </td>
+                        <td class="text-center">
+                            <p class="text-xs font-weight-bold mb-0">
+                                @php 
+                                    echo $design_name_1->sqft_pcs;    
                                 @endphp 
                             </p>
                         </td>
@@ -176,11 +233,40 @@
                                                         <div class="form-group col-md-12">
                                                             <input type="hidden" name="prod_id" id="prod_id" value="{{$cusData_val->product->_id}}">
                                                             <input type="hidden" name="master_id" id="master_id" value="{{$cusData_val->_id}}">
-
                                                             <label for="user_firstname">Design Name<span
                                                                     class="required"></span></label>
                                                             <input type="text" class="form-control" name="design_name"
                                                                 id="design_name" placeholder="Design Name">
+
+                                                            <label for="user_firstname">Dimensions<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="dimensions"
+                                                                id="dimensions" placeholder="Dimensions">
+
+                                                            <label for="user_firstname">Thickness<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="thickness"
+                                                                id="thickness" placeholder="Thickness">
+
+                                                            <label for="user_firstname">Weight/Pcs<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="weight_pcs"
+                                                                id="weight_pcs" placeholder="Weight/Pcs">
+
+                                                            <label for="user_firstname">Weight/Sqft<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="weight_sqft"
+                                                                id="weight_sqft" placeholder="Weight/Sqft">
+
+                                                            <label for="user_firstname">PCS/SQFT<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="pcs_sqft"
+                                                                id="pcs_sqft" placeholder="PCS/SQFT">
+
+                                                            <label for="user_firstname">SQFT/PCS<span
+                                                                    class="required"></span></label>
+                                                            <input type="text" class="form-control" name="sqft_pcs"
+                                                                id="sqft_pcs" placeholder="SQFT/PCS ">
                                                         </div>
                                                     </div>
                                                     </form>

@@ -107,6 +107,7 @@ Route::group(['middleware' => 'auth'], function () {
      //  Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
      //  Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
       Route::get('admin/get_designlist/{product}', [OrderController::class, 'get_designlist']);
+      Route::get('admin/get_design_data/{designId}', [OrderController::class, 'getDesignData']);
      Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
      Route::POST('/admin/edit_order', [OrderController::class, 'edit_order']);
      Route::POST('/admin/find_color', [OrderController::class, 'fetchColorsNames']);
