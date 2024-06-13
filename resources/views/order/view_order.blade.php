@@ -86,7 +86,7 @@
 
 
     <script>
-        function submitForm(selectElement) {
+        function openModal(selectElement) {
             // Get the form element containing the select dropdown
             var form = selectElement.form;
             console.log(form);

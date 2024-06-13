@@ -605,7 +605,7 @@ class OrderController extends Controller
         $id = intval($request->id);
         $oldStatus = strtolower($request->oldstatus);
         $newStatus = strtolower($request->newstatus);
-        // dd($oldStatus);
+        // dd($newStatus);
     
         // Define collection map
         $collectionMap = [
@@ -653,6 +653,7 @@ class OrderController extends Controller
             $order = $orderResult[0]['order'];
             $parentid = $orderResult[0]['_id'];
             $new_id = Processing::max('_id') + 1;
+            dd($order);
 
             // $orderData = $orderResult[0]['order']; // Assuming there's only one order
             // // dd($orderData);
@@ -695,7 +696,8 @@ class OrderController extends Controller
                 $docId = (int)$info[1];
                 $pushResult = $newCollection->updateOne(
                     ['companyID' => $companyID, '_id' => $docId],
-                    ['$push' => ['order' => $order]]
+                    ['$push' => ['order' => $order]],
+                    ['$set' => ['order._id' => $new_id]]
                 );
             } else {
                 $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
@@ -742,18 +744,115 @@ class OrderController extends Controller
         }
 
         elseif (!empty($processResult)) {
+            $dis_order_type = $request->dis_order_type;
+            $products= $request->products;
+
             $orderData = $processResult[0]['order']; // Assuming there's only one order
-            dd($orderData);
-            // Remove the order from the Processing collection
-            Processing::raw()->updateOne(
-                ['companyID' => $companyID],
-                ['$pull' => ['order' => ['_id' => $id]]]
-            );
-            // Insert the order into the Dispatch collection
-            Dispatch::raw()->updateOne(
-                ['companyID' => $companyID],
-                ['$addToSet' => ['order' => $orderData]]
-            );
+            // dd($processResult);
+
+            if($dis_order_type === "Partial order"){
+
+                Dispatch::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$push' => ['order' => $orderData]]
+                );
+                dd($products);
+                foreach ($products as $product) {
+                    $partialQuantity = $product['partial_quantity'];
+                    $remainingQuantity = $product['remaining_quantity'];
+
+                    $updateQuanInPic = $product['updateQuanInPic'];
+                    $updateQuanInSqft = $product['updateQuanInSqft'];
+
+                    $productId = $product['product_id'];
+           
+                    // dd($productId);
+
+                Processing::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $id,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+                    ],
+                    [
+                        '$set' => [
+                            'order.$[outer].product.$[inner].quantity_in_soft' => $updateQuanInSqft,
+                            'order.$[outer].product.$[inner].quantity_in_pieces' => $updateQuanInPic
+                        ],
+
+                    ],
+                    [
+                        'arrayFilters' => [
+                            ['outer._id' => $id], // Filter for the outer 'order' array
+                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
+                        ]
+                    ]
+                );
+
+                Processing::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $id,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => "0" // Check if quantity_in_pieces is 0
+                    ],
+                    [
+                        '$pull' => [
+                            'order' => ['_id' => $id] // Remove the order from the array
+                        ]
+                    ]
+                );
+                    
+                // dd("ju");
+                // Insert the order into the Dispatch collection
+                Dispatch::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $id,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+                    ],
+                    [
+                        '$set' => [
+                            'order.$[outer].product.$[inner].quantity_in_soft' => $remainingQuantity,
+                            'order.$[outer].product.$[inner].quantity_in_pieces' => $partialQuantity,
+                            'order.$[outer].status' => $newStatus,
+                        ]
+                    ],
+                    [
+                        'arrayFilters' => [
+                            ['outer._id' => $id], // Filter for the outer 'order' array
+                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
+                        ]
+                    ]
+                );
+
+                // if($updateQuanInPic == "0" && $updateQuanInSqft == "0"){
+                //     Processing::raw()->updateOne(
+                //         ['companyID' => $companyID],
+                //         ['$pull' => ['order' => $orderData]]
+                //     );
+                // }
+
+                // dd($updateQuanInPic);
+
+            }
+    
+
+            }
+            else{
+                Processing::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$pull' => ['order' => ['_id' => $id]]]
+                );
+                // Insert the order into the Dispatch collection
+                Dispatch::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$addToSet' => ['order' => $orderData]]
+                );
+
+            }
     
             // Your response after successful update
             return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
@@ -897,15 +996,16 @@ class OrderController extends Controller
             'counter' => 1,
             'orderid'=>  $request->input('orderid'),
             'status' => $request->input('status'),
-            'delivery_date' => $request->input('delivery_date'),
-            'time' => $request->input('time'),
+            'partial_quantity' => $request->input('partial_quantity'),
+            'remaining_quantity' => $request->input('remaining_quantity'),
+            'dis_order_type' => $request->input('dis_order_type'),
             'note' => $request->input('note'),
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deletestatus' => "",
             'deleteTime' => "",
             ];
-            // dd($cons);
+            dd($cons);
             if ($docAvailable != null)
             {
                 $info = (explode("^",$docAvailable));
@@ -919,8 +1019,9 @@ class OrderController extends Controller
                 'counter' => 0,
                 'oldstatus' => $request->input('addoldStatus'),
                 'status' => $request->input('status'),
-                'delivery_date' => $request->input('delivery_date'),
-                'time' => $request->input('time'),
+                'partial_quantity' => $request->input('partial_quantity'),
+                'remaining_quantity' => $request->input('remaining_quantity'),
+                'dis_order_type' => $request->input('dis_order_type'),
                 'note' => $request->input('note'),
                 'orderid' => $request->input('orderid'),
                 'insertedTime' => time(),

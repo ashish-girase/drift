@@ -857,6 +857,7 @@ function openModal(selectElement,orderId,oldStatus) {
     var newStatus = selectElement.value;
     var selectedStatus = selectElement.value;
     
+    
      if(selectedStatus === 'dispatch'){
         var dis_newStatus = selectElement.value;
         $('#dispatchstatusChange').modal('show');
@@ -933,17 +934,19 @@ function openModal(selectElement,orderId,oldStatus) {
         
             // Assuming data is an array of objects with properties to populate the table
             products.forEach(function(product, index) {
+                // console.log(product);
                 var row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
+                    <td class="text-center" style="display: none;" id="product_id" >${product.product_id}</td>
                     <td class="text-center">${product.prodName}</td>
                     <td class="text-center">${product.product_type}</td>
                     <td class="text-center">${product.design_name}</td>
                     <td class="text-center">${product.color_name}</td>
-                    <td class="text-center">${product.quantity_in_soft}</td>
-                    <td class="text-center">${product.quantity_in_pieces}</td>
+                    <td class="text-center" id="quantity_in_soft_process">${product.quantity_in_soft}</td>
+                    <td class="text-center" id="quantity_in_pieces_process">${product.quantity_in_pieces}</td>
                     <td class="text-center"><input type="text" class="form-control" name="partial_quantity[${index}]" value="" id="partial_quantity" placeholder="Partial Quantity"></td>
-                    <td class="text-center"><input type="text" class="form-control" name="remaining_quantity[${index}]" value="" placeholder="Remaining Quantity"></td>
+                    <td class="text-center"><input type="text" class="form-control" name="remaining_quantity[${index}]" value="" id="remaining_quantity" placeholder="Remaining Quantity"></td>
                     
                 `;
                 tableBody.appendChild(row);
@@ -958,9 +961,120 @@ function openModal(selectElement,orderId,oldStatus) {
 
             
         }
-    }
 
-  
+        $('#dis_savesatatus').click(function(e) {
+            e.preventDefault();
+            var partial_quantity = $('#partial_quantity').val();
+            var remaining_quantity = $('#remaining_quantity').val();
+            var dis_order_type = $('#order_type option:selected').text();
+
+            var orderid = $('#dis_order_id').val();
+            var addoldStatus = $('#dis_old_status').val();
+            var status=$('#dis_status').val();
+            var order_type=$('#order_type option:selected').text();
+            var note = $('#dis_note').val();
+    
+    
+    
+        
+            var formData = {
+                'status':status,
+                'order_type': order_type,
+                'note': note,
+                'addoldStatus':addoldStatus,
+                'partial_quantity':partial_quantity,
+                'remaining_quantity':remaining_quantity,
+                'dis_order_type':dis_order_type,
+                'orderid':orderid,
+                '_token': $('#_tokenOrder').val()
+            };
+            $.ajax({
+                type: 'post',
+                url: base_path+ "/orders/addnewStatus",
+                dataType:"JSON", 
+                data: formData,
+                cache: false,
+                success: function(result){  
+                    console.log("Data being sent:", result);
+                    console.log("sucess");
+                    // $('#statusChange').modal('hide');
+                    // window.location.href = base_path + "/order";
+            
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", status, error); 
+                    // $('#statusChange').modal('hide');
+                    // window.location.href = base_path + "/order";
+                }
+            });
+        });
+
+        $('#dis_savesatatus').click(function(e) {
+            var dis_order_type = $('#order_type option:selected').text();
+            var products = [];
+            // products.empty();
+
+            $('#orderTable tr').each(function(index) {
+                if ($(this).find('#quantity_in_soft_process').length > 0 && $(this).find('#quantity_in_pieces_process').length > 0) {
+                var quantity_in_soft_process = $(this).find('#quantity_in_soft_process').text();
+                var quantity_in_pieces_process = $(this).find('#quantity_in_pieces_process').text();
+                var partial_quantity = $(this).find('#partial_quantity').val();
+                var remaining_quantity = $(this).find('#remaining_quantity').val();
+                var product_id = $(this).find('#product_id').text();
+                // console.log(product_id);
+
+                var updateQuanInSqft = parseFloat(quantity_in_soft_process) - parseFloat(remaining_quantity);
+                var updateQuanInPic = parseFloat(quantity_in_pieces_process) - parseFloat(partial_quantity);
+                
+                // Push quantities for each product to the products array
+                products.push({
+                    quantity_in_soft_process: parseFloat(quantity_in_soft_process),
+                    quantity_in_pieces_process: parseFloat(quantity_in_pieces_process),
+                    partial_quantity: parseFloat(partial_quantity),
+                    remaining_quantity: parseFloat(remaining_quantity),
+                    updateQuanInSqft: updateQuanInSqft,
+                    updateQuanInPic: updateQuanInPic,
+                    product_id:product_id
+                });
+            }
+            });
+        
+
+            
+                
+                    
+            $.ajax({
+                url: base_path+'/orders/updateStatus',
+                type: 'POST',
+                data: {
+                    oldstatus: oldStatus,
+                    newstatus: newStatus,
+                    id:orderId,
+                    // remaining_quantity:remaining_quantity,
+                    // partial_quantity:partial_quantity,
+                    dis_order_type:dis_order_type,
+                    products: products,
+                    // updateQuanInSqft:updateQuanInSqft,
+                    // updateQuanInPic:updateQuanInPic,
+                    '_token': $('#_tokenOrde').val()
+                },
+                success: function(response) {
+                    // Handle success response  
+                    console.log(response);
+                    console.log("sucess");
+                    window.location.href = base_path+"/order";
+                    Swal.fire("sucess", "Order Sucessfully Dispatched");
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    // console.error(xhr.responseText);
+                    console.error("Errorsd:", error);
+                    console.log("not sucess");
+                }
+            });
+        });
+    }
+    else if(selectedStatus === 'processing'){
    
     $.ajax({
         url: base_path+'/orders/updateStatus',
@@ -983,51 +1097,56 @@ function openModal(selectElement,orderId,oldStatus) {
             // console.error(xhr.responseText);
             console.error("Errorsd:", error);
             console.log("not sucess");
+            window.location.href = base_path+"/order";
+            Swal.fire("sucess", "Order Sucessfully Processed");
         }
     });
 }
+}
 
 
-    $('#dis_savesatatus').click(function(e) {
-        e.preventDefault();
-        var valu = $('#partial_quantity').val();
-            console.log(valu);
-        var orderid = $('#dis_order_id').val();
-        var addoldStatus = $('#dis_old_status').val();
-        var status=$('#dis_status').val();
-        var order_type=$('#order_type option:selected').text();
-        var note = $('#dis_note').val();
+    // $('#dis_savesatatus').click(function(e) {
+    //     e.preventDefault();
+    //     var valu = $('#partial_quantity').val();
+    //         console.log(valu);
+    //     var orderid = $('#dis_order_id').val();
+    //     var addoldStatus = $('#dis_old_status').val();
+    //     var status=$('#dis_status').val();
+    //     var order_type=$('#order_type option:selected').text();
+    //     var note = $('#dis_note').val();
 
 
 
     
-        var formData = {
-            'status':status,
-            'order_type': order_type,
-            'note': note,
-            'addoldStatus':addoldStatus,
-            'orderid':orderid,
-            '_token': $('#_tokenOrder').val()
-        };
-        $.ajax({
-            type: 'post',
-            url: base_path+ "",
-            dataType:"JSON", 
-            data: formData,
-            cache: false,
-            success: function(result){  
-                console.log("Data being sent:", result);
-                console.log("sucess");
-                // $('#statusChange').modal('hide');
-                // window.location.href = base_path + "/order";
-            },
-            error: function(xhr, status, error) {
-                console.error("AJAX Error:", status, error); 
-                // $('#statusChange').modal('hide');
-                // window.location.href = base_path + "/order";
-            }
-        });
-    });
+    //     var formData = {
+    //         'status':status,
+    //         'order_type': order_type,
+    //         'note': note,
+    //         'addoldStatus':addoldStatus,
+    //         'orderid':orderid,
+    //         '_token': $('#_tokenOrder').val()
+    //     };
+    //     $.ajax({
+    //         type: 'post',
+    //         url: base_path+ "",
+    //         dataType:"JSON", 
+    //         data: formData,
+    //         cache: false,
+    //         success: function(result){  
+    //             console.log("Data being sent:", result);
+    //             console.log("sucess");
+    //             // $('#statusChange').modal('hide');
+    //             // window.location.href = base_path + "/order";
+
+                
+    //         },
+    //         error: function(xhr, status, error) {
+    //             console.error("AJAX Error:", status, error); 
+    //             // $('#statusChange').modal('hide');
+    //             // window.location.href = base_path + "/order";
+    //         }
+    //     });
+    // });
 
 
 
