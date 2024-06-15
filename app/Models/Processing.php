@@ -10,9 +10,9 @@ use MongoDB\Laravel\Eloquent\Model;
 class Processing extends Model
 {
     use HasApiTokens;
-
-    protected $collection = 'processing';
+    
     protected $primaryKey = '_id';
+    protected $collection = 'processing';
     protected $connection = 'mongodb';
 
 

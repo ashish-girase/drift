@@ -601,11 +601,14 @@ class OrderController extends Controller
     public function updateStatus(Request $request)
     {
         //dd($request);
+        $maxLength = 2000;
         $companyID = 1;
         $id = intval($request->id);
         $oldStatus = strtolower($request->oldstatus);
         $newStatus = strtolower($request->newstatus);
-        // dd($newStatus);
+
+        $docAvailable = AppHelper::instance()->checkDoc(Processing::raw(),$companyID,$maxLength);
+        // dd($newStatus);+
     
         // Define collection map
         $collectionMap = [
@@ -634,9 +637,16 @@ class OrderController extends Controller
             ['$unwind' => '$order'],
             ['$match' => ['order._id' => $id]]
         ])->toArray();
-    
+
+        $dispatchResult = Dispatch::raw()->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],
+            ['$match' => ['order._id' => $id]]
+        ])->toArray();
+            
+        dd($dispatchResult);
         
-        if (empty($orderResult) && empty($processResult)) {
+        if (empty($orderResult) && empty($processResult)  && empty($dispatchResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
             }
             
@@ -652,21 +662,24 @@ class OrderController extends Controller
         if (!empty($orderResult)) {
             $order = $orderResult[0]['order'];
             $parentid = $orderResult[0]['_id'];
-            $new_id = Processing::max('_id') + 1;
-            dd($order);
 
-            // $orderData = $orderResult[0]['order']; // Assuming there's only one order
-            // // dd($orderData);
-            // // Remove the order from the Processing collection
-            // NewOrder::raw()->updateOne(
-            //     ['companyID' => $companyID],
-            //     ['$pull' => ['order' => ['_id' => $id]]]
-            // );
-            // // Insert the order into the Dispatch collection
-            // Processing::raw()->updateOne(
-            //     ['companyID' => $companyID],
-            //     ['$addToSet' => ['order' => $orderData]]
-            // );
+            // $new_id =  Processing::max('_id');
+            $processing = Processing::raw();
+
+            $processCurr = $processing->aggregate([
+                ['$match' => ['companyID' => $companyID]],
+                ['$unwind' => '$order'],  // Unwind the order array first
+                ['$sort' => ['order._id' => -1]],
+                ['$project' => ['_id' => '$order._id']]
+            ])->toArray();
+            $latestOrderId = $processCurr[0]->_id;
+
+            if (!empty($latestIdResult)) {
+                $latestOrderId = $latestIdResult[0]->_id;
+            
+                }
+            $newOrderId = $latestOrderId + 1;
+            $order['_id'] = $newOrderId;
 
             $statusTimes = [
                 'new' => 'status_New_time',
@@ -696,8 +709,8 @@ class OrderController extends Controller
                 $docId = (int)$info[1];
                 $pushResult = $newCollection->updateOne(
                     ['companyID' => $companyID, '_id' => $docId],
-                    ['$push' => ['order' => $order]],
-                    ['$set' => ['order._id' => $new_id]]
+                    ['$push' => ['order' => $order]]
+                  
                 );
             } else {
                 $parentId = AppHelper::instance()->getNextSequenceForNewDoc($newCollection);
@@ -710,6 +723,7 @@ class OrderController extends Controller
                 ];
                 $pushResult = $newCollection->insertOne($newDoc);
             }
+            // return response()->json(['success' => true, 'message' => 'Order moved To Processing.']);
             
             if (isset($pushResult) && $pushResult->getMatchedCount() > 0) {
                 $pullResult = $oldCollection->updateOne(
@@ -717,11 +731,11 @@ class OrderController extends Controller
                     ['$pull' => ['order' => ['_id' => $id]]]
                 );
         
-                if ($pullResult->getMatchedCount() > 0) {
-                   echo "<script>";
-                   echo "alert('Status changed successfully.');";
-                   echo 'window.location.href = "' . url("order") . '";';
-                   echo "</script>";
+                if ($pushResult->getMatchedCount() > 0) {
+                //    echo "<script>";
+                //    echo "alert('Status changed successfully.');";
+                //    echo 'window.location.href = "' . url("order") . '";';
+                //    echo "</script>";
                    return response()->json(['success' => true, 'message' => 'Order moved To Processing.']);
                 } else {
                     echo "<script>";
@@ -748,15 +762,36 @@ class OrderController extends Controller
             $products= $request->products;
 
             $orderData = $processResult[0]['order']; // Assuming there's only one order
+
             // dd($processResult);
 
             if($dis_order_type === "Partial order"){
+
+                $dispatch = Dispatch::raw();
+
+                $dispatchCurr = $dispatch->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id']]
+                ])->toArray();
+                $latestOrderId = $dispatchCurr[0]->_id;
+               
+                // dd($latestOrderId);
+    
+                if (!empty($latestIdResult)) {
+                    $latestOrderId = $latestIdResult[0]->_id;
+                
+                    }
+                $newOrderId = $latestOrderId + 1;
+                $orderData['_id'] = $newOrderId;
+                $orderData['status'] = $newStatus;
 
                 Dispatch::raw()->updateOne(
                     ['companyID' => $companyID],
                     ['$push' => ['order' => $orderData]]
                 );
-                dd($products);
+                // dd($products);
                 foreach ($products as $product) {
                     $partialQuantity = $product['partial_quantity'];
                     $remainingQuantity = $product['remaining_quantity'];
@@ -809,7 +844,7 @@ class OrderController extends Controller
                 Dispatch::raw()->updateOne(
                     [
                         'companyID' => $companyID,
-                        'order._id' => $id,
+                        'order._id' => $newOrderId,
                         'order.product.product_id' => $productId,
                         'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
                     ],
@@ -822,26 +857,38 @@ class OrderController extends Controller
                     ],
                     [
                         'arrayFilters' => [
-                            ['outer._id' => $id], // Filter for the outer 'order' array
+                            ['outer._id' => $newOrderId], // Filter for the outer 'order' array
                             ['inner.product_id' => $productId] // Filter for the inner 'product' array
                         ]
                     ]
                 );
-
-                // if($updateQuanInPic == "0" && $updateQuanInSqft == "0"){
-                //     Processing::raw()->updateOne(
-                //         ['companyID' => $companyID],
-                //         ['$pull' => ['order' => $orderData]]
-                //     );
-                // }
-
-                // dd($updateQuanInPic);
-
             }
     
 
             }
             else{
+                $orderData['status'] = $newStatus;
+                $newCollection = $collectionMap[$newStatus];
+                $dispatch = Dispatch::raw();
+
+                $dispatchCurr = $dispatch->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id']]
+                ])->toArray();
+                $latestOrderId = $dispatchCurr[0]->_id;
+               
+    
+                if (!empty($latestIdResult)) {
+                    $latestOrderId = $latestIdResult[0]->_id;
+                
+                    }
+                $newOrderId = $latestOrderId + 1;
+                $orderData['_id'] = $newOrderId;
+
+                // dd($orderData);
+
                 Processing::raw()->updateOne(
                     ['companyID' => $companyID],
                     ['$pull' => ['order' => ['_id' => $id]]]
@@ -849,13 +896,50 @@ class OrderController extends Controller
                 // Insert the order into the Dispatch collection
                 Dispatch::raw()->updateOne(
                     ['companyID' => $companyID],
-                    ['$addToSet' => ['order' => $orderData]]
+                    ['$addToSet' => ['order' => $orderData]],
                 );
 
+        
             }
     
             // Your response after successful update
             return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
+        }
+
+        elseif (!empty($dispatchResult)) {
+
+            $orderData['status'] = $newStatus;
+                $newCollection = $collectionMap[$newStatus];
+                $dispatch = Completed::raw();
+
+                $dispatchCurr = $dispatch->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id']]
+                ])->toArray();
+                $latestOrderId = $dispatchCurr[0]->_id;
+               
+    
+                if (!empty($latestIdResult)) {
+                    $latestOrderId = $latestIdResult[0]->_id;
+                
+                    }
+                $newOrderId = $latestOrderId + 1;
+                $orderData['_id'] = $newOrderId;
+
+                // dd($orderData);
+
+                Dispatch::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$pull' => ['order' => ['_id' => $id]]]
+                );
+                // Insert the order into the Dispatch collection
+                Completed::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$addToSet' => ['order' => $orderData]],
+                );
+
         }
 
         
@@ -1000,19 +1084,21 @@ class OrderController extends Controller
             'remaining_quantity' => $request->input('remaining_quantity'),
             'dis_order_type' => $request->input('dis_order_type'),
             'note' => $request->input('note'),
+            'receiver_name' => $request->input('receiver_name'),
+            'dispatcher_name' => $request->input('dispatcher_name'),
             'insertedTime' => time(),
             'delete_status' => "NO",
             'deletestatus' => "",
             'deleteTime' => "",
             ];
-            dd($cons);
+            // dd($cons);
             if ($docAvailable != null)
             {
                 $info = (explode("^",$docAvailable));
                 $docId = $info[1];
                 // dd($docId);
                 $counter = $info[0];
-                $companyid = AppHelper::instance()->getAdminDocumentSequence(1, New_notes::raw(),'order',(int)$docId);
+                $companyid = AppHelper::instance()->getAdminDocumentSequence(1, Dispatch::raw(),'order',(int)$docId);
                 // dd($companyid);
                 $data = array(
                 '_id' => $companyid,
@@ -1023,6 +1109,8 @@ class OrderController extends Controller
                 'remaining_quantity' => $request->input('remaining_quantity'),
                 'dis_order_type' => $request->input('dis_order_type'),
                 'note' => $request->input('note'),
+                'receiver_name' => $request->input('receiver_name'),
+                'dispatcher_name' => $request->input('dispatcher_name'),
                 'orderid' => $request->input('orderid'),
                 'insertedTime' => time(),
                 'delete_status' => "NO",

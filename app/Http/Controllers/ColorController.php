@@ -35,7 +35,7 @@ class ColorController extends Controller
         'deletecolor' => "",
         'deleteTime' => "",
         ];
-        //dd($cons);
+        // dd($cons);
         if ($docAvailable != "No")
         {
             $info = (explode("^",$docAvailable));

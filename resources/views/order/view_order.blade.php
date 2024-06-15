@@ -614,7 +614,22 @@
                        </tbody>
                     </table>
                 </div>
-                    <div class="form-row">
+                <div class="form-row">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="user_firstname">Receiver Name<span class="required"></span></label>
+                                <input type="text" class="form-control" name="receiver_name" id="receiver_name"
+                                    placeholder="Receiver Name">
+
+                            
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="user_firstname">Dispatcher Name<span class="required"></span></label>
+                                <input type="text" class="form-control" name="dispatcher_name" id="dispatcher_name"
+                                    placeholder="Dispatcher Name">
+                            </div>
+                        </div>
+                    
                         <div class="form-group col-md-12">
                             <label for="user_firstname">Note<span class="required"></span></label>
                             <input type="text" class="form-control" name="dis_note" id="dis_note"

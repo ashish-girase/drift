@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\DesignController;
+use App\Http\Controllers\DispatchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\NewstatudController;
@@ -126,7 +127,8 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/admin/create', [OrderController::class, 'create'])->name('create');
 
 
-
+    Route::get('/dispatch', [DispatchController::class, 'view_dispatch_order'])->name('dispatch');
+    Route::get('/dispatchdetails', [DispatchController::class, 'dispatch_details'])->name('dispatchdetails');
 
 
 

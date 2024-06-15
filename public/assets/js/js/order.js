@@ -71,6 +71,14 @@ $(".createOrderModalStore").click(function(){
                                 </div>
                             </div>
                             <div class="row">
+                            <div class="form-group col-md-3">
+                                    <label for="prod_qty">PCS/SQFT<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_pic_sqf[${index}]" id="edit_pic_sqf" placeholder="PCS/SQFT" value="${product.pcs_sqft}" >
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="prod_qty">SQFT/PCS<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_sqft_pic[${index}]" id="edit_sqft_pic" placeholder="SQFT/PCS" value="${product.sqft_pcs}" >
+                                </div>
                              
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
@@ -243,16 +251,6 @@ $(".createOrderModalStore").click(function(){
         formData.append('state', edit_state);
         formData.append('country', edit_country);
         formData.append('custref', edit_custref);
-        // formData.append('prodName', edit_prodName);
-        // formData.append('product_type', edit_product_type);
-        // formData.append('prod_code', edit_prod_code);
-        // formData.append('ColourName', edit_ColourName);
-        // formData.append('total_quantity', edit_total_quantity);
-        // formData.append('price', edit_price);
-        // formData.append('Billing_address', edit_Billing_address);
-        // formData.append('Delivery_address', edit_Delivery_address);
-        // formData.append('quantity_in_soft', edit_quantity_in_soft);
-        // formData.append('quantity_in_pieces', edit_quantity_in_pieces);
         formData.append('order_remark', edit_order_remark);
         formData.append('dispatch_remark', edit_dispatch_remark);
         formData.append('order_date', edit_order_date);
@@ -265,7 +263,7 @@ $(".createOrderModalStore").click(function(){
         formData.append('box_packed', edit_box_packed); 
         
         
-    
+    // console.log(formData);
         
                    
          
@@ -968,6 +966,8 @@ function openModal(selectElement,orderId,oldStatus) {
             var remaining_quantity = $('#remaining_quantity').val();
             var dis_order_type = $('#order_type option:selected').text();
 
+            var receiver_name = $('#receiver_name').val();
+            var dispatcher_name = $('#dispatcher_name').val();
             var orderid = $('#dis_order_id').val();
             var addoldStatus = $('#dis_old_status').val();
             var status=$('#dis_status').val();
@@ -986,6 +986,8 @@ function openModal(selectElement,orderId,oldStatus) {
                 'remaining_quantity':remaining_quantity,
                 'dis_order_type':dis_order_type,
                 'orderid':orderid,
+                'receiver_name':receiver_name,
+                'dispatcher_name':dispatcher_name,
                 '_token': $('#_tokenOrder').val()
             };
             $.ajax({
@@ -1062,8 +1064,15 @@ function openModal(selectElement,orderId,oldStatus) {
                     // Handle success response  
                     console.log(response);
                     console.log("sucess");
-                    window.location.href = base_path+"/order";
-                    Swal.fire("sucess", "Order Sucessfully Dispatched");
+                    Swal.fire({
+                        title: "Success",
+                        text: "Order Sucessfully Dispatched",
+                        icon: "success",
+                      }).then(() => {
+                        window.location.href = base_path + "/order";
+                      });
+                        // window.location.href = base_path+"/order";
+                        // Swal.fire("sucess", "Order Sucessfully Dispatched");
                 },
                 error: function(xhr, status, error) {
                     // Handle error
@@ -1089,19 +1098,64 @@ function openModal(selectElement,orderId,oldStatus) {
             // Handle success response  
             console.log(response);
             console.log("sucess");
-            window.location.href = base_path+"/order";
-            Swal.fire("sucess", "Order Sucessfully Processed");
+
+            // window.location.href = base_path+"/order";
+            // Swal.fire("sucess", "Order Sucessfully Processed");
+            Swal.fire({
+                title: "Success",
+                text: "Order Successfully Processed",
+                icon: "success",
+              }).then(() => {
+                window.location.href = base_path + "/order";
+              });
         },
         error: function(xhr, status, error) {
             // Handle error
             // console.error(xhr.responseText);
             console.error("Errorsd:", error);
             console.log("not sucess");
-            window.location.href = base_path+"/order";
-            Swal.fire("sucess", "Order Sucessfully Processed");
+            // window.location.href = base_path+"/order";
+            // Swal.fire("sucess", "Order Sucessfully Processed");
         }
     });
 }
+        else if(selectedStatus === 'dispatch'){
+
+            $.ajax({
+                url: base_path+'/orders/updateStatus',
+                type: 'POST',
+                data: {
+                    oldstatus: oldStatus,
+                    newstatus: newStatus,
+                    id:orderId,
+                    '_token': $('#_tokenOrde').val()
+                },
+                success: function(response) {
+                    // Handle success response  
+                    console.log(response);
+                    console.log("sucess");
+        
+                    // window.location.href = base_path+"/order";
+                    // Swal.fire("sucess", "Order Sucessfully Processed");
+                    Swal.fire({
+                        title: "Success",
+                        text: "Order Successfully Move To Complete",
+                        icon: "success",
+                      }).then(() => {
+                        window.location.href = base_path + "/order";
+                      });
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    // console.error(xhr.responseText);
+                    console.error("Errorsd:", error);
+                    console.log("not sucess");
+                    // window.location.href = base_path+"/order";
+                    // Swal.fire("sucess", "Order Sucessfully Processed");
+                }
+            });
+            
+    }
 }
 
 
