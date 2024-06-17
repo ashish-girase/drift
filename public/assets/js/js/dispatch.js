@@ -40,11 +40,11 @@ $(document).ready(function() {
 
 function openModalf(selectElement,orderId,oldStatus) {
     var newStatus = selectElement.value;
-    var selectedStatus = selectElement.value;
+    // var selectedStatus = selectElement.value;
 
     console.log("hh");
 
-         if(selectedStatus === 'dispatch'){
+         if(newStatus === 'dispatch' || newStatus === 'completed'){
 
             $.ajax({
                 url: base_path+'/orders/updateStatus',
@@ -53,7 +53,7 @@ function openModalf(selectElement,orderId,oldStatus) {
                     oldstatus: oldStatus,
                     newstatus: newStatus,
                     id:orderId,
-                    '_token': $('#_tokenOrde').val()
+                    '_token': $('input[name="_token"]').val()
                 },
                 success: function(response) {
                     // Handle success response  

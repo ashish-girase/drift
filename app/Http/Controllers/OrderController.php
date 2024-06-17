@@ -25,7 +25,9 @@ use App\Models\Dispatch;
 use App\Models\Cancelled;
 use App\Models\Completed;
 use App\Models\New_notes;
+use Dotenv\Util\Regex as UtilRegex;
 use Illuminate\Support\Facades\Redirect;
+use Symfony\Polyfill\Intl\Idn\Resources\unidata\Regex as UnidataRegex;
 
 class OrderController extends Controller
 {
@@ -182,7 +184,7 @@ class OrderController extends Controller
     {
         $val = $request->value;
         $para = '^' . $val;
-        $datasearch = new Regex ($para, 'i');
+        $datasearch = new UnidataRegex ($para, 'i');
         $companyID=1;
         $collection =Customer::raw();
         $show =$collection ->aggregate([['$match' => ["companyID" => $companyID]],
@@ -320,7 +322,7 @@ class OrderController extends Controller
         $products = Product::raw()->aggregate([
         ['$match' => ['companyID' => $companyId]],
         ['$unwind' => '$product'],
-        ['$match' => ['product.prodName' => new Regex("{$product_nm}", 'i')]],
+        ['$match' => ['product.prodName' => new UtilRegex("{$product_nm}", 'i')]],
         ['$group' => [
         '_id' => null,
         'products' => ['$push' => [
@@ -644,7 +646,7 @@ class OrderController extends Controller
             ['$match' => ['order._id' => $id]]
         ])->toArray();
             
-        dd($dispatchResult);
+        // dd($dispatchResult);
         
         if (empty($orderResult) && empty($processResult)  && empty($dispatchResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
@@ -908,9 +910,12 @@ class OrderController extends Controller
 
         elseif (!empty($dispatchResult)) {
 
-            $orderData['status'] = $newStatus;
+            $compleorderData = $dispatchResult[0]['order'];
+
+            $compleorderData['status'] = $newStatus;
                 $newCollection = $collectionMap[$newStatus];
                 $dispatch = Completed::raw();
+                // dd($compleorderData);
 
                 $dispatchCurr = $dispatch->aggregate([
                     ['$match' => ['companyID' => $companyID]],
@@ -918,17 +923,27 @@ class OrderController extends Controller
                     ['$sort' => ['order._id' => -1]],
                     ['$project' => ['_id' => '$order._id']]
                 ])->toArray();
-                $latestOrderId = $dispatchCurr[0]->_id;
+                // $latestOrderId = $dispatchCurr[0]->_id;
                
     
-                if (!empty($latestIdResult)) {
-                    $latestOrderId = $latestIdResult[0]->_id;
+                if (!empty($dispatchCurr)) {
+                    $latestOrderId = $dispatchCurr[0]->_id;
                 
-                    }
-                $newOrderId = $latestOrderId + 1;
-                $orderData['_id'] = $newOrderId;
+                    $newOrderId = $latestOrderId + 1;
+                    $compleorderData['_id'] = $newOrderId;
+                }else{
+                    $compleorderData['_id'] =1; 
 
-                // dd($orderData);
+                    $compleorderData= Completed::raw()->insertOne([
+                        '_id' => 1,
+                        'counter' => 0,
+                        'companyID' => 1,
+                        'order' => [$compleorderData],
+                    ]);
+                    
+                }
+
+               
 
                 Dispatch::raw()->updateOne(
                     ['companyID' => $companyID],
@@ -937,7 +952,7 @@ class OrderController extends Controller
                 // Insert the order into the Dispatch collection
                 Completed::raw()->updateOne(
                     ['companyID' => $companyID],
-                    ['$addToSet' => ['order' => $orderData]],
+                    ['$addToSet' => ['order' => $compleorderData]],
                 );
 
         }

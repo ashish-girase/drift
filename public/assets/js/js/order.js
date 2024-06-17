@@ -1119,43 +1119,43 @@ function openModal(selectElement,orderId,oldStatus) {
         }
     });
 }
-        else if(selectedStatus === 'dispatch'){
+    //     else if(selectedStatus === 'dispatch'){
 
-            $.ajax({
-                url: base_path+'/orders/updateStatus',
-                type: 'POST',
-                data: {
-                    oldstatus: oldStatus,
-                    newstatus: newStatus,
-                    id:orderId,
-                    '_token': $('#_tokenOrde').val()
-                },
-                success: function(response) {
-                    // Handle success response  
-                    console.log(response);
-                    console.log("sucess");
+    //         $.ajax({
+    //             url: base_path+'/orders/updateStatus',
+    //             type: 'POST',
+    //             data: {
+    //                 oldstatus: oldStatus,
+    //                 newstatus: newStatus,
+    //                 id:orderId,
+    //                 '_token': $('#_tokenOrde').val()
+    //             },
+    //             success: function(response) {
+    //                 // Handle success response  
+    //                 console.log(response);
+    //                 console.log("sucess");
         
-                    // window.location.href = base_path+"/order";
-                    // Swal.fire("sucess", "Order Sucessfully Processed");
-                    Swal.fire({
-                        title: "Success",
-                        text: "Order Successfully Move To Complete",
-                        icon: "success",
-                      }).then(() => {
-                        window.location.href = base_path + "/order";
-                      });
-                },
-                error: function(xhr, status, error) {
-                    // Handle error
-                    // console.error(xhr.responseText);
-                    console.error("Errorsd:", error);
-                    console.log("not sucess");
-                    // window.location.href = base_path+"/order";
-                    // Swal.fire("sucess", "Order Sucessfully Processed");
-                }
-            });
+    //                 // window.location.href = base_path+"/order";
+    //                 // Swal.fire("sucess", "Order Sucessfully Processed");
+    //                 Swal.fire({
+    //                     title: "Success",
+    //                     text: "Order Successfully Move To Complete",
+    //                     icon: "success",
+    //                   }).then(() => {
+    //                     window.location.href = base_path + "/order";
+    //                   });
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 // Handle error
+    //                 // console.error(xhr.responseText);
+    //                 console.error("Errorsd:", error);
+    //                 console.log("not sucess");
+    //                 // window.location.href = base_path+"/order";
+    //                 // Swal.fire("sucess", "Order Sucessfully Processed");
+    //             }
+    //         });
             
-    }
+    // }
 }
 
 
