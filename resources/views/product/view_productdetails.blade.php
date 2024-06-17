@@ -36,7 +36,9 @@
                             </thead>
                             <tbody>
                                 @if ($show1)
-                    
+                                {{-- @php
+                                    dd($show1);
+                                @endphp --}}
                                     @foreach ($show1 as $key => $cusData_val)
                                         <tr>
                                             <td class="ps-4">
@@ -52,7 +54,7 @@
                                             </td>          
                                            
                                             <td class="text-center">
-                                                   <!--VIEW BUTTON-->
+                                                   <!--Add BUTTON-->
                                                 <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 createDesignModalStore" id="createDesignModalStore"
                                                         data-user-ids="{{ $cusData_val->product->_id}}" 
                                                         data-user-master_id="{{ $cusData_val['_id'] }}"  
@@ -95,8 +97,6 @@
                 PCS/SQFT</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                 SQFT/PCS</th>
-            
-
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                 Action </th>
         </tr>
@@ -105,91 +105,77 @@
 
 <tbody>
     
-    @if ($show1)
-        @foreach ($show1 as $key => $cusData_val)
-            @if (isset($cusData_val->product->designname) && !empty($cusData_val->product->designname))
-                @foreach($cusData_val->product->designname as $key =>$design_name_1)
-
+ @if ($designData)
+    @foreach ($designData as $key => $cusData_val)
+                 
                     <tr>
                         <td class="ps-4">
                             <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->design_name;    
-                                @endphp 
+                   
+                                {{ $cusData_val->product->designname->design_name }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->dimensions;    
-                                @endphp 
+                            
+                                {{ $cusData_val->product->designname->dimensions }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->thickness;    
-                                @endphp 
+                             
+                                {{ $cusData_val->product->designname->thickness }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->weight_pcs;    
-                                @endphp 
+                             
+                                {{ $cusData_val->product->designname->weight_pcs }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->weight_sqft;    
-                                @endphp 
+                              
+                                 {{ $cusData_val->product->designname->weight_sqft }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->pcs_sqft;    
-                                @endphp 
+                           
+                                  {{ $cusData_val->product->designname->pcs_sqft }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
-                                @php 
-                                    echo $design_name_1->sqft_pcs;    
-                                @endphp 
+                               
+                                 {{ $cusData_val->product->designname->sqft_pcs }}
                             </p>
                         </td>
                         <td class="text-center">
                             <!-- EDIT BUTTON -->
                         
-                            <a href="#" type="button" class="mx-3 " id="#" 
-                                data-user-ids="{{ $cusData_val->product->designname[$key]->_id }}"
+                            <a href="#" type="button" class="mx-3 edit-product-design" id="#" 
+                                data-user-ids="{{ $cusData_val->product->designname->_id }}"
                                 data-user-master_id="{{ $cusData_val['_id'] }}"
                                 data-bs-toggle="tooltip">
                                 <i class="fas fa-user-edit text-secondary"></i>
                             </a>
                             
                             <!-- DELETE BUTTON -->
-                            <a href="#" type="button" class="mx-3 delete_product_design" data-user-ids="{{ $cusData_val->product->designname[$key]->_id }}"
-                                data-user-master_id="{{ $cusData_val->product['_id'] }}"  id="delete_product_design" data-bs-toggle="tooltip">
+                            <a href="#" type="button" class="mx-3 delete_product_design" data-user-ids="{{ $cusData_val->product->designname->_id }}"
+                                data-user-master_id="{{ $cusData_val->product->_id }}"  id="delete_product_design" data-bs-toggle="tooltip">
+
+        
+                    
                                 <span>
                                     <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                 </span>
                             </a>
                         </td>
-                    </tr>
-                @endforeach
-            @else
-                <tr>
-                    <td colspan="3">
-                        <center>Record Not Found</center>
-                    </td>
-                </tr>
-            @endif
+                    </tr> 
         @endforeach
     @else 
         <tr>
@@ -274,6 +260,73 @@
                                         <div class="modal-footer">
                                             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                                             <button type="button" class="btn bg-gradient-primary " id="savedesign">Save changes</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    </div>
+
+
+                                
+                            <!--Edit Modal -->
+                            <div class="modal fade" id="EditDesignModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title font-weight-normal" id="exampleModalLabel"> Edit Design</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                            <form method="post">
+                                                    @csrf
+                                                    <input type="hidden" name="_token" id="_tokeupdatenproductdesign" value="{{Session::token()}}">
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-12">
+                                                            <input type="hidden" name="edit_prodid" id="edit_prodid" value="{{$cusData_val->product->_id}}">
+                                                            <input type="hidden" name="master_id" id="master_id" value="{{$cusData_val->_id}}">
+                                                            <input type="hidden" name="edit_disdid" id="edit_disdid" >
+                                                            <label for="user_firstname">Design Name<span
+                                                                    class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_design_name"
+                                                                id="edit_design_name" placeholder="Design Name">
+
+                                                            <label for="user_firstname">Dimensions<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_dimensions"
+                                                                id="edit_dimensions" placeholder="Dimensions">
+
+                                                            <label for="user_firstname">Thickness<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_thickness"
+                                                                id="edit_thickness" placeholder="Thickness">
+
+                                                            <label for="user_firstname">Weight/Pcs<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_weight_pcs"
+                                                                id="edit_weight_pcs" placeholder="Weight/Pcs">
+
+                                                            <label for="user_firstname">Weight/Sqft<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_weight_sqft"
+                                                                id="edit_weight_sqft" placeholder="Weight/Sqft">
+
+                                                            <label for="user_firstname">PCS/SQFT<span
+                                                                class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_pcs_sqft"
+                                                                id="edit_pcs_sqft" placeholder="PCS/SQFT">
+
+                                                            <label for="user_firstname">SQFT/PCS<span
+                                                                    class="required"></span></label>
+                                                            <input type="text" class="form-control" name="edit_sqft_pcs"
+                                                                id="edit_sqft_pcs" placeholder="SQFT/PCS ">
+                                                        </div>
+                                                    </div>
+                                                    </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn bg-gradient-primary " id="updatedesign">Update changes</button>
                                         </div>
                                         </div>
                                     </div>

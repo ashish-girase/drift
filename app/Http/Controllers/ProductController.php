@@ -130,7 +130,7 @@ class ProductController extends Controller
             ]);
 
             $productData = $productCurr->toArray();
-
+            
             // return response()->json($product_data, 200 );
             return view('product.view_product',compact('productData'));
             }
@@ -187,16 +187,29 @@ class ProductController extends Controller
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
                 ['$unwind' => '$product'],
                 ['$match' => ['product._id' => (int)$id]],
-                // ['$match' => ['designname.delete_status' => "NO"]],
+                ['$match' => [
+                    'product.designname.delete_status' => 'NO' // Match condition based on delete_status
+                ]],
                 ])->toArray();
-                foreach ($show1 as $row) {
+
+                $designData = $collection->aggregate([
+                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                ['$unwind' => '$product'],
+                ['$match' => ['product._id' => (int)$id]],
+                ['$unwind' => '$product.designname'],
+                ['$match' => [
+                    'product.designname.delete_status' => 'NO' // Match condition based on delete_status
+                ]],
+                ])->toArray();
+                // dd($show1);
+                foreach ($designData as $row) {
                     $activeProduct12 = array();
                     $k = 0;
                     $activeProduct12[$k] = $row['product'];
                     $k++;
                 }
-                // dd($show1);
-                return view('product.view_productdetails', compact('show1'));
+                // dd($designData);
+                return view('product.view_productdetails', compact('show1','designData'));
                 // return response()->json(['success' => $show1]);
         }
 
@@ -264,25 +277,119 @@ class ProductController extends Controller
             }
 
         }
+        public function edit_product_design(Request $request){
+            $parent=$request->master_id;
+                $companyID=1;
+                $id=$request->id;
+                $productId = $request->product_id;
+                // dd($parent);
+                $collection=Product::raw();
+                $editDesign = $collection->aggregate([
+                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                ['$unwind' => ['path' => '$product']],
+                ['$match' => ['product._id' => (int)$productId]],
+                ['$unwind' => ['path' => '$product.designname']],
+                ['$match' => [
+                    'product.designname._id' => (int)$id // Match condition based on delete_status
+                ]],
+                ])->toArray();
+                foreach ($editDesign as $row) {
+                    $activeProduct12 = array();
+                    $k = 0;
+                    $activeProduct12[$k] = $row['product'];
+                    $k++;
+                }
+                // dd($show1);
+               
+                // dd($productData);
+                $productData[]=array("product" => $activeProduct12);
+                if ($productData) {
+                    return response()->json([
+                    'success' => $productData,
+
+                ]);
+                } else {
+                    return response()->json([
+                    'success' => 'No record'
+                ]);
+                }
+
+        }
+
+        public function update_product_design(Request $request){
+
+            $id=(int)$request->_id;
+            $designId=(int)$request->designid;
+            // dd($id);
+            $companyID=1;
+
+            $data=Product::raw()->updateOne(['companyID' => $companyID,'product._id' => $id,  'product.designname._id' => $designId],
+
+            ['$set' => [
+            'product.$[prod].designname.$[design].design_name' => $request->design_name,
+            'product.$[prod].designname.$[design].dimensions' => $request->dimensions,
+            'product.$[prod].designname.$[design].thickness' => $request->thickness,
+            'product.$[prod].designname.$[design].weight_pcs' => $request->weight_pcs,
+            'product.$[prod].designname.$[design].weight_sqft' => $request->weight_sqft,
+            'product.$[prod].designname.$[design].pcs_sqft' => $request->pcs_sqft,
+            'product.$[prod].designname.$[design].sqft_pcs' => $request->sqft_pcs,
+            ]],
+            [
+                'arrayFilters' => [
+                    ['prod._id' => $id],
+                    ['design._id' => $designId]
+                ]
+            ]
+            );
+            // dd($data);
+            if ($data==true) {
+            //dd($data);
+            return response()->json(['status' => true,'message' => 'Product updated successfully'], 200);
+            } else {
+            return response()->json(['status' => false,'message' => 'Failed to update Product'], 500);
+            }
+
+        }
 
         public function delete_product_design(Request $request){
             $id = intval($request->id);
             $companyID=1;
             $mainId=(int)$request->master_id;
 
-            $prodData=Product::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'product.designname._id' => (int)$id],
-            ['$set' => [
-                'product.$.insertedTime' => time(),
-                'product.$.delete_status' => "YES",
-                'product.$.deleteProduct' => intval($id),
-                'product.$.deleteTime0' => time(),
-            ]]);
-            dd($prodData);
-            if($prodData==true)
+
+        $comData = Product::raw()->updateOne(
+            [
+                'companyID' => $companyID,
+                '_id' => 1,
+                'product._id' => $mainId,
+                'product.designname._id' => $id
+            ],
+            [
+                '$set' => [
+                    'product.$[prod].designname.$[design].insertedTime' => time(),
+                    'product.$[prod].designname.$[design].delete_status' => "YES",
+                    'product.$[prod].designname.$[design].deleteOrder' => intval($id),
+                    'product.$[prod].designname.$[design].deleteTime0' => time()
+                ]
+            ],
+            [
+                'arrayFilters' => [
+                    ['prod._id' => $mainId],
+                    ['design._id' => $id]
+                ]
+            ]
+        );
+        // dd($comData);
+        
+
+
+            if($comData==true)
             {
                 $arr = array('status' => 'success', 'message' => 'Product Deleted successfully.','statusCode' => 200);
+                
                 return json_encode($arr);
             }
+              return response()->json(['success' => $comData]);
         }
 
 

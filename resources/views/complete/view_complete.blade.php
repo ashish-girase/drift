@@ -34,7 +34,7 @@
                     <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Order ID</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
@@ -70,9 +70,7 @@
         <select class="form-control custom-width" name="newstatus"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
             {{-- <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option> --}}
-            <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
             <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-            <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
         </select>
 
         
@@ -98,7 +96,7 @@
         </td>
         <td class="text-center">
                 <!--VIEW BUTTON-->
-            <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-dispatched-order" id="view-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip" type="button">
+            <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-completed-order" id="view-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip" type="button">
                 view
             </a>
                 <!--EDIT BUTTON-->

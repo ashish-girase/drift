@@ -125,6 +125,101 @@ $(document).ready(function() {
         }
     });
 
+
+  
+
+    $('.edit-product-design').click(function(e) {
+        var designId = $(this).data('user-ids');
+        var product_id = $("#prod_id").val();
+        var master_id = $("#master_id").val();
+
+        
+        $.ajax({
+            type:'POST',
+            url:base_path+"/admin/edit_product_design",
+            data: {
+                id: designId,
+                master_id: master_id,
+                product_id:product_id
+            },
+            success:function(response){
+                // var res = JSON.parse(response);
+                // console.log(response);
+                var productData = response.success[0].product[0];
+                console.log(productData.designname); // Logging _id for debugging
+                $('#edit_prodid').val(productData._id);
+                $('#edit_disdid').val(productData.designname._id); // Setting _id value
+                $('#edit_design_name').val(productData.designname.design_name); // Setting _id value
+                $('#edit_dimensions').val(productData.designname.dimensions);
+                $('#edit_thickness').val(productData.designname.thickness);
+                $('#edit_weight_pcs').val(productData.designname.weight_pcs);
+                $('#edit_weight_sqft').val(productData.designname.weight_sqft);
+                $('#edit_pcs_sqft').val(productData.designname.pcs_sqft);
+                $('#edit_sqft_pcs').val(productData.designname.sqft_pcs);
+
+            }   
+            
+        });
+        $('#EditDesignModal').modal("show");
+
+    });
+
+    $(document).on("click", '#updatedesign', function(event) {
+        console.log("Edit User")
+        var c_id= $('#edit_prodid').val();
+        console.log(c_id);
+        // var companySubID= $('#up_comSubId').val();
+        var edit_designid= $('#edit_disdid').val();
+        var edit_design_name= $('#edit_design_name').val();
+        var edit_dimensions= $('#edit_dimensions').val();
+        var edit_weight_pcs= $('#edit_weight_pcs').val();
+        var edit_weight_sqft= $('#edit_weight_sqft').val();
+        var edit_pcs_sqft= $('#edit_pcs_sqft').val();
+        var edit_thickness= $('#edit_thickness').val();
+        var edit_sqft_pcs= $('#edit_sqft_pcs').val();
+
+        // var form = document.forms.namedItem("editCompanyForm");
+        var formData = new FormData();
+        formData.append('_token', $("#_tokeupdatenproductdesign").val());
+        formData.append('_id', c_id);
+        formData.append('design_name', edit_design_name);
+        formData.append('designid', edit_designid);
+        formData.append('dimensions', edit_dimensions);
+        formData.append('weight_pcs', edit_weight_pcs);
+        formData.append('weight_sqft', edit_weight_sqft);
+        formData.append('pcs_sqft', edit_pcs_sqft);
+        formData.append('thickness', edit_thickness);
+        formData.append('sqft_pcs', edit_sqft_pcs);
+        formData.append('deleteStatus', "NO");
+        $.ajax({
+            url: base_path + "/admin/update_product_design",
+            type: 'post',
+            datatype: "JSON",
+            contentType: false,
+            data: formData,
+            processData: false,
+            cache: false,
+            success: function (response) {
+                $('#EditDesignModal').modal("hide");
+
+                Swal.fire({
+                    title: "Success",
+                    text: "Design Updated Sucessfully",
+                    icon: "success",
+                  }).then(() => {
+                    window.location.href = base_path + "/productdetils?id=" + c_id + "&master_id=" + 1;
+                  });
+                
+
+            },
+            error: function (data) {
+                $.each(data.responseJSON.errors, function (key, value) {
+                    Swal.fire("Error!", value[0], "error");
+                });
+            }
+        });
+    });
+
     $('.delete_product_design').click(function(e) {
         e.preventDefault();
         // var userId = $(this).data('user-ids').split(',');
@@ -149,7 +244,14 @@ $(document).ready(function() {
             _token: "{{ csrf_token  () }}"
         },
         success: function(response) {
-            window.location.href = base_path+"/product";
+            // window.location.href = base_path + "/productdetils?id=" + master_id + "&master_id=" + 1;
+            Swal.fire({
+                title: "Success",
+                text: "Design deleted Sucessfully",
+                icon: "success",
+              }).then(() => {
+                window.location.href = base_path + "/productdetils?id=" + master_id + "&master_id=" + 1;
+              });
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseText);

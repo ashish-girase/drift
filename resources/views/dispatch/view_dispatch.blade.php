@@ -34,7 +34,7 @@
                     <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Order ID</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
@@ -62,7 +62,7 @@
             <form method="POST">
         @csrf
         <!-- Hidden input fields for each data attribute -->
-        <input type="hidden" class="order-id" name="id" id="orderid" value="{{ $order->order->_id }}">
+        <input type="hidden" class="order-id" name="orderid" id="orderid" value="{{ $order->order->_id }}">
         <input type="hidden" name="oldstatus" id="oldstatus" value="{{ $order->order->status }}">
         <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
         <!-- Add more hidden input fields for other data attributes -->
@@ -72,7 +72,7 @@
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option> --}}
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
             <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
-            <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            {{-- <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option> --}}
         </select>
 
         

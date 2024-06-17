@@ -67,7 +67,7 @@ function openModalf(selectElement,orderId,oldStatus) {
                         text: "Order Successfully Move To Complete",
                         icon: "success",
                       }).then(() => {
-                        window.location.href = base_path + "/order";
+                        window.location.href = base_path + "/dispatch";
                       });
                 },
                 error: function(xhr, status, error) {

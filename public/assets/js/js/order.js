@@ -69,6 +69,12 @@ $(".createOrderModalStore").click(function(){
                                     <label for="color_name">Color Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_ColourName[${index}]" id="edit_ColourName" placeholder="Color Name" value="${product.color_name}">
                                 </div>
+                                <div class="form-group col-md-3">
+                                    <label for="edit_colorlist">Color Name</label>
+                                    <select class="form-control" id="edit_colorlist" onchange="showCustomColorInput()">
+                                        <option value="" selected>Select a color</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="row">
                             <div class="form-group col-md-3">
@@ -431,6 +437,44 @@ $(".createOrderModalStore").click(function(){
                 populateProductList();
             });
 
+            function fetchColorsNamesforEdit() {
+
+                // var formData = $(this).serialize();
+                $.ajax({
+                    url: '/admin/find_color', // Replace with your route URL
+                    method: 'GET',
+                    // data: formData, // Pass search term if needed
+                    success: function(data) {
+                        var colorSelect = $('#edit_colorlist'); 
+                            
+                        data.forEach(function(color) {
+                            console.log(color);
+                        colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+                        });
+        
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching color names:', error);
+                    }
+                });
+            }
+
+            fetchColorsNamesforEdit();
+
+
+            // Event handler for change in color selection
+            $('#edit_colorlist').change(function() {
+                var colour_id = $(this).val();
+                var color_name = $('#edit_colorlist option[value="' + colour_id + '"]').text(); // Get selected color name
+        
+                // Use the selected color_id and color_name as needed
+            });
+     
+        // Function to call when showing the edit form or when needed to update the color list
+        function updateEditColorList() {
+            fetchColorsNamesforEdit('', '#edit_colorlist');
+        }
+
 
 
 
@@ -439,7 +483,7 @@ $(".createOrderModalStore").click(function(){
             function fetchColorsNames(searchTerm) {
                 $.ajax({
                     url: '/admin/find_color', // Replace with your route URL
-                    method: 'POST',
+                    method: 'GET',
                     data: { searchTerm: searchTerm }, // Pass search term if needed
                     success: function(data) {
                         var colorSelect = $('#colorlist');
@@ -456,7 +500,7 @@ $(".createOrderModalStore").click(function(){
             }
             
         
-            $('#colorlist').change(function() {
+            $('#edit_colorlist').change(function() {
                 var colour_id = $(this).val();
                 
                 var color_name = $('#colorlist option[value="' + colour_id + '"]').text(); // Get selected color name

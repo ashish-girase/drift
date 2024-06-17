@@ -34,11 +34,12 @@
                     <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
                             <tr>
-                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Order ID</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Tentaitve Dispatch Date</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Remarks</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Dispatch Remarks</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
                            </tr>
@@ -72,12 +73,15 @@
         <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
         <!-- Add more hidden input fields for other data attributes -->
 
-        <select class="form-control custom-width" name="newstatus"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+        <select class="form-control custom-width" name="newstatus" id="statusDropdown"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
             <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
             <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
             <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+            @if ($order->order->status != "processing")
+            <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
+            @endif
         </select>
 
         
@@ -86,10 +90,11 @@
 
 
     <script>
-        function openModal(selectElement) {
+
+
+        function openModal(selectElements) {
             // Get the form element containing the select dropdown
-            var form = selectElement.form;
-            console.log(form);
+            var form = selectElements.form;
             // Submit the form
             form.submit();
         }
@@ -113,6 +118,11 @@
                 <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_remark }}</p>
                 @endif
         </td>
+        <td class="text-center">
+            @if(!empty($order->order->dispatch_remark ))    
+            <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
+            @endif
+    </td>
         <td class="text-center">
                 <!--VIEW BUTTON-->
             <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-order" id="view-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip" type="button">
@@ -390,14 +400,10 @@
                             <div class="row">
                                 <div class="form-group col-md-3">
                                 <input type="text" name="custid" id="custid" hidden>
-                                <label for="custName">Customer Name<span class="required"></span></label>
+                                <label for="custName">PARTY NAME<span class="required"></span></label>
                                 <input class="form-control custom-width" id="edit_custName" name="edit_custName" list="customer_list" placeholder="Select a Customer">
                                 <datalist id="customer_list"></datalist>
                             </div>
-                                {{-- <div class="form-group col-md-3">
-                                    <label for="custName">Customer Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="custName" id="custName" placeholder="Customer Name">
-                                </div> --}}
                                 <div class="form-group col-md-3">
                                     <label for="companylistcust">Company Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_companylistcust" id="edit_companylistcust" placeholder="Company Name">

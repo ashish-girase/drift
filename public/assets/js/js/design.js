@@ -9,62 +9,62 @@ $(document).ready(function() {
        
     });
 
-    $('.edit-design').click(function(e) {
-        var userId = $(this).data('user-ids');
-        var master_id = $(this).data('user-master_id');
-        $.ajax({
-            type:'POST',
-            url:base_path+"/admin/edit_design",
-            data: {
-                id: userId,
-                master_id: master_id
-            },
-            success:function(response){
-                console.log("_id", response);
-                // var res = JSON.parse(response);
-                var designData = response.success[0].design[0];
-                // console.log("_id", response.success[0]); // Logging _id for debugging
-                $('#design_editid').val(designData._id); // Setting _id value
-                $('#design_editname').val(designData.design_name);
-            }
-        });
-        $('#edit_designModel').modal("show");
-    });
+    // $('.edit-design').click(function(e) {
+    //     var userId = $(this).data('user-ids');
+    //     var master_id = $(this).data('user-master_id');
+    //     $.ajax({
+    //         type:'POST',
+    //         url:base_path+"/admin/edit_design",
+    //         data: {
+    //             id: userId,
+    //             master_id: master_id
+    //         },
+    //         success:function(response){
+    //             console.log("_id", response);
+    //             // var res = JSON.parse(response);
+    //             var designData = response.success[0].design[0];
+    //             // console.log("_id", response.success[0]); // Logging _id for debugging
+    //             $('#design_editid').val(designData._id); // Setting _id value
+    //             $('#design_editname').val(designData.design_name);
+    //         }
+    //     });
+    //     $('#edit_designModel').modal("show");
+    // });
 
     //Update User
-    $(document).on("click", '#updatedesign', function(event) {
-        console.log("Edit User")
-        var c_id= $('#design_editid').val();
-        // var companySubID= $('#up_comSubId').val();
-        var design_editname= $('#design_editname').val();
-        // var form = document.forms.namedItem("editCompanyForm");
-        var formData = new FormData();
-        formData.append('_token', $("#_tokeupdatendesign").val());
-        formData.append('_id', c_id);
-        formData.append('design_name', design_editname);
-        formData.append('deleteStatus', "NO");
-        $.ajax({
-            url: base_path + "/admin/update_design",
-            type: 'post',
-            datatype: "JSON",
-            contentType: false,
-            data: formData,
-            processData: false,
-            cache: false,
-            success: function (response) {
-                console.log(formData);
-                $('#edit_designModel').modal("hide");
+    // $(document).on("click", '#updatedesign', function(event) {
+    //     console.log("Edit User")
+    //     var c_id= $('#design_editid').val();
+    //     // var companySubID= $('#up_comSubId').val();
+    //     var design_editname= $('#design_editname').val();
+    //     // var form = document.forms.namedItem("editCompanyForm");
+    //     var formData = new FormData();
+    //     formData.append('_token', $("#_tokeupdatendesign").val());
+    //     formData.append('_id', c_id);
+    //     formData.append('design_name', design_editname);
+    //     formData.append('deleteStatus', "NO");
+    //     $.ajax({
+    //         url: base_path + "/admin/update_design",
+    //         type: 'post',
+    //         datatype: "JSON",
+    //         contentType: false,
+    //         data: formData,
+    //         processData: false,
+    //         cache: false,
+    //         success: function (response) {
+    //             console.log(formData);
+    //             $('#edit_designModel').modal("hide");
 
-                window.location.href = base_path+"/design";
+    //             window.location.href = base_path+"/design";
 
-            },
-            error: function (data) {
-                $.each(data.responseJSON.errors, function (key, value) {
-                    Swal.fire("Error!", value[0], "error");
-                });
-            }
-        });
-    });
+    //         },
+    //         error: function (data) {
+    //             $.each(data.responseJSON.errors, function (key, value) {
+    //                 Swal.fire("Error!", value[0], "error");
+    //             });
+    //         }
+    //     });
+    // });
 
     //delete user
     $('.delete-design').click(function(e) {

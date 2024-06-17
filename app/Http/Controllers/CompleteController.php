@@ -2,33 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\New_notes;
+use App\Models\Completed;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;
-use App\Models\ProductType;
-use App\Models\Customer;
-use App\Models\Dispatch;
-use App\Helpers\AppHelper;
-use App\Models\API\Login_History;
-use MongoDB\BSON\Regex;
-use Auth;
-use PDF;
-use DB;
-use Illuminate\Validation\Rule;
-use Validator;
-
-class DispatchController extends Controller
+class CompleteController extends Controller
 {
-    public function view_dispatch_order(Request $request){
-
-        // $companyID=1;
+    public function view_complete_order(Request $request){
         $id=$request->id;
         $companyID=1;
-        $collection=Dispatch::raw();
+        $collection=Completed::raw();
         // $customers = Customer::select('_id', 'custName')->get();
         $cust_id=$request->input('cust_id');
-        $customers = Customer::raw()->aggregate([
+        $customers = Completed::raw()->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$customer'],
             ['$match' => ['customer._id' => $cust_id]],
@@ -44,25 +29,19 @@ class DispatchController extends Controller
             ['$sort' => ['order._id' => -1]]
         ]);
 
-       
         $order_data = $orderCurr->toArray();
-
-
-        // dd($notes_data);
+        // dd($order_data);
         
-        return view('dispatch.view_dispatch', compact('order_data'));
-                
-        
-
+        return view('complete.view_complete', compact('order_data'));
     }
 
-    public function dispatch_details(Request $request){
+    public function complete_details(Request $request){
         $parent=$request->master_id;
         $companyID=1;
         $id=$request->id;
         // dd($id);
         // dd($parent);
-        $collection=Dispatch::raw();
+        $collection=Completed::raw();
         
         $orderData = $collection->aggregate([
         ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
@@ -77,22 +56,9 @@ class DispatchController extends Controller
             $k++;
         }
 
-        $notes_Curr = New_notes::raw()->aggregate([
-            ['$match' => ['companyID' => $companyID]],
-            ['$unwind' => '$order'],
-            ['$match' => ['order._id' => (int)$id]],
-            ['$limit' => 1],
-            
-            ])->toArray();
-            foreach ($notes_Curr as $row) {
-                $activeProduct12 = array();
-                $k = 0;
-                $activeProduct12[$k] = $row['order'];
-                $k++;
-            }
         
         // dd($notes_Curr);
 
-        return view('dispatch.view_dispatchdetails', compact('orderData','notes_Curr'));
+        return view('complete.view_compledetails', compact('orderData'));
     }
 }

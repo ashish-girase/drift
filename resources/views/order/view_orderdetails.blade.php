@@ -24,7 +24,7 @@
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-s font-weight-bolder ">ID</th>
+                                    <th class="text-uppercase text-secondary text-s font-weight-bolder ">Order ID</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
                                         Customer Name</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
