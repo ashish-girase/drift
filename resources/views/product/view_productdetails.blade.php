@@ -36,9 +36,6 @@
                             </thead>
                             <tbody>
                                 @if ($show1)
-                                {{-- @php
-                                    dd($show1);
-                                @endphp --}}
                                     @foreach ($show1 as $key => $cusData_val)
                                         <tr>
                                             <td class="ps-4">
@@ -106,7 +103,7 @@
 <tbody>
     
  @if ($designData)
-    @foreach ($designData as $key => $cusData_val)
+    @foreach ($designData as $key => $cusData_vald)
                  
                     <tr>
                         <td class="ps-4">
@@ -115,58 +112,58 @@
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                    
-                                {{ $cusData_val->product->designname->design_name }}
+                                {{ $cusData_vald->product->designname->design_name }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                             
-                                {{ $cusData_val->product->designname->dimensions }}
+                                {{ $cusData_vald->product->designname->dimensions }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                              
-                                {{ $cusData_val->product->designname->thickness }}
+                                {{ $cusData_vald->product->designname->thickness }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                              
-                                {{ $cusData_val->product->designname->weight_pcs }}
+                                {{ $cusData_vald->product->designname->weight_pcs }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                               
-                                 {{ $cusData_val->product->designname->weight_sqft }}
+                                 {{ $cusData_vald->product->designname->weight_sqft }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                            
-                                  {{ $cusData_val->product->designname->pcs_sqft }}
+                                  {{ $cusData_vald->product->designname->pcs_sqft }}
                             </p>
                         </td>
                         <td class="text-center">
                             <p class="text-xs font-weight-bold mb-0">
                                
-                                 {{ $cusData_val->product->designname->sqft_pcs }}
+                                 {{ $cusData_vald->product->designname->sqft_pcs }}
                             </p>
                         </td>
                         <td class="text-center">
                             <!-- EDIT BUTTON -->
                         
                             <a href="#" type="button" class="mx-3 edit-product-design" id="#" 
-                                data-user-ids="{{ $cusData_val->product->designname->_id }}"
-                                data-user-master_id="{{ $cusData_val['_id'] }}"
+                                data-user-ids="{{ $cusData_vald->product->designname->_id }}"
+                                data-user-master_id="{{ $cusData_vald['_id'] }}"
                                 data-bs-toggle="tooltip">
                                 <i class="fas fa-user-edit text-secondary"></i>
                             </a>
                             
                             <!-- DELETE BUTTON -->
-                            <a href="#" type="button" class="mx-3 delete_product_design" data-user-ids="{{ $cusData_val->product->designname->_id }}"
-                                data-user-master_id="{{ $cusData_val->product->_id }}"  id="delete_product_design" data-bs-toggle="tooltip">
+                            <a href="#" type="button" class="mx-3 delete_product_design" data-user-ids="{{ $cusData_vald->product->designname->_id }}"
+                                data-user-master_id="{{ $cusData_vald->product->_id }}"  id="delete_product_design" data-bs-toggle="tooltip">
 
         
                     
@@ -217,14 +214,15 @@
                                                     <input type="hidden" name="_token" id="_tokendesign" value="{{Session::token()}}">
                                                     <div class="form-row">
                                                         <div class="form-group col-md-12">
+                                                            
                                                             <input type="hidden" name="prod_id" id="prod_id" value="{{$cusData_val->product->_id}}">
                                                             <input type="hidden" name="master_id" id="master_id" value="{{$cusData_val->_id}}">
-                                                            <label for="user_firstname">Design Name<span
+                                                            <label for="">Design Name<span
                                                                     class="required"></span></label>
                                                             <input type="text" class="form-control" name="design_name"
                                                                 id="design_name" placeholder="Design Name">
 
-                                                            <label for="user_firstname">Dimensions<span
+                                                            <label for="">Dimensions<span
                                                                 class="required"></span></label>
                                                             <input type="text" class="form-control" name="dimensions"
                                                                 id="dimensions" placeholder="Dimensions">

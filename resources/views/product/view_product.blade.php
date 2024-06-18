@@ -179,12 +179,13 @@
                                     placeholder="Product Name">
                             </div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group col-md-12">
-                                <label for="user_firstname">Prodcut Type<span class="required"></span></label>
-                                <input type="text" class="form-control" name="edit_product_type"
-                                    id="edit_product_type" placeholder="Prodcut Type">
-                            </div>
+                
+
+                        <div class="form-group col-md-12">
+                            <label for="edit_products_type">Product Type</label>
+                            <select class="form-control" name="edit_products_type" id="edit_products_type">
+                                {{-- <option value="" selected>Select a Product type</option> --}}
+                            </select>
                         </div>
  
                     </form>

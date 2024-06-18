@@ -187,10 +187,14 @@ class ProductController extends Controller
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
                 ['$unwind' => '$product'],
                 ['$match' => ['product._id' => (int)$id]],
-                ['$match' => [
-                    'product.designname.delete_status' => 'NO' // Match condition based on delete_status
-                ]],
                 ])->toArray();
+
+                foreach ($show1 as $row) {
+                    $activeProduct12 = array();
+                    $k = 0;
+                    $activeProduct12[$k] = $row['product'];
+                    $k++;
+                }
 
                 $designData = $collection->aggregate([
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
@@ -208,7 +212,7 @@ class ProductController extends Controller
                     $activeProduct12[$k] = $row['product'];
                     $k++;
                 }
-                // dd($designData);
+                // dd($show1);
                 return view('product.view_productdetails', compact('show1','designData'));
                 // return response()->json(['success' => $show1]);
         }
@@ -468,6 +472,7 @@ class ProductController extends Controller
         
         $id = (int) $request->id;
         $companyId = 1;
+        // dd($id);
 
         // Get the design name from the request
         $designName = $request->input('design_name');
@@ -507,7 +512,7 @@ class ProductController extends Controller
             'deleteOrder' => "",
             'deleteTime' => "",
         ];
-        // dd($designData);
+        // dd($id);
 
         // Use the aggregation framework to update the product document
         $updateResult = Product::raw()->updateOne(
@@ -516,6 +521,7 @@ class ProductController extends Controller
                 'product.$.designname' => $designData,
             ]]
         );
+
 
         // dd($updateResult );
         // Fetch the updated product for verification

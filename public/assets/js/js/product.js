@@ -23,12 +23,42 @@ $(document).ready(function() {
                 $('#edit_prodid').val(productData._id); // Setting _id value
                 $('#edit_prodName').val(productData.prodName); // Setting _id value
                 $('#edit_colour_name').val(productData.ColorName);
-                $('#edit_product_type').val(productData.product_type);
                 $('#edit_prod_code').val(productData.prod_code);
                 $('#edit_prod_qty').val(productData.prod_qty);
                 $('#edit_Thickness').val(productData.Thickness);
                 $('#edit_Width').val(productData.Width);
                 $('#edit_Roll_weight').val(productData.Roll_weight);
+                
+                
+
+                $.ajax({
+                    url: "/admin/getProductTypes",
+                    type: "GET",
+                    success: function(response) {
+                        // var options = '<option value="" selected>Select a Product Type</option>';
+                        
+                        $('#edit_products_type').empty();
+                        // Construct the <option> tags for each product type
+                        $.each(response, function(index, productType) {
+                            options += '<option value="' + productType.producttype._id + '">' + productType.producttype.producttype_name + '</option>';
+                        });
+                        
+                        // Populate the select element with options
+                        $('#edit_products_type').html(options);
+                        
+                        // Set the selected option based on productData.product_type
+                        var defaultProductTypeName = productData.product_type; // Assuming productData.product_type holds the name of the default product type
+        
+                        $('#edit_products_type option').filter(function() {
+                            return $(this).text() === defaultProductTypeName;
+                        }).prop('selected', true);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors if any
+                        console.error('Error fetching product types:', error);
+                    }
+                });
+                
                 
 
                 $('#edit_colour_name').empty();
@@ -54,7 +84,8 @@ $(document).ready(function() {
         var pro_editname= $('#edit_prodid').val();
         var edit_prodName= $('#edit_prodName').val();
         var edit_colour_id= $('#edit_colour_id').val();
-        var edit_product_type= $('#edit_product_type').val();
+        // var edit_product_type= $('#edit_product_type').val();
+        var edit_product_type= $('#edit_products_type option:selected').text();
         var edit_prod_code= $('#edit_prod_code').val();
         var edit_prod_qty= $('#edit_prod_qty').val();
         var edit_Thickness= $('#edit_Thickness').val();

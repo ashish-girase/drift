@@ -108,7 +108,7 @@ $("#savedesign").click(function(){
 
     if(design_name=='')
     {
-    Swal.fire( "Enter Company Name");
+    Swal.fire( "Enter Design Name");
     $('#design_name').focus();
     return false;
     }

@@ -65,16 +65,25 @@ $(".createOrderModalStore").click(function(){
                                     <label for="email">DESIGN NAME<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_designName[${index}]" id="edit_designName" placeholder="Color Name" value="${product.design_name}">
                                 </div>
+
+                                  <div class="form-group col-md-3">
+                                    <label for="editdesignlist">DESIGN NAME<span class="required"></span></label>
+                                    <select class="form-control" id="editdesignlist">
+                                        <option value="" selected>Select a Design</option>
+                                    </select>
+                                </div>
+
                                 <div class="form-group col-md-3">
                                     <label for="color_name">Color Name<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_ColourName[${index}]" id="edit_ColourName" placeholder="Color Name" value="${product.color_name}">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="edit_colorlist">Color Name</label>
-                                    <select class="form-control" id="edit_colorlist" onchange="showCustomColorInput()">
+                                    <select class="form-control edit_colorlist" id="#" onchange="showCustomColorInput()">
                                         <option value="" selected>Select a color</option>
                                     </select>
                                 </div>
+
                             </div>
                             <div class="row">
                             <div class="form-group col-md-3">
@@ -97,9 +106,153 @@ $(".createOrderModalStore").click(function(){
                             </div>
                         </div>
                             `;
+                            
+                           
+
+                            
+                            populateProductListForEdit();
+
+                            function populateProductListForEdit() {
+                                $.ajax({
+                                    url: base_path +'/admin/searchproductdata',
+                                    method: 'GET',
+                                    success: function(data){
+                                        var datalist = $('#product_list');
+                                        datalist.empty();
+                                        data.forEach(function(product){
+                                            datalist.append('<option value="'+product.product.prodName+'" data-product_type="'+product.product.product_type+'"data-prod_code="'+product.product.prod_code+'"data-prod_qty="'+product.product.prod_qty+'"data-thickness="'+product.product.Thickness+'"data-width="'+product.product.Width+'"data-colorname="'+product.product.ColorName+'"data-roll_weight="'+product.product.Roll_weight+'"data-prodid="'+product.product._id+'">');
+                                            
+                                        });
+                                            
+                                        
+                                        // Event listener for selecting an option
+                                        $('#edit_prodName').on('input', function() {
+                                            var selectedName = $(this).val();
+                                            var selectedOption = $('option[value="' + selectedName + '"]');
+                                            var selectedproduct_type = selectedOption.data('product_type');
+                                
+                                            $('#edit_product_type').val(selectedproduct_type);
+
+                                            $.ajax({
+                                                url: 'admin/get_designlist/' + selectedName,
+                                                type: 'GET',
+                                                success: function(data) {
+                                                    console.log(data);
+                                                    var options = '<option value="" selected>Select a Design</option>';
+                                                    
+                                                    $.each(data, function(index, designs){
+                                                            options += '<option value="'+designs.designname._id+'">'+designs.designname.design_name+'</option>';
+                                              
+                                                });
+                                                    $('#editdesignlist').html(options);
+                                                     // Populate the dropdown
+
+                                                    
+                                                },
+                                                error: function(xhr, status, error) {
+                                                    console.error(error);
+                                                }
+                                                });
+                                            
+                                        });
+                                    },
+                                    error: function(error){
+                                        console.error("data not fetched", error);
+                                    }
+                                });
+                        
+                            }
+
+    
+
+                            // FatchDesignNameForEdit();
+
+                            function FatchDesignNameForEdit(){
+                                var productName = product.prodName;
+
+                                // Make AJAX request to fetch designs for the selected product
+                                    $.ajax({
+                                    url: 'admin/get_designlist/' + productName,
+                                    type: 'GET',
+                                    success: function(data) {
+                                        console.log(data);
+                                        // var options = '<option value="" selected>Select a Design</option>';
+                                        
+                                        $.each(data, function(index, designs){
+                                            console.log(designs);
+                                                options += '<option value="'+designs.designname._id+'">'+designs.designname.design_name+'</option>';
+                                  
+                                    });
+                                        $('#editdesignlist').html(options); // Populate the dropdown
+                                                    
+                                        // var defaultdesignName = product.design_name;
+                                        console.log(defaultdesignName);
+                                        $('#editdesignlist').val(defaultDesignName);
+                                        
+                                        // $('#editdesignlist option').filter(function() {
+                                        //     var ee = $(this).text()
+                                        //     console.log(ee);
+                                        //     return $(this).text() === defaultdesignName;
+                                        // }).prop('selected', true);
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error(error);
+                                    }
+                                    });
+                             
+                            }
+                            
+
                             // console.log(product.prodName);
                             $('#editProductContainer').append(productDetailBlock);
+
                         });
+                        
+                        fetchColorsNamesforEdit(); 
+
+                        function fetchColorsNamesforEdit() {
+                
+                            // var formData = $(this).serialize();
+                            $.ajax({
+                                url: '/admin/find_color', // Replace with your route URL
+                                method: 'GET',
+                                // data: formData, // Pass search term if needed
+                                success: function(data) {
+                                    // var colorSelect = $('#edit_colorlist'); 
+                                        
+                                    $.each(data, function(index, color) {
+                                        
+                                        options += '<option value="' + color.color._id + '">' + color.color.color_name + '</option>';
+                                    });
+
+                                    $('.edit_colorlist').html(options);
+
+                                    // Set default color options if needed
+                                    // orderData.product.forEach(function(product, index) {
+                                    //     var defaultColorName = product.color_name;
+                                    //     $('.edit_colorlist').eq(index).val(defaultColorName);
+                                    // });
+                                    // colorsFetched = true;
+                                    // $('.edit_colorlist').html(options); 
+
+                                    // var defaultColorName = product.color_name;
+                                  
+
+                                    console.log(response);
+
+                                
+                                    // $('.edit_colorlist option').filter(function() {
+                                    //     return $(this).text() === defaultColorName;
+                                    // }).prop('selected', true);
+                    
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error fetching color names:', error);
+                                }
+                            });
+                        }
+
+
                         // console.log("_id", orderData); // Logging _id for debugging
                         // $('#edit_prodid').val(orderData._id);
                         $('#edit_custName').val(orderData.customer.custName); // Added customer name
@@ -436,30 +589,9 @@ $(".createOrderModalStore").click(function(){
             $('#customerInput').on('input', function() {
                 populateProductList();
             });
-
-            function fetchColorsNamesforEdit() {
-
-                // var formData = $(this).serialize();
-                $.ajax({
-                    url: '/admin/find_color', // Replace with your route URL
-                    method: 'GET',
-                    // data: formData, // Pass search term if needed
-                    success: function(data) {
-                        var colorSelect = $('#edit_colorlist'); 
-                            
-                        data.forEach(function(color) {
-                            console.log(color);
-                        colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
-                        });
         
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('Error fetching color names:', error);
-                    }
-                });
-            }
-
-            fetchColorsNamesforEdit();
+           
+            
 
 
             // Event handler for change in color selection
@@ -538,7 +670,7 @@ $(".createOrderModalStore").click(function(){
 
 document.getElementById('productsInput').addEventListener('change', function() {
     var product = this.value;
-    // console.log(product);
+    console.log(product);
     // Make AJAX request to fetch designs for the selected product
     $.ajax({
       url: 'admin/get_designlist/' + product,
@@ -546,10 +678,10 @@ document.getElementById('productsInput').addEventListener('change', function() {
       success: function(data) {
         var options = '<option value="" selected>Select a Design</option>';
         $.each(data, function(index, designs){
-            $.each(designs.designname, function(index, design) {
+   
                 // console.log(design._id); // Make sure this is returning the array of designs
-                options += '<option value="'+design._id+'">'+design.design_name+'</option>';
-            });
+                options += '<option value="'+designs.designname._id+'">'+designs.designname.design_name+'</option>';
+
         });
         $('#designlist').html(options); // Populate the dropdown
       },
@@ -690,9 +822,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 success: function(data) {
                     var options = '<option value="" selected>Select a Design</option>';
                     $.each(data, function(index, designs) {
-                        $.each(designs.designname, function(index, design) {
-                            options += '<option value="' + design._id + '">' + design.design_name + '</option>';
-                        });
+                            options += '<option value="' + designs.designname._id + '">' + designs.designname.design_name + '</option>';
+
                     });
                     $('#designlist', productDetailsBlock).html(options);
                 },

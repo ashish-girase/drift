@@ -1186,6 +1186,7 @@ class OrderController extends Controller
                         ['$unwind' => '$product'],
                         ['$match' => ['product.prodName' => $productName]],
                         ['$match' => ['product.designname' => ['$exists' => true]]], // Filter out documents without designname
+                        ['$unwind' => '$product.designname'],
                         ['$match' => ['product.designname.delete_status' => 'NO']],
                         ['$project' => [
                             'designname' => '$product.designname'
