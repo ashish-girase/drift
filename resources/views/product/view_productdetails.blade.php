@@ -25,7 +25,7 @@
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Product ID</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                                         Product Name</th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
@@ -79,7 +79,7 @@
 
     <thead>
         <tr>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">ID</th>
+            <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Design ID</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">
                 Design Name</th>
             <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder ">

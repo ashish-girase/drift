@@ -101,6 +101,7 @@ class OrderController extends Controller
         $orderData = [
             '_id' => $new_id,
             'counter' => 1,
+            'neworderid' => $request->input('neworderid'),
             'customer' => [
                 'cust_id' => $request->input('cusrID'),
                 'custName' => $request->input('custName'),
@@ -112,7 +113,8 @@ class OrderController extends Controller
                 'zipcode' => $request->input('zipcode'),
                 'state' => $request->input('state'),
                 'country' => $request->input('country'),
-                'custref' => $request->input('custref'),
+                // 'custref' => $request->input('custref'),
+                'customer_refrence_number' => $request->input('customer_refrence_number'),
             ],
             'product' =>  $products ,
             'box_packed' =>  $request->input('isChecked'),
@@ -392,8 +394,28 @@ class OrderController extends Controller
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],  // Unwind the order array first
             ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
-            ['$sort' => ['order._id' => -1]]
+            ['$sort' => ['order._id' => -1]],
+            ['$project' => [
+                'order' => 1,
+                'neworderid' => '$order.neworderid'
+            ]]  
         ]);
+        $order_data = iterator_to_array($orderCurr);
+
+        $lastNewOrderId = isset($order_data[0]['neworderid']) ? $order_data[0]['neworderid'] : null;
+
+
+        function incrementOrderId($orderId) {
+            $prefix = 'DD';
+            $number = (int) substr($orderId, strlen($prefix));
+            $newNumber = $number + 1;
+            return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        }
+        
+        // Increment the neworderid
+        $nextNewOrderId = $lastNewOrderId ? incrementOrderId($lastNewOrderId) : 'DD001';
+        // dd($nextNewOrderId);
+
         $processCurr = $processing->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],  // Unwind the order array first
@@ -402,7 +424,7 @@ class OrderController extends Controller
         ]);
 
         $process_data = $processCurr->toArray();
-        $order_data = $orderCurr->toArray();
+        // $order_data = $orderCurr->toArray();
 
         // $proorderData = $processing->aggregate([
         //     ['$match' => ['companyID' => $companyID]],
@@ -417,7 +439,7 @@ class OrderController extends Controller
         //     $k++;
         // }
         
-        return view('order.view_order', compact('order_data','customers','process_data'));
+        return view('order.view_order', compact('order_data','customers','process_data','nextNewOrderId'));
                 
         
 
@@ -452,7 +474,7 @@ class OrderController extends Controller
                 ['$unwind' => '$order'],
                 ['$match' => ['order.delete_status' => "NO"]],
                 ['$match' => ['order._id' => (int)$id]],
-                // ['$match' => ['designname.delete_status' => "NO"]],
+                
                 ])->toArray();
                 foreach ($proorderData as $row) {
                     $proProduct12 = array();
@@ -617,7 +639,7 @@ class OrderController extends Controller
             'new' => NewOrder::raw(),
             'processing' => Processing::raw(),
             'dispatch' => Dispatch::raw(),
-            'completed' => Completed::raw(),
+            // 'completed' => Completed::raw(),
             'cancelled' => Cancelled::raw()
         ];
         // dd($id);
@@ -646,7 +668,7 @@ class OrderController extends Controller
             ['$match' => ['order._id' => $id]]
         ])->toArray();
             
-        // dd($dispatchResult);
+        // dd($processResult);
         
         if (empty($orderResult) && empty($processResult)  && empty($dispatchResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
@@ -672,9 +694,28 @@ class OrderController extends Controller
                 ['$match' => ['companyID' => $companyID]],
                 ['$unwind' => '$order'],  // Unwind the order array first
                 ['$sort' => ['order._id' => -1]],
-                ['$project' => ['_id' => '$order._id']]
+                ['$project' => ['_id' => '$order._id' , 'neworderid'=>'$order.neworderid']]
             ])->toArray();
+
+            $newOrderId = $processCurr[0]->neworderid;
+
+            function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+            // Increment the neworderid
+            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+            
+            // dd($nextNewOrderId);
+
+
+
             $latestOrderId = $processCurr[0]->_id;
+
+            // $newOrderId = $processCurr[0]->neworderid;
 
             if (!empty($latestIdResult)) {
                 $latestOrderId = $latestIdResult[0]->_id;
@@ -682,12 +723,13 @@ class OrderController extends Controller
                 }
             $newOrderId = $latestOrderId + 1;
             $order['_id'] = $newOrderId;
+            $order['neworderid'] = $nextNewOrderId;
 
             $statusTimes = [
                 'new' => 'status_New_time',
                 'processing' => 'status_Processing_time',
                 'dispatch' => 'status_dispatch_time',
-                'completed' => 'status_Completed_time',
+                // 'completed' => 'status_Completed_time',
                 'cancelled' => 'status_Cancelled_time'
             ];
         
@@ -760,137 +802,61 @@ class OrderController extends Controller
         }
 
         elseif (!empty($processResult)) {
-            $dis_order_type = $request->dis_order_type;
-            $products= $request->products;
-
-            $orderData = $processResult[0]['order']; // Assuming there's only one order
-
             // dd($processResult);
 
-            if($dis_order_type === "Partial order"){
+            $compleorderData = $processResult[0]['order'];
 
-                $dispatch = Dispatch::raw();
-
-                $dispatchCurr = $dispatch->aggregate([
-                    ['$match' => ['companyID' => $companyID]],
-                    ['$unwind' => '$order'],  // Unwind the order array first
-                    ['$sort' => ['order._id' => -1]],
-                    ['$project' => ['_id' => '$order._id']]
-                ])->toArray();
-                $latestOrderId = $dispatchCurr[0]->_id;
-               
-                // dd($latestOrderId);
-    
-                if (!empty($latestIdResult)) {
-                    $latestOrderId = $latestIdResult[0]->_id;
-                
-                    }
-                $newOrderId = $latestOrderId + 1;
-                $orderData['_id'] = $newOrderId;
-                $orderData['status'] = $newStatus;
-
-                Dispatch::raw()->updateOne(
-                    ['companyID' => $companyID],
-                    ['$push' => ['order' => $orderData]]
-                );
-                // dd($products);
-                foreach ($products as $product) {
-                    $partialQuantity = $product['partial_quantity'];
-                    $remainingQuantity = $product['remaining_quantity'];
-
-                    $updateQuanInPic = $product['updateQuanInPic'];
-                    $updateQuanInSqft = $product['updateQuanInSqft'];
-
-                    $productId = $product['product_id'];
-           
-                    // dd($productId);
-
-                Processing::raw()->updateOne(
-                    [
-                        'companyID' => $companyID,
-                        'order._id' => $id,
-                        'order.product.product_id' => $productId,
-                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
-                    ],
-                    [
-                        '$set' => [
-                            'order.$[outer].product.$[inner].quantity_in_soft' => $updateQuanInSqft,
-                            'order.$[outer].product.$[inner].quantity_in_pieces' => $updateQuanInPic
-                        ],
-
-                    ],
-                    [
-                        'arrayFilters' => [
-                            ['outer._id' => $id], // Filter for the outer 'order' array
-                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
-                        ]
-                    ]
-                );
-
-                Processing::raw()->updateOne(
-                    [
-                        'companyID' => $companyID,
-                        'order._id' => $id,
-                        'order.product.product_id' => $productId,
-                        'order.product.quantity_in_pieces' => "0" // Check if quantity_in_pieces is 0
-                    ],
-                    [
-                        '$pull' => [
-                            'order' => ['_id' => $id] // Remove the order from the array
-                        ]
-                    ]
-                );
-                    
-                // dd("ju");
-                // Insert the order into the Dispatch collection
-                Dispatch::raw()->updateOne(
-                    [
-                        'companyID' => $companyID,
-                        'order._id' => $newOrderId,
-                        'order.product.product_id' => $productId,
-                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
-                    ],
-                    [
-                        '$set' => [
-                            'order.$[outer].product.$[inner].quantity_in_soft' => $remainingQuantity,
-                            'order.$[outer].product.$[inner].quantity_in_pieces' => $partialQuantity,
-                            'order.$[outer].status' => $newStatus,
-                        ]
-                    ],
-                    [
-                        'arrayFilters' => [
-                            ['outer._id' => $newOrderId], // Filter for the outer 'order' array
-                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
-                        ]
-                    ]
-                );
-            }
-    
-
-            }
-            else{
-                $orderData['status'] = $newStatus;
+            $compleorderData['status'] = $newStatus;
                 $newCollection = $collectionMap[$newStatus];
                 $dispatch = Dispatch::raw();
+                // dd($compleorderData);
 
                 $dispatchCurr = $dispatch->aggregate([
                     ['$match' => ['companyID' => $companyID]],
                     ['$unwind' => '$order'],  // Unwind the order array first
                     ['$sort' => ['order._id' => -1]],
-                    ['$project' => ['_id' => '$order._id']]
+                    ['$project' => ['_id' => '$order._id','neworderid'=>'$order.neworderid']]
                 ])->toArray();
-                $latestOrderId = $dispatchCurr[0]->_id;
-               
-    
-                if (!empty($latestIdResult)) {
-                    $latestOrderId = $latestIdResult[0]->_id;
                 
-                    }
-                $newOrderId = $latestOrderId + 1;
-                $orderData['_id'] = $newOrderId;
 
-                // dd($orderData);
+                $newOrderId = $dispatchCurr[0]->neworderid;
 
+                function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+            // Increment the neworderid
+            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+
+            $currentDate = date('d/m/y');
+
+    
+            $latestOrderId = $dispatchCurr[0]->_id;
+    
+                if (!empty($dispatchCurr)) {
+                    $latestOrderId = $dispatchCurr[0]->_id;
+                
+                    $newOrderId = $latestOrderId + 1;
+                    $compleorderData['_id'] = $newOrderId;
+                    $compleorderData['neworderid'] = $nextNewOrderId;
+                    $compleorderData['actual_dispatch_date'] = $currentDate;
+
+                }else{
+                    $compleorderData['_id'] =1; 
+
+                    $compleorderData= Completed::raw()->insertOne([
+                        '_id' => 1,
+                        'counter' => 0,
+                        'companyID' => 1,
+                        'order' => [$compleorderData],
+                    ]);
+                    
+                }
+                // dd($compleorderData);
+               
                 Processing::raw()->updateOne(
                     ['companyID' => $companyID],
                     ['$pull' => ['order' => ['_id' => $id]]]
@@ -898,15 +864,166 @@ class OrderController extends Controller
                 // Insert the order into the Dispatch collection
                 Dispatch::raw()->updateOne(
                     ['companyID' => $companyID],
-                    ['$addToSet' => ['order' => $orderData]],
+                    ['$addToSet' => ['order' => $compleorderData]],
                 );
 
-        
-            }
-    
-            // Your response after successful update
-            return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
         }
+
+
+
+
+
+        // Re Usable in partial dispatch
+        // elseif (!empty($processResult)) {
+        //     $dis_order_type = $request->dis_order_type;
+        //     $products= $request->products;
+
+        //     $orderData = $processResult[0]['order']; // Assuming there's only one order
+
+        //     // dd($processResult);
+
+        //     if($dis_order_type === "Partial order"){
+
+        //         $dispatch = Dispatch::raw();
+
+        //         $dispatchCurr = $dispatch->aggregate([
+        //             ['$match' => ['companyID' => $companyID]],
+        //             ['$unwind' => '$order'],  // Unwind the order array first
+        //             ['$sort' => ['order._id' => -1]],
+        //             ['$project' => ['_id' => '$order._id']]
+        //         ])->toArray();
+        //         $latestOrderId = $dispatchCurr[0]->_id;
+               
+        //         // dd($latestOrderId);
+                
+
+    
+        //         if (!empty($latestIdResult)) {
+        //             $latestOrderId = $latestIdResult[0]->_id;
+                
+        //             }
+        //         $newOrderId = $latestOrderId + 1;
+        //         $orderData['_id'] = $newOrderId;
+        //         $orderData['status'] = $newStatus;
+
+        //         Dispatch::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$push' => ['order' => $orderData]]
+        //         );
+        //         // dd($products);
+        //         foreach ($products as $product) {
+        //             $partialQuantity = $product['partial_quantity'];
+        //             $remainingQuantity = $product['remaining_quantity'];
+
+        //             $updateQuanInPic = $product['updateQuanInPic'];
+        //             $updateQuanInSqft = $product['updateQuanInSqft'];
+
+        //             $productId = $product['product_id'];
+           
+        //             // dd($productId);
+
+        //         Processing::raw()->updateOne(
+        //             [
+        //                 'companyID' => $companyID,
+        //                 'order._id' => $id,
+        //                 'order.product.product_id' => $productId,
+        //                 'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+        //             ],
+        //             [
+        //                 '$set' => [
+        //                     'order.$[outer].product.$[inner].quantity_in_soft' => $updateQuanInSqft,
+        //                     'order.$[outer].product.$[inner].quantity_in_pieces' => $updateQuanInPic
+        //                 ],
+
+        //             ],
+        //             [
+        //                 'arrayFilters' => [
+        //                     ['outer._id' => $id], // Filter for the outer 'order' array
+        //                     ['inner.product_id' => $productId] // Filter for the inner 'product' array
+        //                 ]
+        //             ]
+        //         );
+
+        //         Processing::raw()->updateOne(
+        //             [
+        //                 'companyID' => $companyID,
+        //                 'order._id' => $id,
+        //                 'order.product.product_id' => $productId,
+        //                 'order.product.quantity_in_pieces' => "0" // Check if quantity_in_pieces is 0
+        //             ],
+        //             [
+        //                 '$pull' => [
+        //                     'order' => ['_id' => $id] // Remove the order from the array
+        //                 ]
+        //             ]
+        //         );
+                    
+        //         // dd("ju");
+        //         // Insert the order into the Dispatch collection
+        //         Dispatch::raw()->updateOne(
+        //             [
+        //                 'companyID' => $companyID,
+        //                 'order._id' => $newOrderId,
+        //                 'order.product.product_id' => $productId,
+        //                 'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+        //             ],
+        //             [
+        //                 '$set' => [
+        //                     'order.$[outer].product.$[inner].quantity_in_soft' => $remainingQuantity,
+        //                     'order.$[outer].product.$[inner].quantity_in_pieces' => $partialQuantity,
+        //                     'order.$[outer].status' => $newStatus,
+        //                 ]
+        //             ],
+        //             [
+        //                 'arrayFilters' => [
+        //                     ['outer._id' => $newOrderId], // Filter for the outer 'order' array
+        //                     ['inner.product_id' => $productId] // Filter for the inner 'product' array
+        //                 ]
+        //             ]
+        //         );
+        //     }
+    
+
+        //     }
+        //     else{
+        //         $orderData['status'] = $newStatus;
+        //         $newCollection = $collectionMap[$newStatus];
+        //         $dispatch = Dispatch::raw();
+
+        //         $dispatchCurr = $dispatch->aggregate([
+        //             ['$match' => ['companyID' => $companyID]],
+        //             ['$unwind' => '$order'],  // Unwind the order array first
+        //             ['$sort' => ['order._id' => -1]],
+        //             ['$project' => ['_id' => '$order._id']]
+        //         ])->toArray();
+        //         $latestOrderId = $dispatchCurr[0]->_id;
+               
+    
+        //         if (!empty($latestIdResult)) {
+        //             $latestOrderId = $latestIdResult[0]->_id;
+                
+        //             }
+        //         $newOrderId = $latestOrderId + 1;
+        //         $orderData['_id'] = $newOrderId;
+
+        //         // dd($orderData);
+
+        //         Processing::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$pull' => ['order' => ['_id' => $id]]]
+        //         );
+        //         // Insert the order into the Dispatch collection
+        //         Dispatch::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$addToSet' => ['order' => $orderData]],
+        //         );
+
+        
+        //     }
+    
+        //     // Your response after successful update
+        //     return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
+        // }
 
         elseif (!empty($dispatchResult)) {
 
@@ -956,6 +1073,55 @@ class OrderController extends Controller
                 );
 
         }
+        // elseif (!empty($orderResult) || !empty($processResult) ) {
+
+        //     $compleorderData = $dispatchResult[0]['order'];
+        //     dd("dd");
+
+        //     $compleorderData['status'] = $newStatus;
+        //         $newCollection = $collectionMap[$newStatus];
+        //         $dispatch = Cancelled::raw();
+        //         dd($compleorderData);
+
+        //         $dispatchCurr = $dispatch->aggregate([
+        //             ['$match' => ['companyID' => $companyID]],
+        //             ['$unwind' => '$order'],  // Unwind the order array first
+        //             ['$sort' => ['order._id' => -1]],
+        //             ['$project' => ['_id' => '$order._id']]
+        //         ])->toArray();
+        //         // $latestOrderId = $dispatchCurr[0]->_id;
+               
+    
+        //         if (!empty($dispatchCurr)) {
+        //             $latestOrderId = $dispatchCurr[0]->_id;
+                
+        //             $newOrderId = $latestOrderId + 1;
+        //             $compleorderData['_id'] = $newOrderId;
+        //         }else{
+        //             $compleorderData['_id'] =1; 
+
+        //             $compleorderData= Completed::raw()->insertOne([
+        //                 '_id' => 1,
+        //                 'counter' => 0,
+        //                 'companyID' => 1,
+        //                 'order' => [$compleorderData],
+        //             ]);
+                    
+        //         }
+
+               
+
+        //         Dispatch::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$pull' => ['order' => ['_id' => $id]]]
+        //         );
+        //         // Insert the order into the Dispatch collection
+        //         Completed::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$addToSet' => ['order' => $compleorderData]],
+        //         );
+
+        // }
 
         
     

@@ -452,20 +452,20 @@ class ProductController extends Controller
         return response()->json($product);
     }
 
-    public function fetchColorNames(Request $request){
-        // $colors = Color::all()->toArray();
-        $searchTerm = $request->input('searchTerm');
+    // public function fetchColorNames(Request $request){
+    //     // $colors = Color::all()->toArray();
+    //     $searchTerm = $request->input('searchTerm');
 
-        $colour = Color::raw()->aggregate([
-            ['$unwind' => '$color'],
-            ['$match' => ['color.delete_status'=>'NO']],
-            ])->toArray();
-        // Fetch color names from the database based on the search term
-        // $colors =  $colors = Color::where('_id')->get();
-        // dd($colour);
+    //     $colour = Color::raw()->aggregate([
+    //         ['$unwind' => '$color'],
+    //         ['$match' => ['color.delete_status'=>'NO']],
+    //         ])->toArray();
+    //     // Fetch color names from the database based on the search term
+    //     // $colors =  $colors = Color::where('_id')->get();
+    //     // dd($colour);
 
-        return response()->json($colour);
-    }
+    //     return response()->json($colour);
+    // }
 
 
     public function addDesign(Request $request){

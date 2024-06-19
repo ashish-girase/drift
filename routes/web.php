@@ -89,7 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::get('/product', [ProductController::class, 'view_product'])->name('product');
      Route::get('/productdetils', [ProductController::class, 'view_productdetails'])->name('productdetils');
      Route::POST('/admin/adddesign', [ProductController::class, 'addDesign']);
-     Route::get('/admin/getProductTypes', [ProductController::class, 'getProductTypes']);
+     Route::get('/admin/getProductTypes', [ProductController::class, 'getProductTypes'])->name('getProductTypes');
      Route::POST('/admin/add_product', [ProductController::class, 'add_product']);
      Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);
      Route::POST('/admin/update_product', [ProductController::class, 'update_product']);
@@ -98,8 +98,8 @@ Route::group(['middleware' => 'auth'], function () {
      Route::post('/admin/delete_product', [ProductController::class, 'delete_product'])->name('delete_product');
      Route::post('/admin/delete_product_design', [ProductController::class, 'delete_product_design'])->name('delete_product_design');
      Route::post('/admin/edit_product_design', [ProductController::class, 'edit_product_design'])->name('edit_product_design');
-     Route::post('/admin/update_product_design', [ProductController::class, 'update_product_design']);
-     Route::post('/admin/get_colorlist', [ProductController::class, 'fetchColorNames']);
+     Route::post('/admin/update_product_design', [ProductController::class, 'update_product_design'])->name('update_product_design');
+    //  Route::post('/admin/get_colorlist', [ProductController::class, 'fetchColorNames'])->name('get_colorlist');
     // Route::get('/fetch-color-name', 'ProductController@fetchColorName');
      
      //Order master module
@@ -114,7 +114,7 @@ Route::group(['middleware' => 'auth'], function () {
       Route::get('admin/get_design_data/{designId}', [OrderController::class, 'getDesignData']);
      Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
      Route::POST('/admin/edit_order', [OrderController::class, 'edit_order']);
-     Route::get('/admin/find_color', [OrderController::class, 'fetchColorsNames']);
+     Route::get('/admin/find_color', [OrderController::class, 'fetchColorsNames'])->name('find_color');
      Route::POST('/admin/update_order', [OrderController::class, 'update_order']);
      Route::post('/admin/delete_order', [OrderController::class, 'delete_order'])->name('delete_order');
      Route::post('admin/searchCustomer', [OrderController::class, 'searchCustomer']);
@@ -133,8 +133,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dispatch', [DispatchController::class, 'view_dispatch_order'])->name('dispatch');
     Route::get('/dispatchdetails', [DispatchController::class, 'dispatch_details'])->name('dispatchdetails');
 
-    Route::get('/complete', [CompleteController::class, 'view_complete_order'])->name('complete');
-    Route::get('/completedetails', [CompleteController::class, 'complete_details'])->name('completedetails');
+    // Route::get('/complete', [CompleteController::class, 'view_complete_order'])->name('complete');
+    // Route::get('/completedetails', [CompleteController::class, 'complete_details'])->name('completedetails');
 
 
 

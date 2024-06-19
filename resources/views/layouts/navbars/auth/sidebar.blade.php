@@ -49,6 +49,8 @@
           <span class="nav-link-text ms-1">Dashboard</span>
         </a>
       </li>
+
+      
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('order') ? 'active' : '') }}" href="{{ url('order') }}"  id="order-management-link">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -56,24 +58,15 @@
             </div>
             <span class="nav-link-text ms-1">Order Management</span>
         </a>
-        
       </li>
       <li class="nav-item d-none" id="dispatch-field">
         <a class="nav-link" href="{{ url('dispatch') }}">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                 <i style="font-size: 1rem;" class="fas fa-lg fa-truck ps-2 pe-2 text-center text-dark"></i>
             </div>
-            <span class="nav-link-text ms-1">Dispatch</span>
+            <span class="nav-link-text ms-1">Dispatched</span>
         </a>
     </li>
-    <li class="nav-item d-none" id="complete-field">
-      <a class="nav-link" href="{{ url('complete') }}">
-          <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-              <i style="font-size: 1rem;" class="fas fa-lg fa-truck ps-2 pe-2 text-center text-dark"></i>
-          </div>
-          <span class="nav-link-text ms-1">Completed</span>
-      </a>
-  </li>
       <li class="nav-item pb-2">
         <a class="nav-link {{ (Request::is('user') ? 'active' : '') }}" href="{{ url('user') }}">
            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -98,22 +91,7 @@
             <span class="nav-link-text ms-1">Customer</span>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link {{ (Request::is('color') ? 'active' : '') }}" href="{{ url('color') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('color') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Color</span>
-        </a>
-      </li>
-      {{-- <li class="nav-item">
-        <a class="nav-link {{ (Request::is('design') ? 'active' : '') }}" href="{{ url('design') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('color') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
-            </div>
-            <span class="nav-link-text ms-1">Design</span>
-        </a>
-      </li> --}}
+     
 
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('product') ? 'active' : '') }}" href="{{ url('product') }}">
@@ -121,6 +99,14 @@
                 <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('product') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
             </div>
             <span class="nav-link-text ms-1">Product</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {{ (Request::is('color') ? 'active' : '') }}" href="{{ url('color') }}">
+            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('color') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
+            </div>
+            <span class="nav-link-text ms-1">Color</span>
         </a>
       </li>
 

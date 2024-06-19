@@ -4,6 +4,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
     
 <style>
     /* Style the dropdown options */
@@ -34,7 +35,9 @@
                     <table class="table align-items-center mb-0" id="ordertable">
                         <thead>
                             <tr>
+                                <th class="text-uppercase text-secondary text-xxs font-weight-bolder">ID</th>
                                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder">Order ID</th>
+
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Customer Name</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
@@ -59,6 +62,11 @@
         <p class="text-xs font-weight-bold mb-0">{{ $key + 1 }}</p>
     </td>
     <td class="text-center">
+        @if(!empty($order->order->neworderid))
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->neworderid }}</p>
+        @endif     
+    </td>
+    <td class="text-center">
         @if(!empty($order->order->customer->custName))
                 <p class="text-xs font-weight-bold mb-0">{{ $order->order->customer->custName }}</p>
         @endif     
@@ -76,12 +84,9 @@
         <select class="form-control custom-width" name="newstatus" id="statusDropdown"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
             <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+            <option value="partialdispatch" {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>Partial Dispatch</option>
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-            <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
             <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-            @if ($order->order->status != "processing")
-            <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
-            @endif
         </select>
 
         
@@ -186,6 +191,12 @@
                             <h6 class="mb-0">Customer Details</h6>
                         </div>
                         <div class="card-body">
+
+                            <div class="form-group col-md-2">
+                                <label for="new_order_id">Order Id<span class="required"></span></label>
+                                <input type="text" class="form-control custom-width" name="new_order_id" id="new_order_id" value="{{$nextNewOrderId}}" placeholder="Enter Order Id" disabled>
+                            </div>
+
                             <div class="form-group col-md-2">
                                 <label for="custName">Order Type<span class="required"></span></label>
                                 <select  class="form-control custom-width" name="ordertype" id="ordertype">
@@ -242,8 +253,11 @@
                                     <label for="country">Country<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="country" id="country" placeholder="Country">
                                 </div>
+                                <div class="form-group col-md-3">
+                                    <label for="customer_refrence_number">Customer Refrence Number<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="customer_refrence_number" id="customer_refrence_number" placeholder="Customer Refrence Number">
+                                </div>
                             </div>
-
                         </div>
                     </div>
                     <button type="button" id="addProductBtn" class="btn btn-primary">Add Products +</button>

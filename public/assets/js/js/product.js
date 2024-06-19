@@ -314,24 +314,24 @@ $(document).ready(function() {
     });
     
 
-    fetchColorNames();
+    // fetchColorNames();
 
-    function fetchColorNames(searchTerm) {
-        $.ajax({
-            url: '/admin/get_colorlist', // Replace with your route URL
-            method: 'POST',
-            data: { searchTerm: searchTerm }, // Pass search term if needed
-            success: function(data) {
-                var colorSelect = $('#colorlistcust1');
-                data.forEach(function(color) {
-                colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
-                });
-                },
-            error: function(xhr, status, error) {
-                console.error('Error fetching color names:', error);
-            }
-        });
-    }
+    // function fetchColorNames(searchTerm) {
+    //     $.ajax({
+    //         url: '/admin/get_colorlist', // Replace with your route URL
+    //         method: 'POST',
+    //         data: { searchTerm: searchTerm }, // Pass search term if needed
+    //         success: function(data) {
+    //             var colorSelect = $('#colorlistcust1');
+    //             data.forEach(function(color) {
+    //             colorSelect.append('<option value="' + color.color._id + '">' + color.color.color_name + '</option>');
+    //             });
+    //             },
+    //         error: function(xhr, status, error) {
+    //             console.error('Error fetching color names:', error);
+    //         }
+    //     });
+    // }
     
 
     $('#colorlistcust1').change(function() {

@@ -9,7 +9,7 @@
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
-                            <a href="{{route('dispatch')}}" type="button" class="mx-3 " id="" data-bs-toggle="tooltip">
+                            <a href="{{route('complete')}}" type="button" class="mx-3 " id="" data-bs-toggle="tooltip">
                                 <button class=" btn btn-sm btn-outline btn-danger  ">Back</button>
                                 </a>
                             <h5 class="mb-0">Customer Details</h5>

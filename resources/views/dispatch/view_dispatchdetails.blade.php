@@ -245,9 +245,9 @@
                                 @if ($notes_Curr)   
                                                      
                                     @foreach ($notes_Curr as $key => $Data_val)
-                                    {{-- @php
+                                    @php
                                         dd($Data_val);
-                                    @endphp --}}
+                                    @endphp
                                     
                                         {{-- @foreach ($Data_val->order->product as $key => $product) --}}
                                     <tr>

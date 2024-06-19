@@ -39,6 +39,7 @@
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">status</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Order Date</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Tentaitve Dispatch Date</th>
+                                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Actual Dispatch Date</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Dispatch Remarks</th>
                                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">Action</th>
                            </tr>
@@ -67,11 +68,12 @@
         <input type="hidden" name="custName" value="{{ $order->order->customer->custName }}">
         <!-- Add more hidden input fields for other data attributes -->
 
-        <select class="form-control custom-width" name="newstatus"  onchange="openModalf(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+        {{-- <select class="form-control custom-width" name="newstatus"  onchange="openModalf(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')"> --}}
+            <select class="form-control custom-width" name="newstatus" >
             {{-- <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option> --}}
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-            <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option>
+            {{-- <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option> --}}
             {{-- <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option> --}}
         </select>
 
@@ -90,6 +92,11 @@
                 @if(!empty( $order->order->tentative_date))    
                 <p class="text-xs font-weight-bold mb-0">{{ date('d/m/Y', strtotime($order->order->tentative_date)) }}</p>
                 @endif
+        </td>
+        <td class="text-center">
+            @if(!empty( $order->order->actual_dispatch_date))    
+            <p class="text-xs font-weight-bold mb-0">{{ $order->order->actual_dispatch_date }}</p>
+            @endif
         </td>
         <td class="text-center">
                 @if(!empty($order->order->order_remark ))    
