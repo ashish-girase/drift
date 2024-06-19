@@ -1265,6 +1265,7 @@ function openModal(selectElement,orderId,oldStatus) {
     //     });
     // }
     if(selectedStatus === 'processing'){
+        console.log("pro");
 
     $.ajax({
         url: base_path+'/orders/updateStatus',
@@ -1302,6 +1303,7 @@ function openModal(selectElement,orderId,oldStatus) {
 }
 
 else if(selectedStatus === 'dispatch'){
+    console.log("dis");
     var dis_newStatus = selectElement.value;
         $('#dis_status').val(dis_newStatus);
         $('#dis_old_status').val(oldStatus);
@@ -1337,85 +1339,85 @@ else if(selectedStatus === 'dispatch'){
 
 }
 
-// else if(selectedStatus === 'cancelled'){
-//     console.log("can");
-   
-//    $.ajax({
-//        url: '',
-//        type: 'POST',
-//        data: {
-//            oldstatus: oldStatus,
-//            newstatus: newStatus,
-//            id:orderId,
-//            '_token': $('input[name="_token"]').val()
-//        },
-//        success: function(response) {
-//            // Handle success response  
-//            console.log(response);
-//            console.log("sucess");
-
-//            // window.location.href = base_path+"/order";
-//            // Swal.fire("sucess", "Order Sucessfully Processed");
-//            Swal.fire({
-//                title: "Success",
-//                text: "Order Successfully Move To Complete",
-//                icon: "success",
-//              }).then(() => {
-//                window.location.href = base_path + "/order";
-//              });
-//        },
-//        error: function(xhr, status, error) {
-//            // Handle error
-//            // console.error(xhr.responseText);
-//            console.error("Errorsd:", error);
-//            console.log("not sucess");
-//            // window.location.href = base_path+"/order";
-//            // Swal.fire("sucess", "Order Sucessfully Processed");
-//        }
-//    });
-   
-// }
-
-
-
-    //     else if(selectedStatus === 'dispatch'){
-
-    //         $.ajax({
-    //             url: base_path+'/orders/updateStatus',
-    //             type: 'POST',
-    //             data: {
-    //                 oldstatus: oldStatus,
-    //                 newstatus: newStatus,
-    //                 id:orderId,
-    //                 '_token': $('#_tokenOrde').val()
-    //             },
-    //             success: function(response) {
-    //                 // Handle success response  
-    //                 console.log(response);
-    //                 console.log("sucess");
+        else if(selectedStatus === 'cancelled'){
+            console.log("can");
         
-    //                 // window.location.href = base_path+"/order";
-    //                 // Swal.fire("sucess", "Order Sucessfully Processed");
-    //                 Swal.fire({
-    //                     title: "Success",
-    //                     text: "Order Successfully Move To Complete",
-    //                     icon: "success",
-    //                   }).then(() => {
-    //                     window.location.href = base_path + "/order";
-    //                   });
-    //             },
-    //             error: function(xhr, status, error) {
-    //                 // Handle error
-    //                 // console.error(xhr.responseText);
-    //                 console.error("Errorsd:", error);
-    //                 console.log("not sucess");
-    //                 // window.location.href = base_path+"/order";
-    //                 // Swal.fire("sucess", "Order Sucessfully Processed");
-    //             }
-    //         });
+        $.ajax({
+            url: base_path+'/orders/updateStatus',
+            type: 'POST',
+            data: {
+                oldstatus: oldStatus,
+                newstatus: newStatus,
+                id:orderId,
+                '_token': $('input[name="_token"]').val()
+            },
+            success: function(response) {
+                // Handle success response  
+                console.log(response);
+                console.log("sucess");
+
+                // window.location.href = base_path+"/order";
+                // Swal.fire("sucess", "Order Sucessfully Processed");
+                Swal.fire({
+                    title: "Success",
+                    text: "Order Successfully Cancelld",
+                    icon: "success",
+                    }).then(() => {
+                    window.location.href = base_path + "/order";
+                    });
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                // console.error(xhr.responseText);
+                console.error("Errorsd:", error);
+                console.log("not sucess");
+                // window.location.href = base_path+"/order";
+                // Swal.fire("sucess", "Order Sucessfully Processed");
+            }
+        });
+        
+        }
+
+
+
+//         else if(selectedStatus === 'dispatch'){
+
+//             $.ajax({
+//                 url: base_path+'/orders/updateStatus',
+//                 type: 'POST',
+//                 data: {
+//                     oldstatus: oldStatus,
+//                     newstatus: newStatus,
+//                     id:orderId,
+//                     '_token': $('#_tokenOrde').val()
+//                 },
+//                 success: function(response) {
+//                     // Handle success response  
+//                     console.log(response);
+//                     console.log("sucess");
+        
+//                     window.location.href = base_path+"/order";
+//                     // Swal.fire("sucess", "Order Sucessfully Processed");
+//                     Swal.fire({
+//                         title: "Success",
+//                         text: "Order Successfully Move To Complete",
+//                         icon: "success",
+//                       }).then(() => {
+//                         window.location.href = base_path + "/order";
+//                       });
+//                 },
+//                 error: function(xhr, status, error) {
+//                     // Handle error
+//                     // console.error(xhr.responseText);
+//                     console.error("Errorsd:", error);
+//                     console.log("not sucess");
+//                     // window.location.href = base_path+"/order";
+//                     // Swal.fire("sucess", "Order Sucessfully Processed");
+//                 }
+//             });
             
-    // }
-}
+//     }
+// }
 
 
     // $('#dis_savesatatus').click(function(e) {
@@ -1460,6 +1462,7 @@ else if(selectedStatus === 'dispatch'){
     //         }
     //     });
     // });
+}
 
 
 

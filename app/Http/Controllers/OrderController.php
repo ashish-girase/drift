@@ -379,6 +379,7 @@ class OrderController extends Controller
         $companyID=1;
         $collection=NewOrder::raw();
         $processing =Processing::raw();
+        $cancelled = Cancelled::raw();
         // $customers = Customer::select('_id', 'custName')->get();
         $cust_id=$request->input('cust_id');
         $customers = Customer::raw()->aggregate([
@@ -424,22 +425,19 @@ class OrderController extends Controller
         ]);
 
         $process_data = $processCurr->toArray();
-        // $order_data = $orderCurr->toArray();
 
-        // $proorderData = $processing->aggregate([
-        //     ['$match' => ['companyID' => $companyID]],
-        //     ['$unwind' => '$order'],
-        //     ['$match' => ['order._id' => (int)$id]],
-        //     // ['$match' => ['designname.delete_status' => "NO"]],
-        //     ])->toArray();
-        // foreach ($proorderData as $row) {
-        //     $proProduct12 = array();
-        //     $k = 0;
-        //     $proProduct12[$k] = $row['order'];
-        //     $k++;
-        // }
+        $cancelledCurr = $cancelled->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],  // Unwind the order array first
+            ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
+            ['$sort' => ['order._id' => -1]]
+        ]);
+
+        $cancelled_data = $cancelledCurr->toArray();
+
+      
         
-        return view('order.view_order', compact('order_data','customers','process_data','nextNewOrderId'));
+        return view('order.view_order', compact('order_data','customers','process_data','cancelled_data','nextNewOrderId'));
                 
         
 
@@ -669,7 +667,8 @@ class OrderController extends Controller
         ])->toArray();
             
         // dd($processResult);
-        
+
+       
         if (empty($orderResult) && empty($processResult)  && empty($dispatchResult)) {
             return response()->json(['success' => false, 'message' => 'Order not found.']);
             }
@@ -681,11 +680,138 @@ class OrderController extends Controller
         // $parentid = $orderResult[0]['_id'];
         // dd($proorder);
 
+        if(!empty($orderResult) && $newStatus === 'cancelled'){
+            
+            $orderResult = $orderResult[0]['order'];
+            // dd($orderResult);
+
+            $orderResult['status'] = $newStatus;
+                $newCollection = $collectionMap[$newStatus];
+                $cancelled = Cancelled::raw();
+                // dd($compleorderData);
+
+                $cancelledCurr = $cancelled->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id','neworderid'=>'$order.neworderid']]
+                ])->toArray();
+                
+
+                $newOrderId = $cancelledCurr[0]->neworderid;
+
+                function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+            // Increment the neworderid
+            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+
+            // dd($nextNewOrderId);
+
+
+    
+            $latestOrderId = $cancelledCurr[0]->_id;
+    
+                if (!empty($cancelledCurr)) {
+                    $latestOrderId = $cancelledCurr[0]->_id;
+                
+                    $newOrderId = $latestOrderId + 1;
+                    $orderResult['_id'] = $newOrderId;
+                    $orderResult['neworderid'] = $nextNewOrderId;
+
+                }else{
+                    $orderResult['_id'] =1; 
+                    $orderResult['neworderid'] = "DD001";
+                    
+                }
+                // dd($compleorderData);
+               
+                NewOrder::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$pull' => ['order' => ['_id' => $id]]]
+                );
+                // Insert the order into the Dispatch collection
+                Cancelled::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$addToSet' => ['order' => $orderResult]],
+                );
+
+
+        }
+
+        else if(!empty($processResult) && $newStatus === 'cancelled'){
+            
+            $processResult = $processResult[0]['order'];
+            // dd($orderResult);
+
+            $processResult['status'] = $newStatus;
+                $newCollection = $collectionMap[$newStatus];
+                $cancelled = Cancelled::raw();
+                // dd($compleorderData);
+
+                $cancelledCurr = $cancelled->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id','neworderid'=>'$order.neworderid']]
+                ])->toArray();
+                
+
+                $newOrderId = $cancelledCurr[0]->neworderid;
+
+                function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+            // Increment the neworderid
+            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+
+            // dd($nextNewOrderId);
+
+
+    
+            $latestOrderId = $cancelledCurr[0]->_id;
+    
+                if (!empty($cancelledCurr)) {
+                    $latestOrderId = $cancelledCurr[0]->_id;
+                
+                    $newOrderId = $latestOrderId + 1;
+                    $processResult['_id'] = $newOrderId;
+                    $processResult['neworderid'] = $nextNewOrderId;
+
+                }else{
+                    $processResult['_id'] =1; 
+                    $processResult['neworderid'] = "DD001";
+                    
+                }
+                // dd($processResult);
+               
+                Processing::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$pull' => ['order' => ['_id' => $id]]]
+                );
+                // Insert the order into the Dispatch collection
+                Cancelled::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$addToSet' => ['order' => $processResult]],
+                );
+
+
+        }
+
 
         // If $orderResult is not empty, extract values
-        if (!empty($orderResult)) {
+        else if (!empty($orderResult)) {
             $order = $orderResult[0]['order'];
             $parentid = $orderResult[0]['_id'];
+            
 
             // $new_id =  Processing::max('_id');
             $processing = Processing::raw();
@@ -696,6 +822,7 @@ class OrderController extends Controller
                 ['$sort' => ['order._id' => -1]],
                 ['$project' => ['_id' => '$order._id' , 'neworderid'=>'$order.neworderid']]
             ])->toArray();
+            
 
             $newOrderId = $processCurr[0]->neworderid;
 
@@ -846,13 +973,6 @@ class OrderController extends Controller
 
                 }else{
                     $compleorderData['_id'] =1; 
-
-                    $compleorderData= Completed::raw()->insertOne([
-                        '_id' => 1,
-                        'counter' => 0,
-                        'companyID' => 1,
-                        'order' => [$compleorderData],
-                    ]);
                     
                 }
                 // dd($compleorderData);
@@ -1025,54 +1145,56 @@ class OrderController extends Controller
         //     return response()->json(['success' => true, 'message' => 'Order status updated and moved to dispatch.']);
         // }
 
-        elseif (!empty($dispatchResult)) {
+        // elseif (!empty($dispatchResult)) {
 
-            $compleorderData = $dispatchResult[0]['order'];
+        //     $compleorderData = $dispatchResult[0]['order'];
 
-            $compleorderData['status'] = $newStatus;
-                $newCollection = $collectionMap[$newStatus];
-                $dispatch = Completed::raw();
-                // dd($compleorderData);
+        //     $compleorderData['status'] = $newStatus;
+        //         $newCollection = $collectionMap[$newStatus];
+        //         $dispatch = Completed::raw();
+        //         // dd($compleorderData);
 
-                $dispatchCurr = $dispatch->aggregate([
-                    ['$match' => ['companyID' => $companyID]],
-                    ['$unwind' => '$order'],  // Unwind the order array first
-                    ['$sort' => ['order._id' => -1]],
-                    ['$project' => ['_id' => '$order._id']]
-                ])->toArray();
-                // $latestOrderId = $dispatchCurr[0]->_id;
+        //         $dispatchCurr = $dispatch->aggregate([
+        //             ['$match' => ['companyID' => $companyID]],
+        //             ['$unwind' => '$order'],  // Unwind the order array first
+        //             ['$sort' => ['order._id' => -1]],
+        //             ['$project' => ['_id' => '$order._id']]
+        //         ])->toArray();
+        //         // $latestOrderId = $dispatchCurr[0]->_id;
                
     
-                if (!empty($dispatchCurr)) {
-                    $latestOrderId = $dispatchCurr[0]->_id;
+        //         if (!empty($dispatchCurr)) {
+        //             $latestOrderId = $dispatchCurr[0]->_id;
                 
-                    $newOrderId = $latestOrderId + 1;
-                    $compleorderData['_id'] = $newOrderId;
-                }else{
-                    $compleorderData['_id'] =1; 
+        //             $newOrderId = $latestOrderId + 1;
+        //             $compleorderData['_id'] = $newOrderId;
+        //         }else{
+        //             $compleorderData['_id'] =1; 
 
-                    $compleorderData= Completed::raw()->insertOne([
-                        '_id' => 1,
-                        'counter' => 0,
-                        'companyID' => 1,
-                        'order' => [$compleorderData],
-                    ]);
+        //             $compleorderData= Completed::raw()->insertOne([
+        //                 '_id' => 1,
+        //                 'counter' => 0,
+        //                 'companyID' => 1,
+        //                 'order' => [$compleorderData],
+        //             ]);
                     
-                }
+        //         }
 
                
 
-                Dispatch::raw()->updateOne(
-                    ['companyID' => $companyID],
-                    ['$pull' => ['order' => ['_id' => $id]]]
-                );
-                // Insert the order into the Dispatch collection
-                Completed::raw()->updateOne(
-                    ['companyID' => $companyID],
-                    ['$addToSet' => ['order' => $compleorderData]],
-                );
+        //         Dispatch::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$pull' => ['order' => ['_id' => $id]]]
+        //         );
+        //         // Insert the order into the Dispatch collection
+        //         Complete::raw()->updateOne(
+        //             ['companyID' => $companyID],
+        //             ['$addToSet' => ['order' => $compleorderData]],
+        //         );
 
-        }
+        // }
+
+
         // elseif (!empty($orderResult) || !empty($processResult) ) {
 
         //     $compleorderData = $dispatchResult[0]['order'];
