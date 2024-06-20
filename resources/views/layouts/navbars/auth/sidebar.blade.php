@@ -52,21 +52,34 @@
 
       
       <li class="nav-item">
-        <a class="nav-link {{ (Request::is('order') ? 'active' : '') }}" href="{{ url('order') }}"  id="order-management-link">
+        <a class="nav-link {{ (Request::is('order*') ? 'active' : '') }}" href="#order-management-submenu" data-bs-toggle="collapse" aria-expanded="{{ (Request::is('order*') ? 'true' : 'false') }}" id="order-management-link">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('order') ? 'text-white' : 'text-dark') }} " aria-hidden="true"></i>
+                <i style="font-size: 1rem;" class="fas fa-lg fa-list-ul ps-2 pe-2 text-center text-dark {{ (Request::is('order*') ? 'text-white' : 'text-dark') }}" aria-hidden="true"></i>
             </div>
             <span class="nav-link-text ms-1">Order Management</span>
         </a>
-      </li>
-      <li class="nav-item d-none" id="dispatch-field">
-        <a class="nav-link" href="{{ url('dispatch') }}">
-            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i style="font-size: 1rem;" class="fas fa-lg fa-truck ps-2 pe-2 text-center text-dark"></i>
-            </div>
-            <span class="nav-link-text ms-1">Dispatched</span>
-        </a>
+        <div class="collapse {{ (Request::is('order*') ? 'show' : '') }}" id="order-management-submenu">
+            <ul class="nav ms-4 ps-3">
+                <li class="nav-item">
+                    <a class="nav-link {{ (Request::is('order') ? 'active' : '') }}" href="{{ url('order') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1rem;" class="fas fa-lg fa-plus ps-2 pe-2 text-center text-dark {{ (Request::is('order') ? 'text-white' : 'text-dark') }}"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">New Order</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (Request::is('order/dispatch') ? 'active' : '') }}" href="{{ url('order/dispatch') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <i style="font-size: 1rem;" class="fas fa-lg fa-truck ps-2 pe-2 text-center text-dark {{ (Request::is('order/dispatch') ? 'text-white' : 'text-dark') }}"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">Dispatched</span>
+                    </a>
+                </li>
+            </ul>
+        </div>  
     </li>
+    
       <li class="nav-item pb-2">
         <a class="nav-link {{ (Request::is('user') ? 'active' : '') }}" href="{{ url('user') }}">
            <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">

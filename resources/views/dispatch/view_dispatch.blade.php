@@ -73,7 +73,7 @@
             {{-- <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option> --}}
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-            {{-- <option value="completed" {{ $order->order->status == 'completed' ? 'selected' : '' }}>Completed</option> --}}
+            <option value="partialdispatch" {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>partialdispatch</option>
             {{-- <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option> --}}
         </select>
 
@@ -99,13 +99,13 @@
             @endif
         </td>
         <td class="text-center">
-                @if(!empty($order->order->order_remark ))    
-                <p class="text-xs font-weight-bold mb-0">{{ $order->order->order_remark }}</p>
+                @if(!empty($order->order->dispatch_remark ))    
+                <p class="text-xs font-weight-bold mb-0">{{ $order->order->dispatch_remark }}</p>
                 @endif
         </td>
         <td class="text-center">
                 <!--VIEW BUTTON-->
-            <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-dispatched-order" id="view-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip" type="button">
+            <a href="#" type="button" class="btn bg-gradient-primary btn-sm mb-0 view-dispatched-order" id="view-dispatched-order"  data-user-ids="{{ $order->order->_id}}" data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip" type="button">
                 view
             </a>
                 <!--EDIT BUTTON-->

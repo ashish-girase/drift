@@ -51,6 +51,8 @@
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                             Tentaitve Dispatch Date</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
+                                            Actual Dispatch Date</th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                             Order Remarks</th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder">
                                             Dispatch Remarks</th>
@@ -62,17 +64,37 @@
                                 <tbody>
 
                                     @php
-                                        $mergedData = array_merge($order_data, $process_data, $cancelled_data);
+                                        $mergedData = array_merge($order_data, $process_data,$dispatch_data,$cancelled_data);
                                         // dd($mergedData);
                                     @endphp
 
                                     @if ($mergedData)
                                         @foreach ($mergedData as $key => $order)
+
+                                        {{-- @php
+                                            dd($order->order->product)
+                                        @endphp --}}
                                             @php
                                                 $rowClass = '';
                                                 if ($order->order->status == 'cancelled') {
                                                     $rowClass = 'class=table-danger';
                                                 }
+                                                else if ($order->order->status == 'partialdispatch') {
+                                                    $rowClass = 'class=table-active';
+                                                }
+
+                                                $productDetails = '';
+                                                    if (!empty($order->order->product)) {
+                                                        foreach ($order->order->product as $product) {
+                                                            $productDetails .= '<strong>Product Name - </strong>' . htmlspecialchars($product->prodName, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                            $productDetails .= '<strong>Product Type - </strong>' . htmlspecialchars($product->product_type, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                            $productDetails .= '<strong>Design Name - </strong>' . htmlspecialchars($product->design_name, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                            $productDetails .= '<strong>Color Name - </strong>' . htmlspecialchars($product->color_name, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                            $productDetails .= '<strong>Quantity In Soft - </strong>' . htmlspecialchars($product->quantity_in_soft, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                            $productDetails .= '<strong>Quantity In Pieces- </strong>' . htmlspecialchars($product->quantity_in_pieces, ENT_QUOTES, 'UTF-8') . '<br>';
+                                                        }
+                                                    }
+
                                             @endphp
                                             <tr  {{ $rowClass }}>
                                                 <td class="ps-4">
@@ -86,7 +108,7 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if (!empty($order->order->customer->custName))
-                                                        <p class="text-xs font-weight-bold mb-0">
+                                                        <p class="text-xs font-weight-bold mb-0" data-bs-toggle="tooltip" data-bs-html="true" title="{!! $productDetails !!}" >
                                                             {{ $order->order->customer->custName }}</p>
                                                     @endif
                                                 </td>
@@ -158,6 +180,13 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
+                                                    @if (!empty($order->order->actual_dispatch_date))
+                                                        <p class="text-xs font-weight-bold mb-0">
+                                                            {{ $order->order->actual_dispatch_date }}
+                                                        </p>
+                                                    @endif
+                                                </td>
+                                                <td class="text-center">
                                                     @if (!empty($order->order->order_remark))
                                                         <p class="text-xs font-weight-bold mb-0">
                                                             {{ $order->order->order_remark }}</p>
@@ -174,19 +203,23 @@
                                                     <a href="#" type="button"
                                                         class="btn bg-gradient-primary btn-sm mb-0 view-order"
                                                         id="view-order" data-user-ids="{{ $order->order->_id }}"
+                                                        data-user-status="{{ $order->order->status }}"
                                                         data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip"
                                                         type="button">
                                                         view
                                                     </a>
                                                     <!--EDIT BUTTON-->
+                                                    @if($order->order->status == 'New')
                                                     <a href="#" type="button" class="mx-3 edit-order" id="edit-order"
                                                         data-user-ids="{{ $order->order->_id }}"
                                                         data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
                                                         <i class="fas fa-user-edit text-secondary"></i>
                                                     </a>
+                                                    @endif
                                                     <!--DELETE BUTTON-->
                                                     <a href="#" class="mx-3 delete-order"
                                                         data-user-ids="{{ $order->order->_id }}"
+                                                        data-user-status="{{ $order->order->status }}"
                                                         data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
                                                         <span>
                                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
@@ -702,14 +735,16 @@
                                     <input type="text" class="form-control" name="dis_status" id="dis_status"
                                         placeholder="Status" disabled>
                                 </div>
-                                <div class="form-group col-md-3">
+                              
+                                
+                                {{-- <div class="form-group col-md-3">
                                     <label for="user_firstname">Order Type<span class="required"></span></label>
                                     <select class="form-control custom-width" name="order_type" id="order_type">
                                         <option value="normal_order_type" id="normal_order_type">Normal order</option>
                                         <option value="partial_order_type" id="partial_order_type" selected>Partial order
                                         </option>
                                     </select>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0 " id="orderTable">
@@ -749,6 +784,16 @@
                             </div>
                             <div class="form-row">
                                 <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <label for="user_firstname">Vehicle Number<span class="required"></span></label>
+                                        <input type="text" class="form-control" name="vehicle_number" id="vehicle_number"
+                                            placeholder="Enter Vehicle Number" >
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="user_firstname">Vehicle Type<span class="required"></span></label>
+                                        <input type="text" class="form-control" name="vehicle_type" id="vehicle_type"
+                                            placeholder="Enter Vehicle Type" >
+                                    </div>                                  
                                     <div class="form-group col-md-6">
                                         <label for="user_firstname">Receiver Name<span class="required"></span></label>
                                         <input type="text" class="form-control" name="receiver_name"
@@ -801,61 +846,64 @@
 
 
     <script>
-        $(document).ready(function() {
-            // Add event listener to the ordertype dropdown
-            $('#ordertype').change(function() {
-                var selectedOrderType = $(this).val();
-                if (selectedOrderType == 'sampleorder') {
-                    // If sample order is selected, show additional fields
-                    $('#sampleOrderFields').show();
-                } else {
-                    // Otherwise, hide additional fields
-                    $('#sampleOrderFields').hide();
-                }
-            });
-        });
+        // $(document).ready(function() {
+        //     // Add event listener to the ordertype dropdown
+        //     $('#ordertype').change(function() {
+        //         var selectedOrderType = $(this).val();
+        //         if (selectedOrderType == 'sampleorder') {
+        //             // If sample order is selected, show additional fields
+        //             $('#sampleOrderFields').show();
+        //         } else {
+        //             // Otherwise, hide additional fields
+        //             $('#sampleOrderFields').hide();
+        //         }
+        //     });
+        // });
 
-        document.addEventListener("DOMContentLoaded", function() {
-            // Get the order type select element
-            var orderTypeSelect = document.getElementById('order_type');
+        // document.addEventListener("DOMContentLoaded", function() {
+        //     // Get the order type select element
+        //     var orderTypeSelect = document.getElementById('order_type');
 
-            // Get the "Partial Quantity" column header
-            var partialQuantityHeader = document.querySelector(
-            '#orderTable th:nth-child(8)'); // Assuming it's the 8th column
+        //     // Get the "Partial Quantity" column header
+        //     var partialQuantityHeader = document.querySelector(
+        //     '#orderTable th:nth-child(8)'); // Assuming it's the 8th column
 
-            // Get all "Partial Quantity" input fields
-            var partialQuantityInputs = document.querySelectorAll(
-                '#orderTable tbody input[name^="partial_quantity"]');
+        //     // Get all "Partial Quantity" input fields
+        //     var partialQuantityInputs = document.querySelectorAll(
+        //         '#orderTable tbody input[name^="partial_quantity"]');
 
-            // Function to show/hide "Partial Quantity" column
-            function togglePartialQuantityColumn(show) {
-                if (show) {
-                    partialQuantityHeader.style.display = 'table-cell';
-                    partialQuantityInputs.forEach(function(input) {
-                        input.closest('td').style.display = 'table-cell';
-                    });
-                } else {
-                    partialQuantityHeader.style.display = 'none';
-                    partialQuantityInputs.forEach(function(input) {
-                        input.closest('td').style.display = 'none';
-                    });
-                }
-            }
+        //     // Function to show/hide "Partial Quantity" column
+        //     function togglePartialQuantityColumn(show) {
+        //         if (show) {
+        //             partialQuantityHeader.style.display = 'table-cell';
+        //             partialQuantityInputs.forEach(function(input) {
+        //                 input.closest('td').style.display = 'table-cell';
+        //             });
+        //         } else {
+        //             partialQuantityHeader.style.display = 'none';
+        //             partialQuantityInputs.forEach(function(input) {
+        //                 input.closest('td').style.display = 'none';
+        //             });
+        //         }
+        //     }
 
-            // Initial state based on the selected value
-            togglePartialQuantityColumn(orderTypeSelect.value === 'partial_order_type');
+        //     // Initial state based on the selected value
+        //     togglePartialQuantityColumn(orderTypeSelect.value === 'partial_order_type');
 
-            // Add change event listener to the order type select element
-            orderTypeSelect.addEventListener('change', function() {
-                // Check if the selected value is "partial_order_type"
-                if (this.value === 'partial_order_type') {
-                    // Show the "Partial Quantity" column
-                    togglePartialQuantityColumn(true);
-                } else {
-                    // Hide the "Partial Quantity" column
-                    togglePartialQuantityColumn(false);
-                }
-            });
-        });
+        //     // Add change event listener to the order type select element
+        //     orderTypeSelect.addEventListener('change', function() {
+        //         // Check if the selected value is "partial_order_type"
+        //         if (this.value === 'partial_order_type') {
+        //             // Show the "Partial Quantity" column
+        //             togglePartialQuantityColumn(true);
+        //         } else {
+        //             // Hide the "Partial Quantity" column
+        //             togglePartialQuantityColumn(false);
+        //         }
+        //     });
+        // });
+
+   
+
     </script>
 @endsection

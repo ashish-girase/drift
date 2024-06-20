@@ -42,8 +42,10 @@
                             <tbody>
 
                                 @php
-                                    $mergedData = array_merge($orderData, $proorderData);
+                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData);
                                 @endphp
+
+                                
 
                                 @if ($mergedData)                        
                                     @foreach ($mergedData as $key => $Data_val)
@@ -136,7 +138,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $mergedData = array_merge($orderData, $proorderData);
+                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData);
                                 @endphp
                                 @if ($mergedData)                        
                                     @foreach ($mergedData as $key => $Data_val)
@@ -190,6 +192,86 @@
         </div>
     </div>
 </div>
+
+@if ($noteshData)  
+<div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4 mx-4">
+                <div class="card-header pb-0">
+                    <div class="d-flex flex-row justify-content-between">
+                        <!-- <a href="#" class="button-29 createUserModalStore" data-toggle="modal"  data-target="#"><span>Add</span></a> -->
+                        <div>
+                            <h5 class="mb-0">Other Details</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder ">Note ID</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        Vehicle Number</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        Vehicle Type</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        Dispatcher Name</th>
+                                    <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
+                                        Receiver Name</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- @php
+                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData);
+                                @endphp --}}
+                                {{-- @if ($noteshData)                         --}}
+                                    @foreach ($noteshData as $key => $Data_val)
+                                   
+                                    
+                                    <tr>
+                                        <td class="ps-4">
+                                            <p class="text-s font-weight-bold mb-0">{{ $key + 1 }}</p>
+                                        </td>
+                                        <td class="text-center">
+                                            <p class="text-s font-weight-bold mb-0">{{ isset($Data_val->order->vehicle_number)?$Data_val->order->vehicle_number:'N/A' }}</p>
+                                        </td>
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ isset($Data_val->order->vehicle_type)?$Data_val->order->vehicle_type:'N/A' }}</p>
+                                            </td>
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->dispatcher_name }}
+                                                </p>
+                                            </td>         
+                                            <td class="text-center">
+                                                <p class="text-s font-weight-bold mb-0">
+                                                    {{ $Data_val->order->receiver_name }}
+                                                </p>
+                                            </td> 
+                                                  
+                                        </tr>
+                                    
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="3">
+                                            <center>Record Not Found</center>
+                                        </td>
+                                    </tr>
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 
 
 

@@ -89,7 +89,6 @@
 <script src="{{URL::to('/')}}/assets/js/js/producttype.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/product.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/dispatch.js"></script>
-<script src="{{URL::to('/')}}/assets/js/js/cancelled.js"></script>
 <script src="{{URL::to('/')}}/assets/js/js/order.js"></script>
   @stack('rtl')
   @stack('dashboard')

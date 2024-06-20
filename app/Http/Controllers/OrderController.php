@@ -379,6 +379,7 @@ class OrderController extends Controller
         $companyID=1;
         $collection=NewOrder::raw();
         $processing =Processing::raw();
+        $dispatch =Dispatch::raw();
         $cancelled = Cancelled::raw();
         // $customers = Customer::select('_id', 'custName')->get();
         $cust_id=$request->input('cust_id');
@@ -435,9 +436,18 @@ class OrderController extends Controller
 
         $cancelled_data = $cancelledCurr->toArray();
 
+        $dispatchCurr = $dispatch->aggregate([
+            ['$match' => ['companyID' => $companyID]],
+            ['$unwind' => '$order'],  // Unwind the order array first
+            ['$match' => ['order.delete_status' => 'NO','order.status'=>'partialdispatch']],  // Apply filter after unwinding
+            ['$sort' => ['order._id' => -1]]
+        ]);
+
+        $dispatch_data = $dispatchCurr->toArray();
+
       
         
-        return view('order.view_order', compact('order_data','customers','process_data','cancelled_data','nextNewOrderId'));
+        return view('order.view_order', compact('order_data','customers','process_data','cancelled_data','dispatch_data','nextNewOrderId'));
                 
         
 
@@ -448,15 +458,18 @@ class OrderController extends Controller
         $parent=$request->master_id;
             $companyID=1;
             $id=$request->id;
-            // dd($id);
+            $status=$request->status;
+            // dd($status);
             // dd($parent);
+           
+        
             $collection=NewOrder::raw();
             
             $orderData = $collection->aggregate([
             ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
             ['$unwind' => '$order'],
             ['$match' => ['order._id' => (int)$id]],
-            // ['$match' => ['designname.delete_status' => "NO"]],
+            ['$match' => ['order.status' => $status]],
             ])->toArray();
             foreach ($orderData as $row) {
                 $activeProduct12 = array();
@@ -480,10 +493,37 @@ class OrderController extends Controller
                     $proProduct12[$k] = $row['order'];
                     $k++;
                 }
-            // dd($proorderData);
-            return view('order.view_orderdetails', compact('orderData','proorderData'));
-            
-            // return response()->json(['success' => $show1]);
+            // dd($orderData);
+            $partialdispatch=Dispatch::raw();
+            $partialdispatchData = $partialdispatch->aggregate([
+                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                ['$unwind' => '$order'],
+                ['$match' => ['order.delete_status' => 'NO','order.status'=>'partialdispatch']],
+                ['$match' => ['order._id' => (int)$id]],
+                ])->toArray();
+                // dd($partialdispatchData);
+                foreach ($partialdispatchData as $row) {
+                    $proProduct12 = array();
+                    $k = 0;
+                    $proProduct12[$k] = $row['order'];
+                    $k++;
+                }
+                $notes=New_notes::raw();
+                $noteshData = $notes->aggregate([
+                    ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order.delete_status' => 'NO']],
+                    ['$match' => ['order._id' => (int)$id]],
+                    ])->toArray();
+                    // dd($partialdispatchData);
+                    foreach ($noteshData as $row) {
+                        $proProduct12 = array();
+                        $k = 0;
+                        $proProduct12[$k] = $row['order'];
+                        $k++;
+                    }
+            return view('order.view_orderdetails', compact('orderData','proorderData','partialdispatchData','noteshData'));
+
     }
 
 
@@ -588,34 +628,67 @@ class OrderController extends Controller
         $id = intval($request->id);
         $companyID=1;
         $mainId=(int)$request->master_id;
-        // dd($mainId);
-        $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
-       
-        ['$set' => [
-            'order.$.insertedTime' => time(),
-            'order.$.delete_status' => "YES",
-            'order.$.deleteOrder' => intval($id),
-            'order.$.deleteTime0' => time(),
-            ]]);
-        // dd($id);
-        $processData=Processing::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
-        ['$set' => [
-            'order.$.insertedTime' => time(),
-            'order.$.delete_status' => "YES",
-            'order.$.deleteOrder' => intval($id),
-            'order.$.deleteTime0' => time(),
-            ]]);
+        $status=$request->status;
+        // dd($status);
 
-        if($orderData==true)
-        {
-        $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
-        return json_encode($arr);
-        } elseif($processData==true)
-        {
-        $parr = array('status' => 'success', 'message' => 'Order Deleted successfully From processing.','statusCode' => 200);
-        return json_encode($parr);
+        if($status === "New" ){
+
+            $orderData=NewOrder::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
+            
+            ['$set' => [
+                'order.$.insertedTime' => time(),
+                'order.$.delete_status' => "YES",
+                'order.$.deleteOrder' => intval($id),
+                'order.$.deleteTime0' => time(),
+                ]]);
+                // dd($id);
+            
+                if($orderData==true)
+                {
+                $arr = array('status' => 'success', 'message' => 'Order Deleted successfully.','statusCode' => 200);
+                return json_encode($arr);
+                } 
         }
+        elseif($status === "processing"){
+
+            $processData=Processing::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
+            ['$set' => [
+                'order.$.insertedTime' => time(),
+                'order.$.delete_status' => "YES",
+                'order.$.deleteOrder' => intval($id),
+                'order.$.deleteTime0' => time(),
+                ]]);
+
+                if($processData==true)
+                {
+                $parr = array('status' => 'success', 'message' => 'Order Deleted successfully From processing.','statusCode' => 200);
+                return json_encode($parr);
+                }
+                
+        }
+
+        elseif($status === "cancelled"){
+
+            $cancelleData=Cancelled::raw()->updateOne(['companyID' =>$companyID,'_id' => $mainId,'order._id' => $id],
+            ['$set' => [
+                'order.$.insertedTime' => time(),
+                'order.$.delete_status' => "YES",
+                'order.$.deleteOrder' => intval($id),
+                'order.$.deleteTime0' => time(),
+                ]]);
+
+                if($cancelleData==true)
+                {
+                $canc = array('status' => 'success', 'message' => 'Cancelled Order Deleted successfully.','statusCode' => 200);
+                return json_encode($canc);
+                }
         
+            }
+                
+       
+     
+
+     
 
     }
 
@@ -929,8 +1002,133 @@ class OrderController extends Controller
         }
 
         elseif (!empty($processResult)) {
-            // dd($processResult);
+            $orderData = $processResult[0]['order'];
+            if($newStatus === 'partialdispatch'){
+                $products= $request->products;
+                
+                // dd($orderData);
 
+                $dispatch = Dispatch::raw();
+
+                $dispatchCurr = $dispatch->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],  // Unwind the order array first
+                    ['$sort' => ['order._id' => -1]],
+                    ['$project' => ['_id' => '$order._id','neworderid'=>'$order.neworderid']]
+                ])->toArray();
+                
+                $newOrderId = $dispatchCurr[0]->neworderid;
+
+                function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+                // Increment the neworderid
+                $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+                // dd($nextNewOrderId);
+
+                $currentDate = date('d/m/y');
+                    
+                
+                $latestOrderId = $dispatchCurr[0]->_id;
+               
+                
+
+    
+                if (!empty($latestOrderId)) {
+                    $latestOrderId = $dispatchCurr[0]->_id;
+                    // dd($latestOrderId);
+                
+                    $newOrderId = $latestOrderId + 1;
+                    $orderData['_id'] = $newOrderId;
+                    $orderData['status'] = $newStatus;
+                    $orderData['neworderid'] = $nextNewOrderId;
+                    $orderData['actual_dispatch_date'] = $currentDate;
+                }
+                    
+                Dispatch::raw()->updateOne(
+                    ['companyID' => $companyID],
+                    ['$push' => ['order' => $orderData]]
+                );
+                // dd($products);
+                foreach ($products as $product) {
+                    $partialQuantity = $product['partial_quantity'];
+                    $remainingQuantity = $product['remaining_quantity'];
+
+                    $updateQuanInPic = $product['updateQuanInPic'];
+                    $updateQuanInSqft = $product['updateQuanInSqft'];
+
+                    $productId = $product['product_id'];
+           
+                    // dd($partialQuantity);
+
+                Processing::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $id,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+                    ],
+                    [
+                        '$set' => [
+                            // 'order.$[outer].product.$[inner].quantity_in_soft' => $updateQuanInSqft,
+                            'order.$[outer].product.$[inner].quantity_in_pieces' => $updateQuanInPic
+                        ],
+
+                    ],
+                    [
+                        'arrayFilters' => [
+                            ['outer._id' => $id], // Filter for the outer 'order' array
+                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
+                        ]
+                    ]
+                );
+
+                Processing::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $id,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => "0" // Check if quantity_in_pieces is 0
+                    ],
+                    [
+                        '$pull' => [
+                            'order' => ['_id' => $id] // Remove the order from the array
+                        ]
+                    ]
+                );
+                    
+                // dd("ju");
+                // Insert the order into the Dispatch collection
+                Dispatch::raw()->updateOne(
+                    [
+                        'companyID' => $companyID,
+                        'order._id' => $newOrderId,
+                        'order.product.product_id' => $productId,
+                        'order.product.quantity_in_pieces' => ['$exists' => true] // Ensure field exists
+                    ],
+                    [
+                        '$set' => [
+                            // 'order.$[outer].product.$[inner].quantity_in_soft' => $remainingQuantity,
+                            'order.$[outer].product.$[inner].quantity_in_pieces' => $partialQuantity,
+                            'order.$[outer].status' => $newStatus,
+                        ]
+                    ],
+                    [
+                        'arrayFilters' => [
+                            ['outer._id' => $newOrderId], // Filter for the outer 'order' array
+                            ['inner.product_id' => $productId] // Filter for the inner 'product' array
+                        ]
+                    ]
+                );
+            }
+            }
+            else{
+
+          
             $compleorderData = $processResult[0]['order'];
 
             $compleorderData['status'] = $newStatus;
@@ -986,8 +1184,10 @@ class OrderController extends Controller
                     ['companyID' => $companyID],
                     ['$addToSet' => ['order' => $compleorderData]],
                 );
+            }
 
         }
+
 
 
 
@@ -1385,8 +1585,10 @@ class OrderController extends Controller
             'status' => $request->input('status'),
             'partial_quantity' => $request->input('partial_quantity'),
             'remaining_quantity' => $request->input('remaining_quantity'),
-            'dis_order_type' => $request->input('dis_order_type'),
+            // 'dis_order_type' => $request->input('dis_order_type'),
             'note' => $request->input('note'),
+            'vehicle_number' => $request->input('vehicle_number'),
+            'vehicle_type' => $request->input('vehicle_type'),
             'receiver_name' => $request->input('receiver_name'),
             'dispatcher_name' => $request->input('dispatcher_name'),
             'insertedTime' => time(),
@@ -1410,8 +1612,10 @@ class OrderController extends Controller
                 'status' => $request->input('status'),
                 'partial_quantity' => $request->input('partial_quantity'),
                 'remaining_quantity' => $request->input('remaining_quantity'),
-                'dis_order_type' => $request->input('dis_order_type'),
+                // 'dis_order_type' => $request->input('dis_order_type'),
                 'note' => $request->input('note'),
+                'vehicle_number' => $request->input('vehicle_number'),
+                'vehicle_type' => $request->input('vehicle_type'),
                 'receiver_name' => $request->input('receiver_name'),
                 'dispatcher_name' => $request->input('dispatcher_name'),
                 'orderid' => $request->input('orderid'),

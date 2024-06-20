@@ -40,7 +40,7 @@ class DispatchController extends Controller
         $orderCurr = $collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
             ['$unwind' => '$order'],  // Unwind the order array first
-            ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
+            ['$match' => ['order.delete_status' => "NO",'order.status'=>'dispatch']],  // Apply filter after unwinding
             ['$sort' => ['order._id' => -1]]
         ]);
 

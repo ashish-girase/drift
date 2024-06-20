@@ -130,7 +130,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Route::get('/admin/create', [OrderController::class, 'create'])->name('create');
 
 
-    Route::get('/dispatch', [DispatchController::class, 'view_dispatch_order'])->name('dispatch');
+    Route::get('/order/dispatch', [DispatchController::class, 'view_dispatch_order'])->name('dispatch');
     Route::get('/dispatchdetails', [DispatchController::class, 'dispatch_details'])->name('dispatchdetails');
 
     // Route::get('/complete', [CompleteController::class, 'view_complete_order'])->name('complete');
