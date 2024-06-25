@@ -24,7 +24,7 @@
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-s font-weight-bolder ">ID</th>
+                                    {{-- <th class="text-uppercase text-secondary text-s font-weight-bolder ">ID</th> --}}
                                     <th class="text-uppercase text-secondary text-s font-weight-bolder ">Order ID</th>
                                     <th class="text-center text-uppercase text-secondary text-xs font-weight-bolder ">
                                         Customer Name</th>
@@ -42,45 +42,46 @@
                             <tbody>
 
                                 @php
-                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData);
+                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData,$cancelOrderData);
+                                    // dd($mergedData);
                                 @endphp
 
                                 
 
                                 @if ($mergedData)                        
-                                    @foreach ($mergedData as $key => $Data_val)
+                                    @foreach ($mergedData as $Data_val)
   
                                         <tr>
-                                            <td class="ps-4">
-                                                <p class="text-s font-weight-bold mb-0">{{ $key + 1 }}</p>
-                                            </td>
+                                            {{-- <td class="ps-4">
+                                                <p class="text-s font-weight-bold mb-0">{{ isset($Data_val->order) && !empty($Data_val->order) ? $key :"" }}</p>
+                                            </td> --}}
                                             <td class="ps-4">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ isset($Data_val->order->neworderid) ? $Data_val->order->neworderid:"N/A"}}</p>
+                                                    {{ isset($Data_val->order->neworderid) ? $Data_val->order->neworderid:""}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $Data_val->order->customer->custName}}</p>
+                                                    {{ isset($Data_val->order->customer->custName) ? $Data_val->order->customer->custName:""}}</p>
                                             </td>
 
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ isset($Data_val->order->customer->customer_refrence_number) ? $Data_val->order->customer->customer_refrence_number:"N/A"}}</p>
+                                                    {{ isset($Data_val->order->customer->customer_refrence_number) ? $Data_val->order->customer->customer_refrence_number:""}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $Data_val->order->customer->phoneno }}</p>
+                                                    {{isset($Data_val->order->customer->phoneno) ? $Data_val->order->customer->phoneno:""}}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $Data_val->order->customer->city }}
+                                                    {{isset($Data_val->order->customer->city) ? $Data_val->order->customer->city:""}}
                                                 </p>
                                             </td>  
                                          
                                            
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $Data_val->order->customer->state }}
+                                                    {{isset($Data_val->order->customer->state) ? $Data_val->order->customer->state:""}}
                                                 </p>
                                             </td> 
                                            
@@ -138,44 +139,46 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData);
+                                    $mergedData = array_merge($orderData, $proorderData, $partialdispatchData,$cancelOrderData);
                                 @endphp
                                 @if ($mergedData)                        
                                     @foreach ($mergedData as $key => $Data_val)
-                                        @foreach ($Data_val->order->product as $key => $product)
+                                    @if (is_object($Data_val) && isset($Data_val->order))
+                                        @foreach ($Data_val->order->product as $productsNew)
                                     <tr>
                                         <td class="ps-4">
                                             <p class="text-s font-weight-bold mb-0">{{ $key + 1 }}</p>
                                         </td>
                                         <td class="text-center">
-                                            <p class="text-s font-weight-bold mb-0">{{ $product->prodName }}</p>
+                                            <p class="text-s font-weight-bold mb-0">{{ $productsNew->prodName }}</p>
                                         </td>
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $product->product_type }}</p>
+                                                    {{ $productsNew->product_type }}</p>
                                             </td>
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $product->design_name }}
+                                                    {{ $productsNew->design_name }}
                                                 </p>
                                             </td>         
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $product->color_name }}
+                                                    {{ $productsNew->color_name }}
                                                 </p>
                                             </td> 
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $product->quantity_in_soft }}
+                                                    {{ $productsNew->quantity_in_soft }}
                                                 </p>
                                             </td> 
                                             <td class="text-center">
                                                 <p class="text-s font-weight-bold mb-0">
-                                                    {{ $product->quantity_in_pieces }}
+                                                    {{ $productsNew->quantity_in_pieces }}
                                                 </p>
                                             </td>           
                                         </tr>
                                         @endforeach
+                                        @endif
                                     @endforeach
                                 @else
                                     <tr>

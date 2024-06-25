@@ -132,19 +132,19 @@
                                                                 <option value="cancelled" selected>Cancelled</option>
                                                             @else
                                                                 <option value="new"
-                                                                    {{ $order->order->status == 'new' ? 'selected' : '' }}>
+                                                                    {{ $order->order->status == 'new' ? 'selected' : '' }} style="background-color: green;color: #fff;">
                                                                     New</option>
                                                                 <option value="processing"
-                                                                    {{ $order->order->status == 'processing' ? 'selected' : '' }}>
+                                                                    {{ $order->order->status == 'processing' ? 'selected' : '' }} style="background-color: purple;color: #fff;">
                                                                     Processing</option>
                                                                 <option value="partialdispatch"
-                                                                    {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>
+                                                                    {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }} style="background-color:#9B59B6;color: #fff;">
                                                                     Partial Dispatch</option>
                                                                 <option value="dispatch"
-                                                                    {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>
+                                                                    {{ $order->order->status == 'dispatch' ? 'selected' : '' }} style="background-color:#D4AC0D;color: #fff;">
                                                                     Dispatch</option>
                                                                 <option value="cancelled"
-                                                                    {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>
+                                                                    {{ $order->order->status == 'cancelled' ? 'selected' : '' }} style="background-color:#E74C3C;color: #fff;">
                                                                     Cancelled</option>
                                                             @endif
                                                         </select>

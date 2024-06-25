@@ -462,52 +462,61 @@ class OrderController extends Controller
             // dd($status);
             // dd($parent);
            
-        
-            $collection=NewOrder::raw();
-            
-            $orderData = $collection->aggregate([
-            ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
-            ['$unwind' => '$order'],
-            ['$match' => ['order._id' => (int)$id]],
-            ['$match' => ['order.status' => $status]],
-            ])->toArray();
-            foreach ($orderData as $row) {
-                $activeProduct12 = array();
-                $k = 0;
-                $activeProduct12[$k] = $row['order'];
-                $k++;
-            }
-
-            $procollection=Processing::raw();
-            
-            $proorderData = $procollection->aggregate([
-                ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
-                ['$unwind' => '$order'],
-                ['$match' => ['order.delete_status' => "NO"]],
-                ['$match' => ['order._id' => (int)$id]],
+            if($status == "New"){
+                $collection=NewOrder::raw();
                 
-                ])->toArray();
-                foreach ($proorderData as $row) {
-                    $proProduct12 = array();
-                    $k = 0;
-                    $proProduct12[$k] = $row['order'];
-                    $k++;
-                }
-            // dd($orderData);
-            $partialdispatch=Dispatch::raw();
-            $partialdispatchData = $partialdispatch->aggregate([
+                $orderData = $collection->aggregate([
                 ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
                 ['$unwind' => '$order'],
-                ['$match' => ['order.delete_status' => 'NO','order.status'=>'partialdispatch']],
                 ['$match' => ['order._id' => (int)$id]],
+                ['$match' => ['order.status' => $status]],
                 ])->toArray();
-                // dd($partialdispatchData);
-                foreach ($partialdispatchData as $row) {
-                    $proProduct12 = array();
+                foreach ($orderData as $row) {
+                    $activeProduct12 = array();
                     $k = 0;
-                    $proProduct12[$k] = $row['order'];
+                    $activeProduct12[$k] = $row['order'];
                     $k++;
                 }
+            }
+            $orderData = isset($orderData) && !empty($orderData) ? $orderData : [''];
+
+            if($status == "processing"){
+                $procollection=Processing::raw();
+                
+                $proorderData = $procollection->aggregate([
+                    ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order.delete_status' => "NO"]],
+                    ['$match' => ['order._id' => (int)$id]],
+                    
+                    ])->toArray();
+                    foreach ($proorderData as $row) {
+                        $proProduct12 = array();
+                        $k = 0;
+                        $proProduct12[$k] = $row['order'];
+                        $k++;
+                    }
+            }
+            $proorderData = isset($proorderData) && !empty($proorderData) ? $proorderData : [''];
+            
+            if($status == "partialdispatch"){
+                $partialdispatch=Dispatch::raw();
+                $partialdispatchData = $partialdispatch->aggregate([
+                    ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order.delete_status' => 'NO','order.status'=>'partialdispatch']],
+                    ['$match' => ['order._id' => (int)$id]],
+                    ])->toArray();
+                    // dd($partialdispatchData);
+                    foreach ($partialdispatchData as $row) {
+                        $proProduct12 = array();
+                        $k = 0;
+                        $proProduct12[$k] = $row['order'];
+                        $k++;
+                    }
+            }
+            $partialdispatchData = isset($partialdispatchData) && !empty($partialdispatchData) ? $partialdispatchData : [''];    
+
                 $notes=New_notes::raw();
                 $noteshData = $notes->aggregate([
                     ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
@@ -522,7 +531,26 @@ class OrderController extends Controller
                         $proProduct12[$k] = $row['order'];
                         $k++;
                     }
-            return view('order.view_orderdetails', compact('orderData','proorderData','partialdispatchData','noteshData'));
+            
+            if($status == "cancelled"){
+                $cancelOrder=Cancelled::raw();
+                $cancelOrderData = $cancelOrder->aggregate([
+                    ['$match' => ['_id' => (int)$parent, 'companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order.delete_status' => 'NO','order.status'=>'cancelled']],
+                    ['$match' => ['order._id' => (int)$id]],
+                    ])->toArray();
+                    // dd($partialdispatchData);
+                    foreach ($cancelOrderData as $row) {
+                        $proProduct12 = array();
+                        $k = 0;
+                        $proProduct12[$k] = $row['order'];
+                        $k++;
+                }
+            }
+            $cancelOrderData = isset($cancelOrderData) && !empty($cancelOrderData) ? $cancelOrderData : [''];    
+                // dd($cancelOrderData);
+            return view('order.view_orderdetails', compact('orderData','proorderData','partialdispatchData','noteshData','cancelOrderData'));
 
     }
 
