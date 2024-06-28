@@ -649,7 +649,7 @@ class OrderController extends Controller
     $companyId = 1;
     $masterId = (int)$request->masterId;
     $id = (int)$request->_id;
-    dd( $request);
+    // dd( $request);
     $collection = NewOrder::raw();
     // Update the order inside the array
     $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'order._id' => $id],
