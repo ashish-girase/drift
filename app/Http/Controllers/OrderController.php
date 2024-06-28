@@ -429,7 +429,7 @@ class OrderController extends Controller
                 return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
             }
             
-            // Increment the neworderid
+            // Increment fgjthe neworderid
             $nextNewOrderId = $highestNewOrderId ? incrementOrderId($highestNewOrderId) : 'DD001';
 
             $orderCurr =$collection->aggregate([
@@ -449,7 +449,7 @@ class OrderController extends Controller
         $order_data = iterator_to_array($orderCurr);
         // // dd($order_data);
 
-        // $lastNewOrderId = isset($order_data[0]['neworderid']) ? $order_data[0]['neworderid'] : null;
+        // $lastNewOrderId = isset($order_data[0][d'neworderid']) ? gdg$order_data[0]['neworderid'] : null;
 
 
         // function incrementOrderId($orderId) {
