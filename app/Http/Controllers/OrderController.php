@@ -392,30 +392,75 @@ class OrderController extends Controller
             ])->toArray();
     
             $customers_name = $customers ? $customers[0]['customer']['custName'] : '';
-        $orderCurr = $collection->aggregate([
+
+            function getHighestNewOrderId($collection, $companyID) {
+                $orderCurr = $collection->aggregate([
+                    ['$match' => ['companyID' => $companyID]],
+                    ['$unwind' => '$order'],
+                    ['$match' => ['order.delete_status' => "NO"]],
+                    ['$sort' => ['order.neworderid' => -1]],
+                    ['$limit' => 1], // Get only the highest neworderid
+                    ['$project' => ['neworderid' => '$order.neworderid']]
+                ]);
+                
+                $order_data = iterator_to_array($orderCurr);
+                return isset($order_data[0]['neworderid']) ? $order_data[0]['neworderid'] : null;
+            }
+            
+            // Get the highest neworderid from each collection
+            $highestNewOrderIdCollection = getHighestNewOrderId($collection, $companyID);
+            $highestNewOrderIdProcessing = getHighestNewOrderId($processing, $companyID);
+            $highestNewOrderIdDispatch = getHighestNewOrderId($dispatch, $companyID);
+            $highestNewOrderIdCancelled = getHighestNewOrderId($cancelled, $companyID);
+            
+            // Find the highest neworderid across all collections
+            $highestNewOrderId = max(array_filter([
+                $highestNewOrderIdCollection,
+                $highestNewOrderIdProcessing,
+                $highestNewOrderIdDispatch,
+                $highestNewOrderIdCancelled
+            ]));
+            
+            // Function to increment the neworderid
+            function incrementOrderId($orderId) {
+                $prefix = 'DD';
+                $number = (int) substr($orderId, strlen($prefix));
+                $newNumber = $number + 1;
+                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            }
+            
+            // Increment the neworderid
+            $nextNewOrderId = $highestNewOrderId ? incrementOrderId($highestNewOrderId) : 'DD001';
+
+            $orderCurr =$collection->aggregate([
             ['$match' => ['companyID' => $companyID]],
-            ['$unwind' => '$order'],  // Unwind the order array first
-            ['$match' => ['order.delete_status' => "NO"]],  // Apply filter after unwinding
+            ['$unwind' => '$order'],  
+            ['$match' => ['order.delete_status' => "NO"]],
             ['$sort' => ['order._id' => -1]],
             ['$project' => [
                 'order' => 1,
                 'neworderid' => '$order.neworderid'
             ]]  
         ]);
-        $order_data = iterator_to_array($orderCurr);
-
-        $lastNewOrderId = isset($order_data[0]['neworderid']) ? $order_data[0]['neworderid'] : null;
 
 
-        function incrementOrderId($orderId) {
-            $prefix = 'DD';
-            $number = (int) substr($orderId, strlen($prefix));
-            $newNumber = $number + 1;
-            return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-        }
+
         
-        // Increment the neworderid
-        $nextNewOrderId = $lastNewOrderId ? incrementOrderId($lastNewOrderId) : 'DD001';
+        $order_data = iterator_to_array($orderCurr);
+        // // dd($order_data);
+
+        // $lastNewOrderId = isset($order_data[0]['neworderid']) ? $order_data[0]['neworderid'] : null;
+
+
+        // function incrementOrderId($orderId) {
+        //     $prefix = 'DD';
+        //     $number = (int) substr($orderId, strlen($prefix));
+        //     $newNumber = $number + 1;
+        //     return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        // }
+        
+        // // Increment the neworderid
+        // $nextNewOrderId = $lastNewOrderId ? incrementOrderId($lastNewOrderId) : 'DD001';
         // dd($nextNewOrderId);
 
         $processCurr = $processing->aggregate([
@@ -604,7 +649,7 @@ class OrderController extends Controller
     $companyId = 1;
     $masterId = (int)$request->masterId;
     $id = (int)$request->_id;
-    // dd( $id);
+    dd( $request);
     $collection = NewOrder::raw();
     // Update the order inside the array
     $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'order._id' => $id],
@@ -779,7 +824,8 @@ class OrderController extends Controller
         
         // $order = $orderResult[0]['order'];
         // $parentid = $orderResult[0]['_id'];
-        // dd($proorder);
+        // print_r($processResult);
+      
 
         if(!empty($orderResult) && $newStatus === 'cancelled'){
             
@@ -913,6 +959,8 @@ class OrderController extends Controller
             $order = $orderResult[0]['order'];
             $parentid = $orderResult[0]['_id'];
             
+            // dd($orderResult);
+            
 
             // $new_id =  Processing::max('_id');
             $processing = Processing::raw();
@@ -923,7 +971,7 @@ class OrderController extends Controller
                 ['$sort' => ['order._id' => -1]],
                 ['$project' => ['_id' => '$order._id' , 'neworderid'=>'$order.neworderid']]
             ])->toArray();
-            
+            // dd($processCurr);
 
             $newOrderId = $processCurr[0]->neworderid;
 
@@ -951,7 +999,7 @@ class OrderController extends Controller
                 }
             $newOrderId = $latestOrderId + 1;
             $order['_id'] = $newOrderId;
-            $order['neworderid'] = $nextNewOrderId;
+            // $order['neworderid'] = $nextNewOrderId;
 
             $statusTimes = [
                 'new' => 'status_New_time',
@@ -1073,7 +1121,7 @@ class OrderController extends Controller
                     $newOrderId = $latestOrderId + 1;
                     $orderData['_id'] = $newOrderId;
                     $orderData['status'] = $newStatus;
-                    $orderData['neworderid'] = $nextNewOrderId;
+                    // $orderData['neworderid'] = $nextNewOrderId;
                     $orderData['actual_dispatch_date'] = $currentDate;
                 }
                     
@@ -1788,8 +1836,54 @@ class OrderController extends Controller
                 return response()->json($designData);
             }
 
+            public function update_tentative(Request $request){
+
+                $companyID=1;
+                $id=(int)$request->id;
+                $updatetantativedate=$request->updatetantativedate;
+                $userstatus=$request->userstatus;
+                $procollection=Processing::raw();
+                $newcollection=NewOrder::raw();
+                // dd($updatetantativedate);
+
+                if($userstatus === "New"){
+                   
+                    $data = $newcollection->updateOne(
+                        ['companyID' => $companyID, 'order._id' => $id],
+                        ['$set' => [
+                            'order.$.tentative_date' => $updatetantativedate,
+                            'order.$.insertedTime' => time()
+                        ]]
+                    );
+                
+
+                if ($data==true) {
+                    return response()->json(['status' => true,'message' => 'Date updated successfully'], 200);
+                } else {
+                    return response()->json(['status' => false,'message' => 'Failed to update Company'], 200);
+                }
+            }else{
+                // dd($updatetantativedate);
+                $data=$procollection->updateOne(
+                ['companyID' => $companyID,'order._id' => $id],    
+                ['$set' => [
+                'order.$.tentative_date' => $updatetantativedate,
+                'order.$.insertedTime' => time(),
+              ]]
+            );
+            
+            // dd($data);
+            if ($data==true) {
+                return response()->json(['status' => true,'message' => 'Date updated successfully'], 200);
+            } else {
+                return response()->json(['status' => false,'message' => 'Failed to update Company'], 200);
+            }
+            }
+                
+                
 
     }
+}
 
         
      

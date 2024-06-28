@@ -679,6 +679,49 @@ $(".createOrderModalStore").click(function(){
 
     });
 
+    $(".edittentative-date").click(function(){
+        var userId = $(this).data('user-ids');
+        var master_id = $(this).data('user-master_id');
+        var userStatus = $(this).data('user-status');
+        var userdtae = $(this).data('user-tantativedate');
+        if (userStatus === 'New' || userStatus === 'processing') {
+        $('#userIdInput').val(userId);
+        $('#masterIdInput').val(master_id);
+        $('#userstatus').val(userStatus);
+        $('#tentativeDate').val(userdtae);
+
+        $('#edittentative').modal("show");
+        }
+    });
+
+    $("#savetantativedate").click(function(){
+        var updatetantativedate=$('#tentativeDate').val();
+        var userstatus=$('#userstatus').val();
+        var id=$('#userIdInput').val();
+        var master_id=$('#masterIdInput').val();
+
+       
+        $.ajax({
+            url: base_path+"/admin/update_tentative",
+            type: "POST",
+            dataType:"JSON",
+            data: {
+                updatetantativedate: updatetantativedate,
+                userstatus:userstatus,
+                id:id,
+                master_id:master_id,
+            },
+            
+            success: function(Result){
+                // console.log(Result);
+                $("#edittentative").modal("hide");
+                // Store the success message in session storage
+                sessionStorage.setItem('successMessage_col', 'Date Update successfully');
+                window.location.href = base_path + "/order";
+            }
+        });
+    });
+
 
 });
 

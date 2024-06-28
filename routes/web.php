@@ -105,6 +105,7 @@ Route::group(['middleware' => 'auth'], function () {
      //Order master module
      Route::get('/order', [OrderController::class, 'view_order'])->name('order');
      Route::get('/orderdetails', [OrderController::class, 'order_details'])->name('orderdetails');
+     Route::POST('/admin/update_tentative', [OrderController::class, 'update_tentative']);
 
      //  Route::POST('/admin/add_product', [OrderController::class, 'add_product']);
      //  Route::POST('/admin/edit_product', [ProductController::class, 'edit_product']);

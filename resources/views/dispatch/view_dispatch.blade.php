@@ -73,7 +73,7 @@
             {{-- <option value="new" {{ $order->order->status == 'new' ? 'selected' : '' }}>New</option>
             <option value="processing" {{ $order->order->status == 'processing' ? 'selected' : '' }}>Processing</option> --}}
             <option value="dispatch" {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>Dispatch</option>
-            <option value="partialdispatch" {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>partialdispatch</option>
+            {{-- <option value="partialdispatch" {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>partialdispatch</option> --}}
             {{-- <option value="cancelled" {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option> --}}
         </select>
 

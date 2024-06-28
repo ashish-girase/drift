@@ -125,26 +125,32 @@
                                                             value="{{ $order->order->customer->custName }}">
                                                         <!-- Add more hidden input fields for other data attributes -->
 
-                                                        <select class="form-control custom-width" name="newstatus"
-                                                            id="statusDropdown"
-                                                            onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+                                                        @if($order->order->status == "New")
+                                                        <select class="form-control custom-width" name="newstatus" id="statusDropdown" style="background-color: green;color: #fff;"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+                                                        @elseif($order->order->status == "processing")    
+                                                        <select class="form-control custom-width" name="newstatus" id="statusDropdown" style="background-color: purple;color: #fff;"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+                                                        @elseif($order->order->status == "partialdispatch")
+                                                        <select class="form-control custom-width" name="newstatus" id="statusDropdown" style="background-color:#9B59B6;color: #fff;"  onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+                                                        @elseif($order->order->status == "cancelled")
+                                                        <select class="form-control custom-width" name="newstatus" id="statusDropdown" style="background-color:#E74C3C;color: #fff;" onchange="openModal(this, '{{ $order->order->_id }}', '{{ $order->order->status }}')">
+                                                        @endif
                                                             @if ($order->order->status == 'cancelled')
                                                                 <option value="cancelled" selected>Cancelled</option>
                                                             @else
                                                                 <option value="new"
-                                                                    {{ $order->order->status == 'new' ? 'selected' : '' }} style="background-color: green;color: #fff;">
+                                                                    {{ $order->order->status == 'new' ? 'selected' : '' }}>
                                                                     New</option>
                                                                 <option value="processing"
-                                                                    {{ $order->order->status == 'processing' ? 'selected' : '' }} style="background-color: purple;color: #fff;">
+                                                                    {{ $order->order->status == 'processing' ? 'selected' : '' }}>
                                                                     Processing</option>
                                                                 <option value="partialdispatch"
-                                                                    {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }} style="background-color:#9B59B6;color: #fff;">
+                                                                    {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>
                                                                     Partial Dispatch</option>
                                                                 <option value="dispatch"
-                                                                    {{ $order->order->status == 'dispatch' ? 'selected' : '' }} style="background-color:#D4AC0D;color: #fff;">
+                                                                    {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>
                                                                     Dispatch</option>
                                                                 <option value="cancelled"
-                                                                    {{ $order->order->status == 'cancelled' ? 'selected' : '' }} style="background-color:#E74C3C;color: #fff;">
+                                                                    {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>
                                                                     Cancelled</option>
                                                             @endif
                                                         </select>
@@ -174,8 +180,8 @@
                                                 </td>
                                                 <td class="text-center">
                                                     @if (!empty($order->order->tentative_date))
-                                                        <p class="text-xs font-weight-bold mb-0">
-                                                            {{ date('d/m/Y', strtotime($order->order->tentative_date)) }}
+                                                    <p class="text-xs font-weight-bold mb-0 edittentative-date"  data-user-ids="{{ $order->order->_id }}" data-user-master_id="{{ $order['_id'] }}"   data-user-status="{{ $order->order->status }}" data-user-tantativedate="{{ $order->order->tentative_date }}">
+                                                        {{ date('d/m/Y', strtotime($order->order->tentative_date)) }}
                                                         </p>
                                                     @endif
                                                 </td>
@@ -215,7 +221,7 @@
                                                         data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
                                                         <i class="fas fa-user-edit text-secondary"></i>
                                                     </a>
-                                                    @endif
+                                                    
                                                     <!--DELETE BUTTON-->
                                                     <a href="#" class="mx-3 delete-order"
                                                         data-user-ids="{{ $order->order->_id }}"
@@ -225,7 +231,7 @@
                                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                                         </span>
                                                     </a>
-
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -244,7 +250,7 @@
     </div>
 
 
-    <!--================================= create bank modal ============================= -->
+    <!--================================= create order modal ============================= -->
 
     <!-- Button trigger modal -->
 
@@ -828,6 +834,32 @@
         </div>
     </div>
 
+{{-- ------------------------Edit Tentative Date----------------------- --}}
+<div class="modal fade" id="edittentative" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Tentative Date</h5>
+               
+            </div>
+            <div class="modal-body">
+                <form id="editDateForm">
+                    <div class="form-group">
+                        <label for="tentativeDate">Tentative Date</label>
+                        <input type="date" class="form-control" id="tentativeDate" name="tentativeDate">
+                    </div>
+                    <input type="hidden" id="userIdInput" name="userId">
+                    <input type="hidden" id="masterIdInput" name="masterId">
+                    <input type="hidden" id="userstatus" name="userstatus">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn bg-gradient-primary " id="savetantativedate">Save Status</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -844,66 +876,4 @@
         }
     </style>
 
-
-    <script>
-        // $(document).ready(function() {
-        //     // Add event listener to the ordertype dropdown
-        //     $('#ordertype').change(function() {
-        //         var selectedOrderType = $(this).val();
-        //         if (selectedOrderType == 'sampleorder') {
-        //             // If sample order is selected, show additional fields
-        //             $('#sampleOrderFields').show();
-        //         } else {
-        //             // Otherwise, hide additional fields
-        //             $('#sampleOrderFields').hide();
-        //         }
-        //     });
-        // });
-
-        // document.addEventListener("DOMContentLoaded", function() {
-        //     // Get the order type select element
-        //     var orderTypeSelect = document.getElementById('order_type');
-
-        //     // Get the "Partial Quantity" column header
-        //     var partialQuantityHeader = document.querySelector(
-        //     '#orderTable th:nth-child(8)'); // Assuming it's the 8th column
-
-        //     // Get all "Partial Quantity" input fields
-        //     var partialQuantityInputs = document.querySelectorAll(
-        //         '#orderTable tbody input[name^="partial_quantity"]');
-
-        //     // Function to show/hide "Partial Quantity" column
-        //     function togglePartialQuantityColumn(show) {
-        //         if (show) {
-        //             partialQuantityHeader.style.display = 'table-cell';
-        //             partialQuantityInputs.forEach(function(input) {
-        //                 input.closest('td').style.display = 'table-cell';
-        //             });
-        //         } else {
-        //             partialQuantityHeader.style.display = 'none';
-        //             partialQuantityInputs.forEach(function(input) {
-        //                 input.closest('td').style.display = 'none';
-        //             });
-        //         }
-        //     }
-
-        //     // Initial state based on the selected value
-        //     togglePartialQuantityColumn(orderTypeSelect.value === 'partial_order_type');
-
-        //     // Add change event listener to the order type select element
-        //     orderTypeSelect.addEventListener('change', function() {
-        //         // Check if the selected value is "partial_order_type"
-        //         if (this.value === 'partial_order_type') {
-        //             // Show the "Partial Quantity" column
-        //             togglePartialQuantityColumn(true);
-        //         } else {
-        //             // Hide the "Partial Quantity" column
-        //             togglePartialQuantityColumn(false);
-        //         }
-        //     });
-        // });
-
-   
-
-    </script>
 @endsection
