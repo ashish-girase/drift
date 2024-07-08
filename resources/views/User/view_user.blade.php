@@ -149,7 +149,7 @@
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="inputLocation">Zip Code</label>
-                                                        <input type="text" class="form-control" name="user_code" id="user_code" placeholder="Enter User Code">
+                                                        <input type="text" class="form-control" name="user_code" id="user_code" placeholder="Enter Zip Code">
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label>Date Of Birth</label>
