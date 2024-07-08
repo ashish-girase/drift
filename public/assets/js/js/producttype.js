@@ -127,7 +127,7 @@ $("#saveproducttype").click(function(){
         },
         error: function(xhr, status, error) {
             console.error("Error:", error);
-            // Optionally, alert the user about the error
+            // Optionally,ssalert the user about the error
             Swal.fire("Error", "Failed to add product type. Please try again later.", "error");
         }
     });
