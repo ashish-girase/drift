@@ -136,6 +136,21 @@
                                                         @endif
                                                             @if ($order->order->status == 'cancelled')
                                                                 <option value="cancelled" selected>Cancelled</option>
+                                                            @elseif($order->order->status == 'partialdispatch')
+                                                                <option value="partialdispatch" selected>Partial Dispatch</option>
+                                                            @elseif($order->order->status == 'processing')
+                                                                <option value="processing"
+                                                                    {{ $order->order->status == 'processing' ? 'selected' : '' }}>
+                                                                    Processing</option>
+                                                                <option value="partialdispatch"
+                                                                    {{ $order->order->status == 'partialdispatch' ? 'selected' : '' }}>
+                                                                    Partial Dispatch</option>
+                                                                <option value="dispatch"
+                                                                    {{ $order->order->status == 'dispatch' ? 'selected' : '' }}>
+                                                                    Dispatch</option>
+                                                                <option value="cancelled"
+                                                                    {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>
+                                                                    Cancelled</option>
                                                             @else
                                                                 <option value="new"
                                                                     {{ $order->order->status == 'new' ? 'selected' : '' }}>
@@ -153,6 +168,9 @@
                                                                     {{ $order->order->status == 'cancelled' ? 'selected' : '' }}>
                                                                     Cancelled</option>
                                                             @endif
+                                                         
+                                                                
+                                                            
                                                         </select>
 
 
@@ -220,7 +238,9 @@
                                                         data-user-ids="{{ $order->order->_id }}"
                                                         data-user-master_id="{{ $order['_id'] }}" data-bs-toggle="tooltip">
                                                         <i class="fas fa-user-edit text-secondary"></i>
+                                                      
                                                     </a>
+                                                    @endif
                                                     
                                                     <!--DELETE BUTTON-->
                                                     <a href="#" class="mx-3 delete-order"
@@ -231,7 +251,6 @@
                                                             <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                                         </span>
                                                     </a>
-                                                    @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -515,7 +534,8 @@
                     <form method="post" id="customerForm">
                         @csrf
                         <input type="hidden" name="_token" id="_tokenOrder" value="{{ Session::token() }}">
-                        <input type="hidden" name="color_id" id="edit_prodid">
+                        <input type="hidden" name="edit_prodid" id="edit_prodid">
+                        <input type="hidden" name="edit_customerid" id="edit_customerid">
 
                         <!--CUSTOMER DETAILS-->
                         <div class="card mb-3">
@@ -523,15 +543,15 @@
                                 <h6 class="mb-0">Customer Details</h6>
                             </div>
                             <div class="card-body">
-                                <div class="form-group col-md-3">
+                                {{-- <div class="form-group col-md-3">
                                     <label for="custName">Order Type<span class="required"></span></label>
                                     <input class="form-control custom-width" id="editordertype" name="editordertype"
                                         list="customer_list" placeholder="Select a Customer">
-                                    {{-- <select  class="form-control custom-width" name="editordertype" id="editordertype">
+                                    <select  class="form-control custom-width" name="editordertype" id="editordertype">
                                 <option value="normalorder">Normal Order</option>
                                 <option value="sampleorder">Sample Order</option>
-                            </select> --}}
-                                </div>
+                            </select>
+                                </div> --}}
                                 <div class="row">
                                     <div class="form-group col-md-3">
                                         <input type="text" name="custid" id="custid" hidden>
@@ -594,6 +614,8 @@
                             </div>
                         </div>
 
+                        <button type="button" id="addProductBtnforedit" class="btn btn-primary">Add Products +</button>
+
 
                         <!--PRODUCT DETAILS-->
                         {{-- <div class="card mb-3  border border-dark edit_multiple">
@@ -640,6 +662,12 @@
                             <!-- Product detail blocks will be appended here -->
                         </div>
 
+                        <div id="productDetailsContainer">
+                            
+                        </div>
+
+                        <div id="productDetailsPlaceholder"></div>
+
 
                         <!-- Status Dropdown -->
                         <div class="row">
@@ -650,27 +678,27 @@
                             <div class="form-group col-md-3">
                                 <label for="companylistcust">ORDER DATE<span class="required"></span></label>
                                 <input type="date" class="form-control custom-width" name="edit_order_date"
-                                    id="edit_order_date" placeholder="Company Name">
+                                    id="edit_order_date" placeholder="Company Name" onchange="updateDatefildforEdit()">
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="companylistcust"> DISPTACH DATE FROM PRODUCTION<span
                                         class="required"></span></label>
                                 <input type="text" class="form-control custom-width" name="edit_disptach_date"
-                                    id="edit_disptach_date" placeholder="Company Name">
+                                    id="edit_disptach_date" placeholder="Dispatch Date Name" onchange="updateDatefildforEdit()">
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="companylistcust"> TENTAITVE DISPATCH DATE<span
                                         class="required"></span></label>
                                 <input type="date" class="form-control custom-width" name="edit_tentative_date"
-                                    id="edit_tentative_date" placeholder="Company Name" disabled>
+                                    id="edit_tentative_date" placeholder="Tentative Datee" disabled>
                             </div>
 
                             <div class="form-group col-md-3">
                                 <label for="notes">BOXES PACKED<span class="required"></span></label><br>
                                 <input type="checkbox" name="edit_box_packed" id="edit_box_packed"
-                                    placeholder="ADD ORDER REMARKS">
+                                    >
                             </div>
 
                             <div class="form-group col-md-6">
@@ -681,7 +709,7 @@
                             <div class="form-group col-md-6">
                                 <label for="order remark">DISPATCH REMARKS<span class="required"></span></label>
                                 <input type="text" class="form-control custom-width" name="edit_dispatch_remark"
-                                    id="edit_dispatch_remark" placeholder="ADD ORDER REMARKS">
+                                    id="edit_dispatch_remark" placeholder="ADD Dispatch REMARKS">
                             </div>
                             <div class="row" id="editsampleOrderFields" style="display: none;">
                                 <div class="form-group col-md-6">
@@ -860,10 +888,6 @@
         </div>
     </div>
 </div>
-
-
-
-
 
     <style>
         .custom-width {

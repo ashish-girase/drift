@@ -595,7 +595,7 @@ class OrderController extends Controller
             }
             $cancelOrderData = isset($cancelOrderData) && !empty($cancelOrderData) ? $cancelOrderData : [''];    
                 // dd($cancelOrderData);
-            return view('order.view_orderdetails', compact('orderData','proorderData','partialdispatchData','noteshData','cancelOrderData'));
+            return view('order.view_orderdetails', compact('orderData','proorderData','partialdispatchData','noteshData','cancelOrderData','status'));
 
     }
 
@@ -648,46 +648,127 @@ class OrderController extends Controller
     {
     $companyId = 1;
     $masterId = (int)$request->masterId;
-    $id = (int)$request->_id;
-    // dd( $request);
-    $collection = NewOrder::raw();
-    // Update the order inside the array
-    $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'order._id' => $id],
+    $id =(int)$request->c_id;
+    // dd($id);
+    $edit_custId = $request->custId;
+    // dd($edit_custId);
+    $productsData = json_decode($request->input('productsData'), true); 
+    // dd($productsData);
 
-    ['$set' => [
-    // 'order.$.cust_id' => $request->customer_id,
-    // 'order.$.prod_id' => $request->product_id,
-    'order.$.custName' => $request->customers_name,
-    'order.$.prodName' => $request->products_name,
-    'order.$.product_type' => $request->product_type,
-    'order.$.colour_id' => $request->colour_id,
-    'order.$.ColourName' => $request->colours_name,
-    'order.$.design_name' => $request->design_name,
-    'order.$.quantity_in_soft' => $request->quantity_in_soft,   
-    'order.$.quantity_in_pieces' => $request->quantity_in_pieces,  
-    'order.$.Total_qty' => $request->Total_qty,
-    'order.$.Detail_inst' => $request->Detail_inst,
-    // 'order.$.Billing_address' => $request->Billing_address,
-    // 'order.$.Delivery_address' => $request->Delivery_address,
-    'order.$.total_quantity' => $request->total_quantity,
-    // 'order.$.price' => $request->price,
-    'order.$.order_remark' => $request->order_remark,
-    'order.$.dispatch_remark' => $request->dispatch_remark,
-    'order.$.order_date' => $request->order_date,
-    'order.$.disptach_date' => $request->disptach_date,
-    'order.$.tentative_date' => $request->tentative_date,
-    'order.$.trackingdetails' => $request->trackingdetails,
-    'order.$.transportname' => $request->transportname,
-    'order.$.box_packed' => $request->box_packed,
-    'order.$.insertedTime' => time(),
-    'order.$.delete_status' => "NO",
-    'order.$.deleteOrder' => "",
-    'order.$.deleteTime' => ""
-    ]
-    ]
+    // dd( $productsData);
+    // Update the order inside the array
+
+    $orderData = [
+        'counter' => 1,
+        'neworderid' => $request->input('neworderid'),
+        'customer' => [
+            'cust_id' => $request->input('cusrID'),
+            'custName' => $request->input('custName'),
+            'companylistcust' => $request->input('companylistcust'),
+            'email' => $request->input('email'),
+            'phoneno' => $request->input('phoneno'),
+            'address' => $request->input('address'),
+            'city' => $request->input('city'),
+            'zipcode' => $request->input('zipcode'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
+            'customer_refrence_number' => $request->input('customer_refrence_number'),
+        ],
+        'product' => $productsData, // Assuming you have 'products' in the request
+        'box_packed' => $request->input('isChecked'),
+        'order_date' => $request->input('order_date'),
+        'disptach_date' => $request->input('disptach_date'),
+        'tentative_date' => $request->input('tentative_date'),
+        'ordertype' => $request->input('ordertype'),
+        'transportname' => $request->input('transportname'),
+        'trackingdetails' => $request->input('trackingdetails'),
+        'status' => "New",
+        'order_remark' => $request->input('order_remark'),
+        'dispatch_remark' => $request->input('dispatch_remark'),
+        'insertedTime' => time(),
+        'delete_status' => "NO",
+        'deleteOrder' => "",
+        'deleteTime' => "",
+    ];
+
+    // dd($orderData);
+    // $orderCurr=NewOrder::raw()->updateOne(['companyID' => $companyId,'order._id' => $id],
+    
+
+    // ['$set' => [
+    // // 'order.$.cust_id' => $request->customer_id,
+    // // 'order.$.prod_id' => $request->product_id,
+    // 'order.$.custName' => $request->customers_name,
+    // 'order.$.prodName' => $request->products_name,
+    // 'order.$.product_type' => $request->product_type,
+    // 'order.$.colour_id' => $request->colour_id,
+    // 'order.$.ColourName' => $request->colours_name,
+    // 'order.$.design_name' => $request->design_name,
+    // 'order.$.quantity_in_soft' => $request->quantity_in_soft,   
+    // 'order.$.quantity_in_pieces' => $request->quantity_in_pieces,  
+    // 'order.$.Total_qty' => $request->Total_qty,
+    // 'order.$.Detail_inst' => $request->Detail_inst,
+    // // 'order.$.Billing_address' => $request->Billing_address,
+    // // 'order.$.Delivery_address' => $request->Delivery_address,
+    // 'order.$.total_quantity' => $request->total_quantity,
+    // // 'order.$.price' => $request->price,
+    // 'order.$.order_remark' => $request->edit_order_remark,
+    // 'order.$.dispatch_remark' => $request->edit_dispatch_remark,
+    // 'order.$.order_date' => $request->edit_order_date,
+    // 'order.$.disptach_date' => $request->edit_disptach_date,
+    // 'order.$.tentative_date' => $request->edit_tentative_date,
+    // 'order.$.trackingdetails' => $request->trackingdetails,
+    // 'order.$.transportname' => $request->transportname,
+    // 'order.$.box_packed' => $request->edit_box_packed,
+    // 'order.$.insertedTime' => time(),
+    // 'order.$.delete_status' => "NO",
+    // 'order.$.deleteOrder' => "",
+    // 'order.$.deleteTime' => ""
+    // ]
+    // ]
+    // );
+
+    $orderCurr = NewOrder::raw()->updateOne(
+        [
+            'companyID' => $companyId,
+            'order._id' => $id
+        ],
+        [
+            '$set' => [
+                'order.$[outer].customer.custName' => $request->edit_custName,
+                'order.$[outer].customer.companylistcust' => $request->edit_companylistcust,
+                'order.$[outer].customer.email' => $request->edit_email,
+                'order.$[outer].customer.phoneno' => $request->edit_phoneno,
+                'order.$[outer].customer.address' => $request->edit_address,
+                'order.$[outer].customer.city' => $request->edit_city,
+                'order.$[outer].customer.zipcode' => $request->edit_zipcode,
+                'order.$[outer].customer.state' => $request->edit_state,
+                'order.$[outer].customer.country' => $request->edit_country,
+                'order.$[outer].customer.customer_refrence_number' => $request->edit_custref,
+                'order.$[outer].product' => $productsData,
+                'order.$[outer].order_remark' => $request->edit_order_remark,
+                'order.$[outer].dispatch_remark' => $request->edit_dispatch_remark,
+                'order.$[outer].order_date' => $request->edit_order_date,
+                'order.$[outer].disptach_date' => $request->edit_disptach_date,
+                'order.$[outer].tentative_date' => $request->edit_tentative_date,
+                'order.$[outer].trackingdetails' => $request->edittrackingdetails,
+                'order.$[outer].transportname' => $request->edittransportname,
+                'order.$[outer].box_packed' => $request->edit_box_packed,
+                'order.$[outer].insertedTime' => time(),
+                'order.$[outer].delete_status' => "NO",
+                'order.$[outer].deleteOrder' => "",
+                'order.$[outer].deleteTime' => ""
+            ]
+        ],
+        [
+            'arrayFilters' => [
+                ['outer._id' => $id],
+                
+            ]
+        ]
     );
 
-    dd($orderCurr);
+    // dd($id);
 
     if ($orderCurr==true) {
         // dd($orderCurr);
@@ -847,35 +928,34 @@ class OrderController extends Controller
 
                 $newOrderId = $cancelledCurr[0]->neworderid;
 
-                function incrementOrderId($orderId) {
-                $prefix = 'DD';
-                $number = (int) substr($orderId, strlen($prefix));
-                $newNumber = $number + 1;
-                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-            }
+            //     function incrementOrderId($orderId) {
+            //     $prefix = 'DD';
+            //     $number = (int) substr($orderId, strlen($prefix));
+            //     $newNumber = $number + 1;
+            //     return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+            // }
             
-            // Increment the neworderid
-            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
+            // // Increment the neworderid
+            // $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
 
             // dd($nextNewOrderId);
-
+            dd($orderResult);
 
     
-            $latestOrderId = $cancelledCurr[0]->_id;
+            
     
                 if (!empty($cancelledCurr)) {
                     $latestOrderId = $cancelledCurr[0]->_id;
                 
                     $newOrderId = $latestOrderId + 1;
                     $orderResult['_id'] = $newOrderId;
-                    $orderResult['neworderid'] = $nextNewOrderId;
+                    
 
                 }else{
                     $orderResult['_id'] =1; 
-                    $orderResult['neworderid'] = "DD001";
-                    
+ 
                 }
-                // dd($compleorderData);
+                dd($orderResult);
                
                 NewOrder::raw()->updateOne(
                     ['companyID' => $companyID],
@@ -910,15 +990,7 @@ class OrderController extends Controller
 
                 $newOrderId = $cancelledCurr[0]->neworderid;
 
-                function incrementOrderId($orderId) {
-                $prefix = 'DD';
-                $number = (int) substr($orderId, strlen($prefix));
-                $newNumber = $number + 1;
-                return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-            }
             
-            // Increment the neworderid
-            $nextNewOrderId = $newOrderId ? incrementOrderId($newOrderId) : 'DD001';
 
             // dd($nextNewOrderId);
 
@@ -927,18 +999,18 @@ class OrderController extends Controller
             $latestOrderId = $cancelledCurr[0]->_id;
     
                 if (!empty($cancelledCurr)) {
-                    $latestOrderId = $cancelledCurr[0]->_id;
+                    // $latestOrderId = $cancelledCurr[0]->_id;
                 
                     $newOrderId = $latestOrderId + 1;
                     $processResult['_id'] = $newOrderId;
-                    $processResult['neworderid'] = $nextNewOrderId;
+                   
 
                 }else{
                     $processResult['_id'] =1; 
-                    $processResult['neworderid'] = "DD001";
+                
                     
                 }
-                // dd($processResult);
+                dd($processResult);
                
                 Processing::raw()->updateOne(
                     ['companyID' => $companyID],
@@ -1782,6 +1854,8 @@ class OrderController extends Controller
         
                 return response()->json($colour);
             }
+
+           
 
 
             public function fetchProcessData(Request $request){

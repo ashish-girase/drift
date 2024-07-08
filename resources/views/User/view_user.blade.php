@@ -118,12 +118,7 @@
                                                         <input type="text" class="form-control" name="user_lastname"
                                                             id="user_lastname" placeholder="Last Name">
                                                     </div>
-                                                    <!-- <div class="form-group col-md-3">
-                                                        <label for="inputUsername4">Username<span
-                                                                class="required"></span></label>
-                                                        <input type="text" class="form-control" name="inputUsername4"
-                                                            id="inputUsername4" placeholder="Username">
-                                                    </div> -->
+                                                    
                                                     <div class="form-group col-md-12">
                                                         <label for="user_email">Email<span
                                                                 class="required"></span></label>

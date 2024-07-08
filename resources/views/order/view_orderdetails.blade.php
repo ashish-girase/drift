@@ -138,13 +138,14 @@
                                 </tr>
                             </thead>
                             <tbody>
+                               
                                 @php
                                     $mergedData = array_merge($orderData, $proorderData, $partialdispatchData,$cancelOrderData);
                                 @endphp
                                 @if ($mergedData)                        
                                     @foreach ($mergedData as $key => $Data_val)
                                     @if (is_object($Data_val) && isset($Data_val->order))
-                                        @foreach ($Data_val->order->product as $productsNew)
+                                        @foreach ($Data_val->order->product as $key => $productsNew)
                                     <tr>
                                         <td class="ps-4">
                                             <p class="text-s font-weight-bold mb-0">{{ $key + 1 }}</p>
@@ -196,7 +197,7 @@
     </div>
 </div>
 
-@if ($noteshData)  
+@if ($noteshData && $status === "partialdispatch")  
 <div>
     <div class="row">
         <div class="col-12">

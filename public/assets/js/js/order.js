@@ -46,13 +46,22 @@ $(".createOrderModalStore").click(function(){
                 master_id: master_id
             },
             success: function(response) {
+                
+               
+                
+
                 if (response.success && response.success.length > 0) {
+
+                    
                     var orderData = response.success[0]; // Assuming first item in success array
                     var productData = orderData.product && orderData.product.length > 0 ? orderData.product[0] : null;
                     // console.log(orderData);
+
+                
                     if (orderData) {
                         $('#editProductContainer').empty();
                         orderData.product.forEach(function(product, index) {
+                            
                             var productDetailBlock =
                              `
                                 <div class="card mb-3 border border-dark  edit_multiple">
@@ -71,26 +80,26 @@ $(".createOrderModalStore").click(function(){
                                     <label for="product_type">Product Type<span class="required"></span></label>
                                     <input type="text" class="form-control custom-width" name="edit_product_type[${index}]" id="edit_product_type" placeholder="Product Type" value="${product.product_type}">
                                 </div>
-                                <div class="form-group col-md-3">
-                                    <label for="email">DESIGN NAME<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_designName[${index}]" id="edit_designName" placeholder="Color Name" value="${product.design_name}">
+                                <div class="form-group col-md-3" hidden >
+                                    <label for="edit_designName">DESIGN  NAME<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width edit_designName" name="edit_designName[${index}]" id="edit_designName" placeholder="Color Name" value="${product.design_name}">
                                 </div>
 
-                                  <div class="form-group col-md-3">
+                                <div class="form-group col-md-3">
                                     <label for="editdesignlist">DESIGN NAME<span class="required"></span></label>
-                                    <select class="form-control" id="editdesignlist">
+                                    <select class="form-control editdesignlist" name="editdesignlist[${index}]" id="editdesignlist_${index}">
                                         <option value="" selected>Select a Design</option>
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
-                                    <label for="color_name">Color Name<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_ColourName[${index}]" id="edit_ColourName" placeholder="Color Name" value="${product.color_name}">
+                                <div class="form-group col-md-3"  hidden>
+                                    <label for="color_name">Color  Name<span class="required"></span></label>
+                                    <input type="text" class="form-control custom-width" name="edit_ColourName[${index}]" id="edit_ColourName_${index}" placeholder="Color Name" value="${product.color_name}">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="edit_colorlist">Color Name</label>
-                                    <select class="form-control edit_colorlist" id="#" onchange="showCustomColorInput()">
-                                        <option value="" selected>Select a color</option>
+                                    <select class="form-control edit_colorlist" name="edit_colorlist[${index}]" id="edit_colorlist_${index}">
+                                       
                                     </select>
                                 </div>
 
@@ -98,20 +107,26 @@ $(".createOrderModalStore").click(function(){
                             <div class="row">
                             <div class="form-group col-md-3">
                                     <label for="prod_qty">PCS/SQFT<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_pic_sqf[${index}]" id="edit_pic_sqf" placeholder="PCS/SQFT" value="${product.pcs_sqft}" >
+                                    <input type="text" class="form-control custom-width edit_pic_sqf" name="edit_pic_sqf[${index}]" id="edit_pic_sqf" placeholder="PCS/SQFT" value="${product.pcs_sqft}" disabled>
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">SQFT/PCS<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_sqft_pic[${index}]" id="edit_sqft_pic" placeholder="SQFT/PCS" value="${product.sqft_pcs}" >
+                                    <input type="text" class="form-control custom-width edit_sqft_pic" name="edit_sqft_pic[${index}]" id="edit_sqft_pic" placeholder="SQFT/PCS" value="${product.sqft_pcs}" disabled >
                                 </div>
                              
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN SQFT<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_soft[${index}]" id="edit_quantity_in_soft" placeholder="Product Quantity" value="${product.quantity_in_soft}" >
+                                    <input type="text" class="form-control custom-width edit_quantity_in_soft" name="edit_quantity_in_soft[${index}]" id="edit_quantity_in_soft" placeholder="Product Quantity" value="${product.quantity_in_soft}" >
                                 </div>
                                 <div class="form-group col-md-3">
                                     <label for="prod_qty">QUANTITY IN PIECES<span class="required"></span></label>
-                                    <input type="text" class="form-control custom-width" name="edit_quantity_in_pieces[${index}]" id="edit_quantity_in_pieces" placeholder="Product Quantity" value="${product.quantity_in_pieces}">
+                                    <input type="text" class="form-control custom-width edit_quantity_in_pieces" name="edit_quantity_in_pieces[${index}]" id="edit_quantity_in_pieces" placeholder="Product Quantity" value="${product.quantity_in_pieces}">
+                                </div>
+
+                                <div class="row">
+                                    <div class="form-group col-md-3">
+                                        <button type="button" class="btn btn-danger delete-product" data-index="${index}">Delete Product</button>
+                                    </div>
                                 </div>
                             </div>
                             </div>
@@ -136,34 +151,29 @@ $(".createOrderModalStore").click(function(){
                                             
                                         
                                         // Event listener for selecting an option
-                                        $('#edit_prodName').on('input', function() {
+                                        $(document).on('input', '#edit_prodName', function () {
                                             var selectedName = $(this).val();
-                                            var selectedOption = $('option[value="' + selectedName + '"]');
+                                            var block = $(this).closest('.edit_multiple');
+                                            var selectedOption = $('option[value="' + selectedName + '"]', datalist);
                                             var selectedproduct_type = selectedOption.data('product_type');
                                 
-                                            $('#edit_product_type').val(selectedproduct_type);
+                                            // $('#edit_product_type').val(selectedproduct_type);
+                                            block.find('#edit_product_type').val(selectedproduct_type);
 
                                             $.ajax({
-                                                url: 'admin/get_designlist/' + selectedName,
+                                                url: base_path + '/admin/get_designlist/' + selectedName,
                                                 type: 'GET',
-                                                success: function(data) {
-                                                    console.log(data);
+                                                success: function (data) {
                                                     var options = '<option value="" selected>Select a Design</option>';
-                                                    
-                                                    $.each(data, function(index, designs){
-                                                            options += '<option value="'+designs.designname._id+'">'+designs.designname.design_name+'</option>';
-                                              
-                                                });
-                                                    $('#editdesignlist').html(options);
-                                                     // Populate the dropdown
-
-                                                    
+                                                    $.each(data, function (index, designs) {
+                                                        options += '<option value="' + designs.designname._id + '">' + designs.designname.design_name + '</option>';
+                                                    });
+                                                    block.find('.editdesignlist').html(options);
                                                 },
-                                                error: function(xhr, status, error) {
+                                                error: function (xhr, status, error) {
                                                     console.error(error);
                                                 }
-                                                });
-                                            
+                                            });
                                         });
                                     },
                                     error: function(error){
@@ -175,35 +185,83 @@ $(".createOrderModalStore").click(function(){
 
     
 
-                            // FatchDesignNameForEdit();
+                            FatchDesignNameForEdit();
+
 
                             function FatchDesignNameForEdit(){
                                 var productName = product.prodName;
+                                console.log(productName);
 
-                                // Make AJAX request to fetch designs for the selected product
                                     $.ajax({
                                     url: 'admin/get_designlist/' + productName,
                                     type: 'GET',
                                     success: function(data) {
-                                        console.log(data);
-                                        // var options = '<option value="" selected>Select a Design</option>';
+                                        var options = '';
+                                        $.each(data, function(index, design) {
+                                            options += '<option value="' + design.designname._id + '">' + design.designname.design_name + '</option>';
+                                        });
+                                        $('.editdesignlist').eq(index).html(options);
+
+                                        var defaultDesignName = $('.edit_designName').eq(index).val();
+                                        $('.editdesignlist').eq(index).find('option').filter(function() {
+                                            return $(this).text() === defaultDesignName;
+                                        }).prop('selected', true);
                                         
-                                        $.each(data, function(index, designs){
-                                            console.log(designs);
-                                                options += '<option value="'+designs.designname._id+'">'+designs.designname.design_name+'</option>';
-                                  
+                
+
+                                    $(document).on('change', '.editdesignlist', function() {
+                                        var $productBlock = $(this).closest('.edit_multiple');
+                                        var selectedDesignId = $(this).val();
+                                    
+                                        if (selectedDesignId) {
+                                            $.ajax({
+                                                url: 'admin/get_design_data/' + selectedDesignId,
+                                                type: 'GET',
+                                                success: function(details) {
+                                                    if (details && details.length > 0) {
+                                                        var designDetails = details[0]; // Assuming first item in response array
+                                    
+                                                        $productBlock.find('.edit_pic_sqf').val(designDetails.designname.pcs_sqft);
+                                                        $productBlock.find('.edit_sqft_pic').val(designDetails.designname.sqft_pcs);
+                                    
+                                                        $productBlock.find('.edit_quantity_in_pieces').val('');
+                                                        $productBlock.find('.edit_quantity_in_soft').val('');
+                                                    }
+                                                },
+                                                error: function(xhr, status, error) {
+                                                    console.error('Error fetching design details:', error);
+                                                }
+                                            });
+                                        }
                                     });
-                                        $('#editdesignlist').html(options); // Populate the dropdown
-                                                    
-                                        // var defaultdesignName = product.design_name;
-                                        console.log(defaultdesignName);
-                                        $('#editdesignlist').val(defaultDesignName);
-                                        
-                                        // $('#editdesignlist option').filter(function() {
-                                        //     var ee = $(this).text()
-                                        //     console.log(ee);
-                                        //     return $(this).text() === defaultdesignName;
-                                        // }).prop('selected', true);
+                                    
+                                    // Event listener for edit_quantity_in_pieces
+                                    $(document).on('input', '.edit_quantity_in_pieces', function() {
+                                        var $productBlock = $(this).closest('.edit_multiple');
+                                        var pieces = $(this).val();
+                                        var sqft_pic = parseFloat($productBlock.find('.edit_sqft_pic').val());
+                                        if (!isNaN(pieces) && !isNaN(sqft_pic)) {
+                                            var soft = pieces * sqft_pic;
+                                            $productBlock.find('.edit_quantity_in_soft').val(soft);
+                                        } else {
+                                            $productBlock.find('.edit_quantity_in_soft').val('');
+                                        }
+                                    });
+                                    
+                                    // Event listener for edit_quantity_in_soft
+                                    $(document).on('input', '.edit_quantity_in_soft', function() {
+                                        var $productBlock = $(this).closest('.edit_multiple');
+                                        var soft = $(this).val();
+                                        var pic_sqf = parseFloat($productBlock.find('.edit_pic_sqf').val());
+                                        if (!isNaN(soft) && !isNaN(pic_sqf)) {
+                                            var pieces = soft * pic_sqf;
+                                            $productBlock.find('.edit_quantity_in_pieces').val(pieces);
+                                        } else {
+                                            $productBlock.find('.edit_quantity_in_pieces').val('');
+                                        }
+                                    });
+
+                                        // $('#editdesignlist').trigger('change');
                                     },
                                     error: function(xhr, status, error) {
                                         console.error(error);
@@ -211,60 +269,59 @@ $(".createOrderModalStore").click(function(){
                                     });
                              
                             }
+                                
+
+                            fetchColorsNamesforEdit(); 
+
+                            function fetchColorsNamesforEdit() {
+                                // var formData = $(this).serialize();
+                                $.ajax({
+                                    url: '/admin/find_color', // Replace with your route URL
+                                    method: 'GET',
+                                   
+                                    success: function(data) {
+                                        orderData.product.forEach(function(product, index) {
+                                            var colorSelect = $(`#edit_colorlist_${index}`);
+                                            var options = '';
                             
+                                            $.each(data, function(i, color) {
+                                                options += `<option value="${color.color._id}">${color.color.color_name}</option>`;
+                                            });
+                            
+                                            colorSelect.html(options);
+                            
+                                            var edit_colorname = $(`#edit_ColourName_${index}`).val();
+                            
+                                            colorSelect.find('option').filter(function() {
+                                                return $(this).text() === edit_colorname;
+                                            }).prop('selected', true);
+                                        });
+    
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error('Error fetching color names:', error);
+                                    }
+                                });
+                            }
+
 
                             // console.log(product.prodName);
                             $('#editProductContainer').append(productDetailBlock);
-
                         });
+                        $('.delete-product').click(function() {
+                            var index = $(this).data('index');
+                            $(this).closest('.edit_multiple').remove();
+                        });
+
                         
-                        fetchColorsNamesforEdit(); 
-
-                        function fetchColorsNamesforEdit() {
-                
-                            // var formData = $(this).serialize();
-                            $.ajax({
-                                url: '/admin/find_color', // Replace with your route URL
-                                method: 'GET',
-                                // data: formData, // Pass search term if needed
-                                success: function(data) {
-                                    // var colorSelect = $('#edit_colorlist'); 
-                                        
-                                    $.each(data, function(index, color) {
-                                        
-                                        options += '<option value="' + color.color._id + '">' + color.color.color_name + '</option>';
-                                    });
-
-                                    $('.edit_colorlist').html(options);
-
-                                    // Set default color options if needed
-                                    // orderData.product.forEach(function(product, index) {
-                                    //     var defaultColorName = product.color_name;
-                                    //     $('.edit_colorlist').eq(index).val(defaultColorName);
-                                    // });
-                                    // colorsFetched = true;
-                                    // $('.edit_colorlist').html(options); 
-
-                                    // var defaultColorName = product.color_name;
-                                  
-
-                                    console.log(product);
-
-                                
-                                    // $('.edit_colorlist option').filter(function() {
-                                    //     return $(this).text() === defaultColorName;
-                                    // }).prop('selected', true);
-                    
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error('Error fetching color names:', error);
-                                }
-                            });
-                        }
-
+                        
 
                         // console.log("_id", orderData); // Logging _id for debugging
-                        // $('#edit_prodid').val(orderData._id);
+                        
+                        $('#edit_customerid').val(orderData.customer.cust_id);
+                        $('#edittransportname').val(orderData.customer.transportname);
+                        $('#edittrackingdetails').val(orderData.customer.trackingdetails);
+                        $('#edit_prodid').val(orderData._id);
                         $('#edit_custName').val(orderData.customer.custName); // Added customer name
                         $('#edit_companylistcust').val(orderData.customer.companylistcust);
                         $('#edit_email').val(orderData.customer.email);
@@ -346,16 +403,366 @@ $(".createOrderModalStore").click(function(){
         });
     });
 
+    function fetchColorsNamesforEdit() {
+        $.ajax({
+            url: '/admin/find_color',
+            method: 'GET',
+            success: function(data) {
+                var options = '';
+                $.each(data, function(index, color) {
+                    options += '<option value="' + color.color._id + '">' + color.color.color_name + '</option>';
+                });
+                $('.new_colorlist').html(options);
+
+            
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching color names:', error);
+            }
+        });
+    }
+
+
+    function populateDesignData() {
+        $('#new_editdesignlist').on('change', function() {
+            var designId = $(this).val();
+            // Make AJAX request to fetch data for the selected design
+            $.ajax({
+                url: 'admin/get_design_data/' + designId ,
+                type: 'GET',
+                success: function(data) {
+                    // Handle the fetched data here, e.g., display it on the page
+                    $('#new_pic_sqf').val(data[0].designname.pcs_sqft);
+                    $('#new_sqft_pic').val(data[0].designname.sqft_pcs);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+
+        $('#new_quantity_in_pieces').on('input', function() {
+
+            var edit_designname = $('#new_designName').val();
+            $('#new_editdesignlist option').filter(function() {
+                return $(this).text() === edit_designname;
+            }).prop('selected', true);
+
+            // Event listener for edit_quantity_in_pieces
+            $('#new_quantity_in_pieces').on('input', function() {
+                var pieces = $(this).val();
+                var sqft_pic = parseFloat($('#new_sqft_pic').val());
+                if (!isNaN(pieces) && !isNaN(sqft_pic)) {
+                    var soft = pieces * sqft_pic;
+                    $('#new_quantity_in_soft').val(soft);
+                } else {
+                    $('#new_quantity_in_soft').val('');
+                }
+            });
+
+        });
+
+        $('#new_quantity_in_soft').on('input', function() {
+
+            var edit_designname = $('#new_designName').val();
+            $('#new_editdesignlist option').filter(function() {
+                return $(this).text() === edit_designname;
+            }).prop('selected', true);
+
+            // Event listener for edit_quantity_in_pieces
+            $('#new_quantity_in_soft').on('input', function() {
+                var pieces = $(this).val();
+                var pic_sqf = parseFloat($('#new_pic_sqf').val());
+                if (!isNaN(pieces) && !isNaN(pic_sqf)) {
+                    var soft = pieces * pic_sqf;
+                    $('#new_quantity_in_pieces').val(soft);
+                } else {
+                    $('#new_quantity_in_pieces').val('');
+                }
+            });
+            
+
+        });
+
+    }
+
+
+    function attachCustomColorInputListener(select, customColorInput) {
+        select.addEventListener("change", function() {
+            if (select.value === "custom") {
+                customColorInput.style.display = "block";
+            } else {
+                customColorInput.style.display = "none";
+            }
+        });
+    }
+
+    // Function to populate product list and set product details
+    function populateProductListAndSetDetails(productDetailsBlock) {
+        // Function to set product details based on selected product name
+        function setProductDetails(selectedOption) {
+            var selectedproduct_type = selectedOption.data('product_type');
+            var selectedprod_code = selectedOption.data('prod_code');
+            var selectedprod_qty = selectedOption.data('prod_qty');
+            var selectedColorName = selectedOption.data('colorname');
+            var selectedRoll_weight = selectedOption.data('prodid');
+
+            $('#product_type', productDetailsBlock).val(selectedproduct_type);
+            $('#prod_code', productDetailsBlock).val(selectedprod_code);
+            $('#prod_qty', productDetailsBlock).val(selectedprod_qty);
+            $('#ColourName', productDetailsBlock).val(selectedColorName);
+            $('#prodid', productDetailsBlock).val(selectedRoll_weight);
+        }
+
+        $.ajax({
+            url: base_path + '/admin/searchproductdata',
+            method: 'GET',
+            success: function(data) {
+                var datalist = $('#product_list', productDetailsBlock);
+                datalist.empty();
+                data.forEach(function(product) {
+                    datalist.append('<option value="' + product.product.prodName + '" data-product_type="' + product.product.product_type + '" data-prod_code="' + product.product.prod_code + '" data-prod_qty="' + product.product.prod_qty + '" data-thickness="' + product.product.Thickness + '" data-width="' + product.product.Width + '" data-colorname="' + product.product.ColorName + '" data-roll_weight="' + product.product.Roll_weight + '" data-prodid="' + product.product._id + '">');
+                });
+
+                // Event listener for selecting an option
+                $('#productsInput', productDetailsBlock).on('input', function() {
+                    var selectedName = $(this).val();
+                    var selectedOption = $('option[value="' + selectedName + '"]', productDetailsBlock);
+                    setProductDetails(selectedOption);
+                });
+            },
+            error: function(error) {
+                console.error("data not fetched", error);
+            }
+        });
+    }
+
+
+    // Function to fetch and populate design list based on selected product name
+    function populateDesignList(productDetailsBlock) {
+        
+        $('#productsInput', productDetailsBlock).on('change', function() {
+            var product = this.value;
+            $.ajax({
+                url: 'admin/get_designlist/' + product,
+                type: 'GET',
+                success: function(data) {
+                    var options = '<option value="" selected>Select a Design</option>';
+                    $.each(data, function(index, designs) {
+                            options += '<option value="' + designs.designname._id + '">' + designs.designname.design_name + '</option>';
+
+                    });
+                    $('#designlist', productDetailsBlock).html(options);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    }
+
+    function populateDesignData(productDetailsBlock) {
+        $('#designlist',productDetailsBlock).on('change', function() {
+            var designId = $(this).val();
+            // Make AJAX request to fetch data for the selected design
+            $.ajax({
+                url: 'admin/get_design_data/' + designId ,
+                type: 'GET',
+                success: function(data) {
+                    // Handle the fetched data here, e.g., display it on the page
+                    $('#pcs_sqft',productDetailsBlock).val(data[0].designname.pcs_sqft);
+                    $('#sqft_pcs',productDetailsBlock).val(data[0].designname.sqft_pcs);
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    }
+
+    const sqrf_pcs = document.getElementById("sqft_pcs");
+    const pcs_sqft = document.getElementById("pcs_sqft");
+
+    const quantity_in_soft = document.getElementById("quantity_in_soft");
+    const quantity_in_pieces = document.getElementById("quantity_in_pieces");
+
+    pcs_sqft.addEventListener("input", updateQuantityInSoft);
+    quantity_in_soft.addEventListener("input", QuantityInSqft);
+    
+    sqrf_pcs.addEventListener("input", QuantityInSqft);
+    quantity_in_pieces.addEventListener("input", updateQuantityInSoft);
+
+    function QuantityInSqft(productDetailsBlock) {
+        const pcs_sqft = productDetailsBlock.querySelector("#pcs_sqft");
+        
+        const quantity_in_soft = productDetailsBlock.querySelector("#quantity_in_soft");
+        const quantity_in_pieces = productDetailsBlock.querySelector("#quantity_in_pieces");
+    
+        pcs_sqft.addEventListener("input", function() {
+            const pcs_sqft_val = parseFloat(pcs_sqft.value);
+            const quantity_in_soft_val = parseFloat(quantity_in_soft.value);
+            if (!isNaN(pcs_sqft_val) && !isNaN(quantity_in_soft_val)) {
+                const quantity_in_pieces_val = pcs_sqft_val * quantity_in_soft_val;
+                quantity_in_pieces.value = quantity_in_pieces_val;
+            } else {
+                quantity_in_pieces.value = "";
+            }
+        });
+    
+        quantity_in_soft.addEventListener("input", function() {
+            const pcs_sqft_val = parseFloat(pcs_sqft.value);
+            const quantity_in_soft_val = parseFloat(quantity_in_soft.value);
+            if (!isNaN(pcs_sqft_val) && !isNaN(quantity_in_soft_val)) {
+                const quantity_in_pieces_val = pcs_sqft_val * quantity_in_soft_val;
+                quantity_in_pieces.value = quantity_in_pieces_val;
+            } else {
+                quantity_in_pieces.value = "";
+            }
+        });
+    }
+    
+    function updateQuantityInSoft(productDetailsBlock) {
+        const sqrf_pcs = productDetailsBlock.querySelector("#sqft_pcs");
+        const quantity_in_soft = productDetailsBlock.querySelector("#quantity_in_soft");
+        const quantity_in_pieces = productDetailsBlock.querySelector("#quantity_in_pieces");
+    
+        sqrf_pcs.addEventListener("input", function() {   
+            const sqrf_pcs_val = parseFloat(sqrf_pcs.value);
+            const quantity_in_pieces_val = parseFloat(quantity_in_pieces.value);
+            if (!isNaN(sqrf_pcs_val) && !isNaN(quantity_in_pieces_val)) {
+                const quantity_in_soft_val = quantity_in_pieces_val * sqrf_pcs_val;
+                quantity_in_soft.value = quantity_in_soft_val;
+            } else {
+                quantity_in_soft.value = "";
+            }
+        });
+    
+        quantity_in_pieces.addEventListener("input", function() {
+            const sqrf_pcs_val = parseFloat(sqrf_pcs.value);
+            const quantity_in_pieces_val = parseFloat(quantity_in_pieces.value);
+            if (!isNaN(sqrf_pcs_val) && !isNaN(quantity_in_pieces_val)) {
+                const quantity_in_soft_val = quantity_in_pieces_val * sqrf_pcs_val;
+                quantity_in_soft.value = quantity_in_soft_val;
+            } else {
+                quantity_in_soft.value = "";
+            }
+        });
+    }
+
+ 
+
+    // Get the Add Product button
+    var addProductBtn = document.getElementById("addProductBtnforedit");
+
+    // Add click event listener to the Add Product button
+    addProductBtn.addEventListener("click", function() {
+        // Clone the product details block
+        var productDetailsBlock = document.querySelector(".multiple").cloneNode(true);
+
+        // Clear input values in the cloned block (optional)
+        var inputs = productDetailsBlock.querySelectorAll("input");
+        inputs.forEach(function(input) {
+            input.value = "";
+        });
+
+        // Reattach event listener for custom color input
+        var select = productDetailsBlock.querySelector("#colorlist");
+        var customColorInput = productDetailsBlock.querySelector("#customColorInput");
+        attachCustomColorInputListener(select, customColorInput);
+
+        // Populate product list and set product details
+        populateProductListAndSetDetails(productDetailsBlock);
+
+        // Fetch and populate design list based on selected product name
+        populateDesignList(productDetailsBlock);
+
+        populateDesignData(productDetailsBlock);
+
+        QuantityInSqft(productDetailsBlock);
+
+        updateQuantityInSoft(productDetailsBlock);
+
+        // Create and append the cancel button
+        var cancelButton = document.createElement("button");
+        cancelButton.textContent = "Cancel";
+        cancelButton.classList.add("btn", "btn-danger", "mt-2");
+        cancelButton.onclick = function() {
+            // Remove the product details block when cancel button is clicked
+            productDetailsBlock.remove();
+        };
+        productDetailsBlock.querySelector(".card-body").appendChild(cancelButton);
+
+        // Append the cloned block to the parent container
+        var placeholderDiv = document.getElementById("productDetailsContainer");
+        placeholderDiv.parentNode.insertBefore(productDetailsBlock, placeholderDiv);
+    });
+
+    // Initial call to attach event listener for custom color input
+    var initialSelect = document.getElementById("colorlist");
+    var initialCustomColorInput = document.getElementById("customColorInput");
+    attachCustomColorInputListener(initialSelect, initialCustomColorInput);
+
+
+    
+
+
     //Update User
     $(document).on("click", '#updateOrder', function(event) {
         
         // var formData = new FormData();
-        // Gather product details
-        // var editproductsData = [];
-      
+        var editorderData = {
+            _token: $("#_tokenOrder").val(),
 
+            // Add other order details here
+        };
+
+        var productsData = [];
+
+        $('.edit_multiple').each(function(index) {
+            var productData = {
+                product_id: $(this).find('input[name="editprodid"]').val(),
+                prodName: $(this).find('input[name^="edit_prodName"]').val(),
+                product_type: $(this).find('input[name^="edit_product_type"]').val(),
+                design_name: $(this).find('select[name="editdesignlist[' + index + ']"] option:selected').text(),
+                color_name: $(this).find('select[name="edit_colorlist[' + index + ']"] option:selected').text(),
+                pcs_sqft: $(this).find('input[name^="edit_pic_sqf"]').val(),
+                sqft_pcs: $(this).find('input[name^="edit_sqft_pic"]').val(),
+                quantity_in_soft: $(this).find('input[name^="edit_quantity_in_soft"]').val(),
+                quantity_in_pieces: $(this).find('input[name^="edit_quantity_in_pieces"]').val()
+                // Add more fields as needed
+            };
+            console.log("Edit Multiple Data:", productData); // Debug output
+            productsData.push(productData);
+        });
+        
+        $('.multiple').each(function(index) {
+            var product = {
+                product_id: $(this).find('#prodid').val(),
+                prodName: $(this).find('#productsInput').val(),
+                product_type: $(this).find('#product_type').val(),
+                design_name: $(this).find('#designlist option:selected').text(),
+                color_name: $(this).find('#colorlist option:selected').text(),
+                quantity_in_soft: $(this).find('#quantity_in_soft').val(),
+                quantity_in_pieces: $(this).find('#quantity_in_pieces').val(),
+                pcs_sqft: $(this).find('#pcs_sqft').val(),
+                sqft_pcs: $(this).find('#sqft_pcs').val(),
+                // Add other product details here
+            };
+        
+            // Ensure the product has valid data before pushing
+            if (product.product_id && product.prodName && product.product_type) {
+                console.log("Multiple Data:", product); // Debug output
+                productsData.push(product);
+            }
+        });
+        
+        console.log("Final Products Data:", productsData); // Debug output of final array
+        
+        
+
+        var custId = $('#edit_customerid').val();
         var c_id= $('#edit_prodid').val();
-        // var companySubID= $('#up_comSubId').val();
+
         var edit_custName = $('#edit_custName').val();
         var edit_companylistcust = $('#edit_companylistcust').val();
         var edit_email = $('#edit_email').val();
@@ -366,16 +773,6 @@ $(".createOrderModalStore").click(function(){
         var edit_state = $('#edit_state').val();
         var edit_country = $('#edit_country').val();
         var edit_custref = $('#edit_custref').val();
-        // var edit_prodName = $('#edit_prodName').val();
-        // var edit_product_type = $('#edit_product_type').val();
-        // var edit_prod_code = $('#edit_prod_code').val();
-        // var edit_ColourName = $('#edit_ColourName').val();
-        // var edit_total_quantity = $('#edit_total_quantity').val();
-        // var edit_price = $('#edit_price').val();
-        // var edit_Billing_address = $('#edit_Billing_address').val();
-        // var edit_Delivery_address = $('#edit_Delivery_address').val();
-        // var edit_quantity_in_soft = $('#edit_quantity_in_soft').val();
-        // var edit_quantity_in_pieces = $('#edit_quantity_in_pieces').val();
         var edit_order_remark = $('#edit_order_remark').val();
         var edit_dispatch_remark = $('#edit_dispatch_remark').val();
         var edit_order_date = $('#edit_order_date').val();
@@ -388,66 +785,47 @@ $(".createOrderModalStore").click(function(){
         var edit_box_packed = $('#edit_box_packed').prop('checked') ? 1 : 0;
    
       
-        
-
-          
-        // var form = document.forms.namedItem("editCompanyForm");
-        var formData = new FormData();
-
-        $('.editProductContainer').each(function(index) {
-            var editproduct = {
-                product_id: $(this).find('#editprodid').val(),
-                prodName: $(this).find('#edit_prodName').val(),
-                product_type: $(this).find('#edit_product_type').val(),
-                design_name: $(this).find('#edit_designName').val(),
-                color_name: $(this).find('#edit_ColourName').val(),
-                quantity_in_soft: $(this).find('#edit_quantity_in_soft').val(),
-                quantity_in_pieces: $(this).find('#edit_quantity_in_pieces').val(),
-                // Add other product details here
-            };
-            formData.append('products[' + index + ']', JSON.stringify(editproduct));
-            console.log(editproduct);
-        });
-        
-        formData.append('_id', c_id);
-        formData.append('custName', edit_custName);
-        formData.append('companylistcust', edit_companylistcust);
-        formData.append('email', edit_email);
-        formData.append('phoneno', edit_phoneno);
-        formData.append('address', edit_address);
-        formData.append('city', edit_city);
-        formData.append('zipcode', edit_zipcode);
-        formData.append('state', edit_state);
-        formData.append('country', edit_country);
-        formData.append('custref', edit_custref);
-        formData.append('order_remark', edit_order_remark);
-        formData.append('dispatch_remark', edit_dispatch_remark);
-        formData.append('order_date', edit_order_date);
-        formData.append('disptach_date', edit_disptach_date);
-        formData.append('tentative_date', edit_tentative_date);
-        // formData.append('design_name', edit_designName);
-        formData.append('box_packed', edit_box_packed);
-        formData.append('transportname', edittransportname);
-        formData.append('trackingdetails', edittrackingdetails);
-        formData.append('box_packed', edit_box_packed); 
-        
-        
-    // console.log(formData);
-        
+    
                    
          
         $.ajax({
             url: base_path + "/admin/update_order",
-            type: 'post',
-            datatype: "JSON",
-            data: formData,
-            contentType: false,
-            processData: false,
+            type: 'POST',
+            dataType: "json",
+            data: {
+                custId:custId,
+                c_id:c_id,
+                edit_custName:edit_custName,
+                edit_companylistcust:edit_companylistcust,
+                edit_email:edit_email,
+                edit_phoneno:edit_phoneno,
+                edit_address:edit_address,
+                edit_city:edit_city,
+                edit_zipcode:edit_zipcode,
+                edit_state:edit_state,
+                edit_country:edit_country,
+                edit_custref:edit_custref,
+                edit_order_remark:edit_order_remark,
+                edit_dispatch_remark:edit_dispatch_remark,
+                edit_order_date:edit_order_date,
+                edit_disptach_date:edit_disptach_date,
+                edit_tentative_date:edit_tentative_date,
+                edit_designName:edit_designName,
+                edit_box_packed:edit_box_packed,
+                edittransportname:edittransportname,
+                edittrackingdetails:edittrackingdetails,
+                // edit_box_packed:edit_box_packed,
+                productsData: JSON.stringify(productsData )
+                
+            },
+            // contentType: false,
+            // processData: false,
             cache: false,
             success: function (response) {
-                console.log(formData);
+                console.log("sucess");
+                // console.log(formData);
                 $('#editordermodal').modal("hide");
-
+                sessionStorage.setItem('successMessage_col', 'Date Update successfully');
                 window.location.href = base_path+"/order";
 
             },
@@ -486,7 +864,7 @@ $(".createOrderModalStore").click(function(){
         },
         success: function(response) {
             if (response.status === 'success') {
-                alert(response.message);
+                sessionStorage.setItem('successMessage_col', 'Date Deleted successfully');
             window.location.href = base_path+"/order";
             }
         },
@@ -1050,6 +1428,16 @@ function updateDatefild(){
     
 
 }
+
+function updateDatefildforEdit(){
+    var startDate = new Date(document.getElementById("edit_order_date").value);
+    var increment = parseInt(document.getElementById("edit_disptach_date").value);
+    var endDate = new Date(startDate.getTime()+increment * 24 * 60 * 60 * 1000);
+    document.getElementById("edit_tentative_date").value = endDate.toISOString().slice(0,10);
+    
+
+}
+
 document.addEventListener("DOMContentLoaded", function() {
 
 const sqrf_pcs = document.getElementById("sqft_pcs");

@@ -52,7 +52,7 @@ $(".createColorModalStore").click(function(){
             success: function (response) {
                 console.log(formData);
                 $('#edit_colorModel').modal("hide");
-
+                sessionStorage.setItem('successMessage_col', 'Color Updated successfully');
                 window.location.href = base_path+"/color";
 
             },
@@ -87,6 +87,7 @@ $(".createColorModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
+            sessionStorage.setItem('successMessage_col', 'Color Deleted successfully');
             window.location.href = base_path+"/color";
         },
         error: function(xhr, status, error) {

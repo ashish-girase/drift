@@ -91,7 +91,7 @@ $(".createCustomerModalStore").click(function(){
             cache: false,
             success: function (response) {
                 $('#edit_customerModel').modal("hide");
-                console.log(response);
+                sessionStorage.setItem('successMessage_col', 'Customer Updated successfully');
                 window.location.href = base_path+"/customer";
 
             },
@@ -124,6 +124,7 @@ $(".createCustomerModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
+            sessionStorage.setItem('successMessage_col', 'Customer Deleted successfully');
             window.location.href = base_path+"/customer";
         },
         error: function(xhr, status, error) {

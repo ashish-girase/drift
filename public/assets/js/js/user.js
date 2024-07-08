@@ -74,7 +74,7 @@ $(".createUserModalStore").click(function(){
             cache: false,
             success: function (response) {
                 $('#edit_userModel').modal("hide");
-
+                sessionStorage.setItem('successMessage_col', 'User Updated successfully');
                 window.location.href = base_path+"/user";
 
             },
@@ -102,7 +102,8 @@ $(".createUserModalStore").click(function(){
             _token: "{{ csrf_token() }}"
         },
         success: function(response) {
-            Swal.fire('USER DELETED SUCCESSFULLY')
+            sessionStorage.setItem('successMessage_col', 'User Deleted successfully');
+            // Swal.fire('USER DELETED SUCCESSFULLY')
             window.location.href = base_path+"/user";
         },
         error: function(xhr, status, error) {

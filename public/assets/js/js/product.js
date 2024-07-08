@@ -114,7 +114,7 @@ $(document).ready(function() {
             cache: false,
             success: function (response) {
                 $('#edit_productModel').modal("hide");
-
+                sessionStorage.setItem('successMessage_col', 'Product Updated successfully');
                 window.location.href = base_path+"/product";
 
             },
@@ -147,6 +147,7 @@ $(document).ready(function() {
             _token: "{{ csrf_token  () }}"
         },
         success: function(response) {
+            sessionStorage.setItem('successMessage_col', 'Product Deleted successfully');
             window.location.href = base_path+"/product";
         },
         error: function(xhr, status, error) {

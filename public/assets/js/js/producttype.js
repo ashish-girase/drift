@@ -55,7 +55,7 @@ $(document).ready(function() {
             success: function (response) {
                 console.log(formData);
                 $('#edit_producttypeModel').modal("hide");
-
+                sessionStorage.setItem('successMessage_col', 'Product Type Updated successfully');
                 window.location.href = base_path+"/producttype";
 
             },
@@ -87,6 +87,7 @@ $(document).ready(function() {
                 _token: "{{ csrf_token() }}", 
             },
             success: function(response) {
+                sessionStorage.setItem('successMessage_col', 'Product Type Deleted successfully');
                 window.location.href = base_path+"/producttype";
             },
             error: function(xhr, status, error) {

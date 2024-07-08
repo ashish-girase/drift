@@ -116,6 +116,7 @@ Route::group(['middleware' => 'auth'], function () {
      Route::post('/admin/add_order', [OrderController::class, 'addOrder']);
      Route::POST('/admin/edit_order', [OrderController::class, 'edit_order']);
      Route::get('/admin/find_color', [OrderController::class, 'fetchColorsNames'])->name('find_color');
+    //  Route::get('/admin/find_color_editorder', [OrderController::class, 'find_color_editorder'])->name('find_color_editorder');
      Route::POST('/admin/update_order', [OrderController::class, 'update_order']);
      Route::post('/admin/delete_order', [OrderController::class, 'delete_order'])->name('delete_order');
      Route::post('admin/searchCustomer', [OrderController::class, 'searchCustomer']);
