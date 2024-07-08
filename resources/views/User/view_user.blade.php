@@ -136,7 +136,7 @@
                                                     </div>
                                                     <div class="form-group col-md-12">
                                                         <label for="inputAddress">Type Of Work<span   class="required"></span></label>
-                                                        <!-- <input cc type="text" class="form-control" name="inputAddress" id="inputAddress" placeholder="Enter Address"> -->
+                                                        <!-- <input  type="text" class="form-control" name="inputAddress" id="inputAddress" placeholder="Enter Address"> -->
                                                         <select class="form-control" id="user_type" class="user_type">
                                                             <option name="on_site">On site </option>
                                                             <option name="remote">Remote </option>
